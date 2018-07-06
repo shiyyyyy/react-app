@@ -1,0 +1,95 @@
+/* 类型选择 */
+.order-state{
+    height: 1.2rem;
+    line-height: 1.2rem;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #fff;
+    display: flex;
+}
+.order-state-item{
+    font-size: .373333rem;
+    flex: 1;
+    transition: all .3s;
+}
+.cur-order-state{
+    color: #6FC5D8;
+    border-bottom: 2px solid #6FC5D8;
+}
+
+/* 订单 状态 的不同状态样式 */
+.active-order-state1{
+    color: aqua;
+}
+.active-order-state2{
+    color: hotpink;
+}
+.active-order-state3{
+    color: gold;
+}
+.active-order-state4{
+    color: green;
+}
+.active-order-state5{
+    color: tomato;
+}
+
+/* 订单list */
+
+.order-list{
+    font-size: .32rem;
+    padding-top: 1px solid #fff;
+    box-sizing: border-box;
+}
+
+.order-item{
+    background-color: #fff;
+    margin: .266667rem 0;
+}
+
+.order-number{
+    height: 1.173333rem;
+    line-height: 1.173333rem;
+    padding: 0 .4rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.order-main{
+    display: flex;
+}
+
+.order-detail{
+    text-align: left;
+}
+.order-detail-item{
+    line-height: 1rem;
+    border-bottom: 2px solid #F5F9F9;
+    padding: 0 0 0 .853333rem;
+    display: flex;
+    justify-content: space-between;
+}
+.order-detail-item div{
+    width: 33%;
+}
+
+.order-btn{
+    font-size: .346667rem;
+    height: 1.2rem;
+    padding: 0 .613333rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.order-btn-item{
+    width: 1.52rem;
+    height: .56rem;
+    line-height: .56rem;
+    text-align: center;
+    border: 1px solid #E6E6E6;
+    border-radius: .106667rem;
+}
+.order-btn-item:last-child{
+    color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+}

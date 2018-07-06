@@ -1,0 +1,129 @@
+
+/* 客户信息 ---(其实这个是所有model-box的通用属性) */
+.model-box{
+    background-color: #fff;
+    margin-top: .266667rem;
+    box-shadow: 6px 1px 3px rgba(0,0,0,.1);
+}
+.box-title{
+    height: 1.2rem;
+    line-height: 1.2rem;
+    padding: 0 .426667rem;
+    display: flex;
+    justify-content: space-between;
+}
+.box-title-text{
+    
+}
+.box-title-operate{
+    font-size: .373333rem;
+    text-align: center;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+.box-title-operate-item{
+    width: 1.733333rem;
+    height: .533333rem;
+    line-height: .533333rem;
+    color: #999;
+    border: 1px solid #999;
+    border-radius: .106667rem;
+    margin-left: .426667rem;
+}
+.model-main{
+
+}
+.model-main-item-box{
+
+}
+.model-main-item{
+    height: 1rem;
+    line-height: 1rem;
+    border-top: 2px solid #F4F8F8;
+    box-sizing: initial;
+    padding: 0 .533333rem 0 .426667rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    position: relative;
+}
+.model-main-item > span{
+    font-size: .373333rem;
+    color: #999;
+    padding-right: .266667rem;
+    display: inline-block;
+}
+.model-main-item > input{
+    height: 90%;
+    border: none;
+    margin-left: .16rem;
+}
+.model-main-item > i{
+    width: .64rem;
+    height: .64rem;
+    background: url(/img/next.png) no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    right: .266667rem;
+    top: .18rem;
+    bottom: .18rem;
+}
+.model-main-item > strong{
+    flex: 1;
+    font-weight: 100;
+    font-size: .373333rem;
+    color: #999;
+    display: inline-block;
+}
+.model-main-item  e{
+    font-size: .373333rem;
+    font-style: normal;
+    color: #000;
+    padding-left: .133333rem;
+    display: inline-block;
+}
+
+/* ---------------------------------------- 底部 footer ----------------------------------- */
+/* ---------------------------------------- 底部 footer ----------------------------------- */
+/* ---------------------------------------- 底部 footer ----------------------------------- */
+
+.order-edit-footer{
+    height: 1.386667rem;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0px 0px 5px rgba(0,0,0,.2);
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+.order-edit-footer > div{
+    flex: 1;
+}
+.order-edit-footer > div:nth-child(-n+2){
+    padding: .106667rem 0;
+}
+.order-edit-footer > div > img{
+    width: .693333rem;
+    height: .693333rem;
+    display: block;
+    margin: 0 auto;
+}
+.order-edit-footer > div > span{
+    font-size: .32rem;
+    line-height: .32rem;
+}
+.order-edit-footer > div:nth-last-child(-n+2){
+    line-height: 1.386667rem;
+    color: #fff;
+    box-shadow: 0px 0px 5px rgba(0,0,0,.2);
+}
+.order-edit-footer-save{
+    background-color: #88D6E8;
+}
+
+.order-edit-footer-submit{
+    background-color: #6FC5D8;
+}

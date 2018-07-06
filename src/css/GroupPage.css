@@ -1,0 +1,165 @@
+
+.group-body{
+    position: relative;
+    box-sizing: border-box;
+    border-top: 1px solid rgba(0,0,0,0);
+    background-color: #F4F8F9;
+    position: relative;
+}
+.group-modal{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 1;
+    background-color: rgba(0,0,0,.3);
+}
+.input-box{
+    width: 95%;
+    margin: 5px auto;
+    background-color: #F4F8F9;
+}
+
+
+/* ------------------- 选项 弹窗 -------------------- */
+.option-type{
+    background-color: #fff;
+    line-height: 50px;
+    text-align: center;
+    /* position: absolute;
+    top: 103px; */
+}
+
+.dialog-box{
+    /* background-color: #fff;
+    position: relative;
+    top: 1px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10; */
+}
+.options-popup{
+    width: 100%;
+    background-color: #fff;
+    /* padding: .266667rem .426667rem; */
+    position: fixed;    
+    box-sizing: border-box;
+}
+
+.selected{
+    font-size: .373333rem;
+    line-height: 1rem;
+    display: flex;
+}
+.select-item{
+    -ms-flex: 1 1;
+    flex: 1 1;
+    height: 10rem;
+    overflow: auto;
+}
+.select-item-main{
+}
+.active-select-item{
+    color: #6FC5D8;
+}
+.select-nav{
+    background-color: #fff
+}
+.select-big{
+    background-color: #fbfbfb;
+}
+.select-sma{
+    background-color: #f9f9f9;
+}
+
+.line-height-3rem{
+    line-height: 1.28rem;
+}
+/* 功能按钮 重置 确定 box */
+.options-btn{
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: .266667rem .32rem;
+    border-top: 1px solid #f1f1f1;
+}
+.options-reset{
+    width: 48%;
+    line-height: .853333rem;
+    color: #ccc;
+    border: 1px solid #ccc;
+    border-radius: .106667rem;
+}
+.options-submit{
+    width: 48%;
+    line-height: .853333rem;
+    color: #fff;
+    background-color: #AED283;
+    border: 1px solid #AED283;
+    border-radius: .106667rem;
+}
+
+/* ---------------------- 产品 列表 ----------------------- */
+.pro-list{
+    padding: 0 .32rem;
+}
+.pro-item{
+    height:2.8rem;
+    background-color: #fff;
+    border-radius: .213333rem;
+    padding: .213333rem;
+    margin: .32rem 0;
+    display: flex;
+}
+
+
+.pro-item-left{
+    width: 37.5%;
+    height: 100%;
+    border-radius: .213333rem;
+    overflow: hidden;
+    position: relative;
+    margin-right: .32rem;
+}
+.pro-item-pro_id{
+    font-size: .32rem;
+    line-height: .853333rem;
+    color: #fff;
+    background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.8));
+    text-align: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+/* 右侧 */
+.pro-item-right{
+    width: 60%;
+    padding-right: .266667rem;
+    flex-grow: 1;
+}
+.pro-item-name{
+    width: 100%;
+    font-size: .373333rem;
+    line-height: .426667rem;
+    max-height: .853333rem;
+    overflow: hidden;
+}
+.pro-item-date{
+    font-size: .32rem;
+    margin: .16rem 0;
+    color: #666;
+}
+.pro-item-dep_city{
+    font-size: .32rem;
+    margin: .16rem 0;
+    color: #666;
+}
+.pro-item-price{
+
+}
+.img-hot1{
+    width: 1.706667rem;
+    height: .506667rem;
+}

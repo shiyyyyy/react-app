@@ -1,0 +1,154 @@
+.my{
+
+}
+.my-top-bg{
+    width: 100%;
+    height: 5.333333rem;
+    font-size: .32rem;
+    color: #fff;
+    line-height: .533333rem;
+    background: url(/img/login-bg.png) no-repeat;
+    background-size: contain;
+    text-align: center;
+    position: relative;
+    padding-top: 1px;
+    box-sizing: border-box;
+}
+.user-avatar{
+    width: 1.733333rem;
+    height: 1.733333rem;
+    margin-top: .426667rem;
+}
+.user-info{
+    margin: 0 auto;
+    text-align: left;
+    display: inline-block;
+}
+.user-info > span{
+    display: block;
+}
+
+.user-operation{
+    margin: .266667rem 1.466667rem 0;
+    display: flex;
+    justify-content: space-around;
+}
+.user-operation > div{
+    font-size: .373333rem;
+    border: 1px solid #fff;
+    border-radius: .533333rem;
+    padding: .053333rem .16rem;
+}
+
+/* ------------------------- 最近订单 (光头title的通用样式) ------------------------- */
+.model-box-bald{
+
+}
+.model-box-bald-title{
+    height: 1.173333rem;
+    line-height: .426667rem;
+    box-sizing: border-box;
+    padding: .373333rem .426667rem .373333rem .106667rem;
+    display: flex;
+    justify-content: space-between;
+}
+.model-box-bald-title-text{
+    border-left: .133333rem solid #6FC5D8;
+    padding-left: 8px;
+}
+.model-box-bald-title-more{
+    font-size: .373333rem;
+    color: #A3A5A4;
+    padding-right: .426667rem;
+    background: url(/img/next.png) no-repeat center right;
+    background-size: 38%;
+}
+
+
+.model-box-bald-main{
+    background-color: #fff;
+    border-radius: .266667rem;
+    padding: .373333rem .64rem;
+    margin: 0 .32rem .32rem .32rem;
+    display: flex;
+    justify-content: space-between;
+}
+/* 最近订单 item */
+.model-box-bald-main-item-order{
+    width: 1.493333rem;
+    height: 1.493333rem;
+    line-height: .373333rem;
+    padding-top: .346667rem;
+    font-size: .32rem;
+    color: #fff;
+    text-align: center;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+.model-box-bald-main-item-order:nth-child(1){
+    background-color: #79BAE6;
+}
+.model-box-bald-main-item-order:nth-child(2){
+    background-color: #79DDE6;
+}
+.model-box-bald-main-item-order:nth-child(3){
+    background-color: #F8B780;
+}
+.model-box-bald-main-item-order:nth-child(4){
+    background-color: #F2869F;
+}
+
+/* 我的账本 item */
+.model-box-bald-main-item-myBooks{
+    font-size: .32rem;
+    line-height: .426667rem;
+    text-align: center;
+}
+.model-box-bald-main-item-myBooks:last-child{
+    color: #F2869F;
+}
+.model-box-bald-main-item-myBooks > img{
+    width: .64rem;
+    height: .64rem;
+    
+}
+
+/* --------------- 消息通知 定制样式------------------ */
+.model-box-bald-main-msg{
+    font-size: .32rem;
+    line-height: .426667rem;
+    padding: 0 .32rem;
+}
+.model-box-bald-main-msg-item{
+    background-color: #fff;
+    box-sizing: border-box;
+    border-radius: .266667rem;
+    padding: .32rem 0 .32rem .533333rem;
+    margin-bottom: .266667rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.model-box-bald-main-msg-item-left{
+    flex: 1;
+    padding-right: .373333rem;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.model-box-bald-main-msg-item-left > div{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: .16rem;
+}
+.model-box-bald-main-msg-item-right{
+    width: 1.386667rem;
+    height: .693333rem;
+    text-align: center;
+    border-left: 1px solid #ccc;
+}
+.model-box-bald-main-msg-item-right > img{
+    width: .64rem;
+    height: .64rem;
+}
