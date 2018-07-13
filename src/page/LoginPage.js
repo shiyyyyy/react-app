@@ -37,7 +37,6 @@ export default class LoginPage extends Component{
 			  </ons-toolbar>
 			  <div className="login">
 					<div className="login-top-bg">
-						<p>北京青年旅行社</p>
 						<img src="img/avatar.png" className="user-img" />
 					</div>
 					<div className="login-input-box">

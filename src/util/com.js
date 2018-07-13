@@ -1,7 +1,9 @@
 import * as ons from 'onsenui';
 import React from 'react';
-import {PullHook,Icon} from 'react-onsenui';
-import {log,reload,i18n,resetTo} from './core';
+import {PullHook,Icon,Modal,Button} from 'react-onsenui';
+import {log,reload,i18n,resetTo,goTo} from './core';
+
+
 
 //--------------------------component----------------------------
 export function loginToPlay() {
@@ -16,6 +18,37 @@ export function loginToPlay() {
                 <button className="login-btn" onClick={_=>resetTo('登录页')}>立即登录</button>
             </div>
         </div>
+    );
+}
+
+export function shareWith(view) {
+    return (
+          <Modal isOpen={view.state.shareWithOpen}>
+            <div className="share-cancel" onClick={_ => view.setState({shareWithOpen: false})}></div>
+            <div className="share">
+                <div className="share-options">
+                    <div className="wx-friends" onClick={() => view.share('SESSION')}>
+                        <img src="img/wx.png"/><br />
+                        <span>微信好友</span>
+                      {/* <Button onClick={() => view.share('SESSION')}>
+                        微信好友
+                      </Button> */}
+                    </div>
+                    <div className="wx-friends-circle" onClick={() => view.share('TIMELINE')}>
+                        <img src="img/wx-pyq.png"/><br />
+                        <span>微信朋友圈</span>
+                      {/* <Button onClick={() => view.share('TIMELINE')}>
+                        微信朋友圈
+                      </Button> */}
+                    </div>
+            </div>
+            <div className="share-options-cancel" onClick={_ => view.setState({shareWithOpen: false})}>
+                  取消
+            </div>
+                      
+            </div>
+
+          </Modal>
     );
 }
 
@@ -76,3 +109,35 @@ export function toast(p) {
     };
     return ons.notification.toast(m);
 }
+
+
+export function footer(text1,text2,class1,class2){
+    return(
+        <div className="order-edit-footer">
+			<div className="">
+				<img src="img/gys.png" />
+				<span>联系供应商</span>
+			</div>
+			<div className="">
+				<img src="img/zs.png" />
+				<span>联系总社</span>
+			</div>
+			<div className={class1}>{text1}</div>
+			<div className={class2}>{text2}</div>
+		</div>
+    )
+}
+
+export function search(){
+    return(
+        <ons-toolbar>
+			<div className="center search-input-box-box" onClick={_=>goTo('搜索')}>
+			  <div className="search-input-box">
+				  <input className='search-input-box-input' value="" placeholder="搜索"/>
+				<img className="search-input-box-img" src="img/search.png" />
+			  </div>
+			</div>
+		  </ons-toolbar>
+    )
+}
+

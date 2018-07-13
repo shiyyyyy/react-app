@@ -9,6 +9,7 @@ import stateTransfer from '../state';
 const pageSize = 10;
 
 export const Enum = {};
+export const AppMeta = {};
 
 export const AppCore = {
     APP_NAME: 'TY_ZS',
@@ -100,13 +101,16 @@ export function setNav(nav){
     navigator = nav;
 }
 
-export function goTo(key) {
+export function goTo(key,p) {
+    console.log(key)
+    console.log(pages)
+    console.log(pages[key])
   navigator.pushPage({
     page: pages[key],
-    key: key
+    key: key,
+    p: p||{}
   });
 }
-
 export function goBack() {
   return navigator.popPage();
 }
@@ -125,6 +129,31 @@ export function resetTo(key) {
     );
 }
 
+export function share(scene,title,des,thumb,link) {
+    if(!hasPlugin('Wechat')){
+        error('请在手机上使用该功能');
+        return;
+    }
+    scene = plugin('Wechat').Scene[scene];
+    if(scene === undefined){
+        error('不支持分享至'+scene);
+        return;
+    }
+    let param = {scene:scene};
+    param.message = {
+        title: title,
+        description: des,
+        thumb: thumb,
+        media: {
+            type: plugin('Wechat').Type.WEBPAGE,
+            webpageUrl: link
+        }
+    }
+    plugin('Wechat').share(param, 
+        r=>log('[share] ok '+link), 
+        e=>log('[share] failed ' + e)
+    );
+}
 
 //-------------------------util---------------------------
 export function encUrl(p) {
@@ -199,38 +228,190 @@ export function emit(e) {
     eq[e].forEach(f=>f());
 }
 
-function _loadPage(view,done){
+function _loadMore(view,done){
   
-  if(view.lastIndex == view.state.pageList.length){
+  if(view.lastIndex == view.state.data.length){
     view.setState({loading:false});
-    done();
+    done && done();
     return;
   }
-  
-  view.lastIndex = view.state.pageList.length;
-  let url = view.url+encUrl({start:view.state.pageList.length+1,limit:pageSize,mod:view.mod});
+
+  view.lastIndex = view.state.data.length;
+  let cfg = get_mod_cfg(view.mod);
+  let url = cfg.read.url + '?' + encUrl({
+        start:view.state.data.length+1,
+        limit:pageSize,
+        mod:view.mod
+  });
   post(url).then(
     r => {
-      view.setState({loading:false,pageList:[...view.state.pageList,...r.data]},done);
+        view.setState({loading:false,data:[...view.state.data,...r.data]},done);
     }
   )
 }
 
-export function loadPage(view,done){
+export function loadMore(view,done){
     view.setState({loading:true});
-    setTimeout(_=>_loadPage(view,done),500);
+    setTimeout(_=>_loadMore(view,done),500);
+}
+
+export function loadIfEmpty(view) {
+    if(!AppCore.sid || view.state.loading || view.state.filled){
+        return;
+    }
+    view.setState({loading:true});
+    reload(view);
 }
 
 export function reload(view,done) {
-    let url = view.url+encUrl({start:1,limit:pageSize,mod:view.mod});
+    setTimeout(_=>_reload(view,done),500);
+}
 
+function _reload(view,done) {
+    let url;
+    if(view.url)
+    {
+        url = view.url;
+    }
+    else if(view.mod)
+    {
+        let cfg = get_mod_cfg(view.mod);
+        url = cfg.read.url+'?'+encUrl( {start:1,limit:pageSize,mod:view.mod} );
+    }
+    else if(view.action)
+    {
+        let cfg = AppMeta.actions[view.action];
+        let param = get_read_param(view.action, cfg, view.props.p.data);
+
+        url = cfg.read.url+'?'+encUrl( param );
+    }
+    else
+    {
+        return;
+    }
+    
     post(url).then(
         r => {
-          view.setState({pageList:r.data},done);
+          view.setState({filled:true,loading:false,data:r.data},done);
+          view.afterLoad && view.afterLoad();
         }
     )
 }
 
+function get_mod_cfg(mod) {
+    
+    if(AppMeta.mods[mod].read){
+        return AppMeta.mods[mod];
+    }
+
+    let cfg;
+    for (var lv1 in AppMeta.menu) {
+        for (var lv2 in AppMeta.menu[lv1]) {
+            if(lv2 === mod){
+                cfg = AppMeta.menu[lv1][lv2];
+                break;
+            }
+        }
+        if(cfg){
+            break;
+        }
+    }
+    return cfg;
+}
+
+function get_read_param(action,cfg,data) {
+    var param = {action:action};
+
+    if(cfg.mod){
+        param.mod = cfg.mod;
+    }
+    if(data && data.search){
+        Object.assign(param,data.search);
+    }
+
+    if(cfg.read.data){
+        Object.assign(param, get_req_data(cfg.read.data, data));
+    }
+    return param;
+}
+
+function get_req_data(cfg,data){
+    if(!cfg){
+        return data;
+    }
+    
+    if(typeof(cfg) === 'string'){
+        return data[cfg];
+    }
+    let rst = {};
+
+    Object.keys(cfg).forEach(function(k){
+        let item = cfg[k];
+
+        //'订单信息.id'
+        if(item.indexOf('.') > 0){
+
+            let fd = item.split(' ');//fields
+            let flt = item.split('|');//filter
+
+            if(fd.length>1){
+                fd[fd.length-1] = fd[fd.length-1].split('|')[0];
+            }else{
+                fd = [flt[0]];
+            }
+            if(flt.length>1){
+                flt = flt[1];
+            }else{
+                flt = undefined;
+            }
+            let blk = fd[0].split('.')[0];//block
+            fd[0] = fd[0].split('.')[1];
+
+            let pk;//picked value
+            if(fd.length>1){
+                pk = data[blk].map(function(_item){
+                    let d = {};
+                    fd.forEach(function(f){
+                        d[f] = _item[f];
+                    });
+                    return d;
+                });
+            }else{
+                pk = data[blk].map(i=>i[fd[0]]);
+            }
+
+            if(flt){//filter : '订单详情.flow_id|first'
+                switch(flt){
+                    case 'first':
+                        rst[k] = data[blk][0][fd[0]];
+                        break;
+                    default:
+                        data[blk].forEach(function(_item){
+                            if(_item[flt]){
+                                rst[k] = _item[fd[0]];
+                            }
+                        });
+                        break;
+                }
+            }else{
+                if(k*1 != NaN){//['订单详情.id']无映射
+                    rst[blk] = pk;
+                }else{//['订单详情.id':'id_arr']映射
+                    rst[k] = pk;
+                }
+            }
+        }else{
+
+            if(k*1 != NaN){//['id']无映射
+                rst[item] = data[item];
+            }else{//['id':'uid']映射
+                rst[k] = data[item];
+            }
+        }
+    });
+
+    return rst;
+}
 //------------------------i18n---------------------------
 const _i18n = {
     lang: 0,

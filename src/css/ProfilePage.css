@@ -8,7 +8,7 @@
     color: #fff;
     line-height: .533333rem;
     background: url(/img/login-bg.png) no-repeat;
-    background-size: contain;
+    background-size: 100% 100%;
     text-align: center;
     position: relative;
     padding-top: 1px;
@@ -60,7 +60,7 @@
     font-size: .373333rem;
     color: #A3A5A4;
     padding-right: .426667rem;
-    background: url(/img/next.png) no-repeat center right;
+    background: url(/img/next1.png) no-repeat center right;
     background-size: 38%;
 }
 
@@ -99,18 +99,57 @@
 }
 
 /* 我的账本 item */
-.model-box-bald-main-item-myBooks{
-    font-size: .32rem;
-    line-height: .426667rem;
-    text-align: center;
+.model-box-bald-main-bill-t{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: .533333rem;
+    padding-top: .266667rem;
 }
-.model-box-bald-main-item-myBooks:last-child{
+.model-box-bald-main-bill-b{
+    display: flex;
+    justify-content: center;
     color: #F2869F;
+    padding-top: .426667rem;
+    position: relative;
 }
-.model-box-bald-main-item-myBooks > img{
+.posi-ab-left{
     width: .64rem;
     height: .64rem;
-    
+    border-radius: 50%;
+    background: #F4F8F9;
+    position: absolute;
+    top: -0.32rem;
+    left: -0.96rem;
+}
+.posi-ab-right{
+    width: .64rem;
+    height: .64rem;
+    border-radius: 50%;
+    background: #F4F8F9;
+    position: absolute;
+    right: -0.96rem;
+    top: -0.32rem;
+}
+.model-box-bald-main-item-myBooks{
+    width: 45%;
+    font-size: .32rem;
+    line-height: .426667rem;
+    text-align: left;
+    display: flex;
+}
+.model-box-bald-main-item-myBooks:nth-child(1){
+    margin-bottom: .426667rem;
+}
+.model-box-bald-main-item-myBooks:nth-child(2){
+    margin-bottom: .426667rem;
+}
+.model-box-bald-main-item-myBooks > img{
+    width: .853333rem;
+    height: .853333rem;
+    margin-right: .16rem;
 }
 
 /* --------------- 消息通知 定制样式------------------ */

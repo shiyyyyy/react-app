@@ -5,7 +5,7 @@
 }
 
 
-.swiper-ctlr{
+.swiper-ctrl{
     text-align: center;
 	font-size: 20px;
 	position: absolute;
@@ -13,12 +13,8 @@
 	left: 0px;
     right: 0px;
 }
-.w-25{
-    width: 25%;
-}
-.scale-07{
-    transform: scale(.7);
-}
+
+
 .flex-j-sb {
     display: flex;
     justify-content: space-between;
@@ -47,39 +43,46 @@
     height: 100%;
 }
 
+
+/* type - item - box 分类样式 */
+.type-item-box{
+    font-size: .373333rem;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: .16rem;
+    padding: .426667rem .32rem .533333rem;
+    margin: .32rem;
+}
+.type-item-row{
+    width: 100%;
+    margin-bottom: .533333rem;
+    display: flex;
+    justify-content: space-between;
+}
+.type-item{
+    width: 25%;
+}
 .banner-scale-img{
+    width: 1.28rem;
+    height: 1.28rem;
     display:inline-block;
     margin: 0 auto;
-    width: 55%;
-    height: 55%;
 }
 .banner-text{
-    position: absolute;
-    bottom: .32rem;
-    left: 0;
-    right:0;
 }
 
 /* list 样式 */
 .list-item {
-    position: relative;
-    font-weight: bold;
-    display: -webkit-box;
-    display: -webkit-flex;
+    height: 1.173333rem;
+    line-height: .426667rem;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: .373333rem .426667rem .373333rem .106667rem;
     display: -ms-flexbox;
     display: flex;
+    -ms-flex-pack: justify;
     justify-content: space-between;
-    padding-left: .426667rem;
-    min-height: 44px;
-    background-color: #fff;
-    vertical-align: middle;
-    overflow: hidden;
-    -webkit-transition: background-color .2s;
-    transition: background-color .2s;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    -ms-flex-align: center;
-    align-items: center;
 }
 
 .list-left-border {
@@ -198,4 +201,39 @@
     background-color: #fff;
     border: 2px solid #CFCFCF;
     border-radius: 1.333333rem;
+}
+
+
+/*  定制 滚动页面小标签  */
+.active-banner-page{
+    width: .693333rem;
+    height: .266667rem;
+    border-radius: .266667rem;
+    background-color: #fff;
+    margin: 0 .106667rem;
+    display: inline-block;
+}
+.other-banner-page{
+    width: .266667rem;
+    height: .266667rem;
+    border-radius: .266667rem;
+    background-color: rgba(199,199,199,.7);
+    margin: 0 .106667rem;
+    display: inline-block;
+}
+.active-type-page{
+    width: .533333rem;
+    height: .106667rem;
+    background-color: #6FC5D8;
+    border-radius: .106667rem;
+    margin: 0 .133333rem;
+    display: inline-block;
+}
+.other-type-page{
+    width: .533333rem;
+    height: .106667rem;
+    background-color: #D3EDF3;
+    border-radius: .106667rem;
+    margin: 0 .133333rem;
+    display: inline-block;
 }

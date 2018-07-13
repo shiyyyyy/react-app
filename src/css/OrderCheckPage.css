@@ -1,0 +1,44 @@
+
+/* 底部footer */
+.order-check-footer{
+    font-size: .373333rem;
+    text-align: center;
+    padding: 0% .426667rem;
+    margin: 1.066667rem 0 1.2rem 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.order-check-footer-btn-default{
+    width: 4.266667rem;
+    height: .96rem;
+    line-height: .96rem;
+    color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    border-radius: .08rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.order-check-footer-btn-default>div, .order-check-footer-btn-submit>div{
+    position: relative;
+    top: .186667rem;
+    left: -0.133333rem;
+    display: inline-block;
+}
+.order-check-footer-btn-default>div img, .order-check-footer-btn-submit>div img{
+    width: .586667rem;
+    height: .586667rem;
+}
+.order-check-footer-btn-submit{
+    width: 4.266667rem;
+    height: .96rem;
+    line-height: .96rem;
+    color: #fff;
+    background-color :#6FC5D8;
+    border-radius: .08rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

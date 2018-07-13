@@ -2,6 +2,7 @@
   "name": "zs-react",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "moment": "^2.22.2",
     "onsenui": "^2.10.1",

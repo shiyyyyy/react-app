@@ -33,18 +33,18 @@ class HomePage extends Component{
 	}
 
     onShow() {
-    	 this.timer && clearInterval(this.timer);
-	  	 this.timer = setInterval(_=>{
-	  	 	let picIdx = this.state.picIdx + 1;
-	  	 	let navIdx = this.state.navIdx + 1;
-	  	 	if(picIdx>3){
-	  	 		picIdx = 0;
-	  	 	}
-	  	 	if(navIdx>1){
-	  			navIdx = 0;
-	  	 	}
-	  		this.setState({picIdx:picIdx,navIdx:navIdx});
-	  	 },5000);
+    	//  this.timer && clearInterval(this.timer);
+	  	//  this.timer = setInterval(_=>{
+	  	//  	let picIdx = this.state.picIdx + 1;
+	  	//  	let navIdx = this.state.navIdx + 1;
+	  	//  	if(picIdx>3){
+	  	//  		picIdx = 0;
+	  	//  	}
+	  	//  	if(navIdx>1){
+	  	// 		navIdx = 0;
+	  	//  	}
+	  	// 	this.setState({picIdx:picIdx,navIdx:navIdx});
+	  	//  },5000);
     }
 
     onHide() {
@@ -65,16 +65,26 @@ class HomePage extends Component{
 	}
 
 	renderToolbar(){
-		return (
-		  	<ons-toolbar>
-		      <div className="center" onClick={_=>clickToLog(this)}>首页</div>
-		  	</ons-toolbar>
-		);
+		// return (
+		//   	<ons-toolbar>
+		//       <div className="center" onClick={_=>clickToLog(this)}>首页</div>
+		//   	</ons-toolbar>
+		// );
 	}
 
+	renderFixed() {
+	    // return (
+	    //   <Fab
+	    //     style={{backgroundColor: '#4282cc' }}
+	    //     onClick={_=>error('test')}
+	    //     position='bottom right'>
+	    //     <Icon icon='md-face' />
+	    //   </Fab>
+	    // );
+	}
 	render(){
 		return (
-	      <Page onShow={_=>this.onShow()} onHide={_=>this.onHide()} renderToolbar={_=>this.renderToolbar()} >
+	      <Page onShow={_=>this.onShow()} onHide={_=>this.onHide()} renderToolbar={_=>this.renderToolbar()} renderFixed={this.renderFixed}>
 
 	        <Carousel onPostChange={e=>this.handleChange('picIdx',e)} index={this.state.picIdx} swipeable autoScroll overscrollable>
 	          {this.props.s.pub.slide.map((item, index) => (
@@ -85,10 +95,11 @@ class HomePage extends Component{
 	              </CarouselItem>
 	          ))}
 	        </Carousel>
-	        <div className="swiper-ctlr">
+	        <div className="swiper-ctrl">
 	          {this.props.s.pub.slide.map((item, index) => (
-	            <span key={index} style={{cursor: 'pointer'}} onClick={this.setIndex.bind(this, 'picIdx',index)}>
-	              {this.state.picIdx === index ? '\u25CF' : '\u25CB'}
+	            <span key={index} onClick={this.setIndex.bind(this, 'picIdx',index)}
+							className={this.state.picIdx === index ? 'active-banner-page' : 'other-banner-page'}>
+	              {/* {this.state.picIdx === index ? '\u25CF' : '\u25CB'} */}
 	            </span>
 	          ))}
 	        </div>
@@ -98,23 +109,23 @@ class HomePage extends Component{
 	            {
 		          	[0,2].map(i => 
 		              <CarouselItem key={i}>
-					  <div>
-								<div style={{display:'flex', margin: '15px 0'}}>
+					  <div className="type-item-box">
+								<div className="type-item-row">
 									{
 										Object.keys(this.state.icon[i]).map(id=>
-											<div className="w-25 text-center" style={{position:"relative"}} key={id}>
-											<div style={{height:'2.5rem'}}><img className="banner-scale-img" src={'img/menu_icon/'+id+'.png'} /></div>
-											<span className="banner-text">{this.state.icon[i][id]}</span>
+											<div className="type-item" key={id}>
+												<div><img className="banner-scale-img" src={'img/menu_icon/'+id+'.png'} /></div>
+												<span className="banner-text">{this.state.icon[i][id]}</span>
 											</div>
 										)
 									}
 								</div>
-								<div style={{display:'flex', margin: '15px 0'}}>
+								<div className="type-item-row">
 									{
 										Object.keys(this.state.icon[i+1]).map(id=>
-											<div className="w-25 text-center" style={{position:"relative"}} key={id}>
-											<div style={{height:'2.5rem'}}><img className="banner-scale-img" src={'img/menu_icon/'+id+'.png'} /></div>
-											<span className="banner-text">{this.state.icon[i+1][id]}</span>
+											<div className="type-item" key={id}>
+												<div><img className="banner-scale-img" src={'img/menu_icon/'+id+'.png'} /></div>
+												<span className="banner-text">{this.state.icon[i+1][id]}</span>
 											</div>
 										)
 									}
@@ -124,19 +135,19 @@ class HomePage extends Component{
 		            )
 	            }
 	        </Carousel>
-	        <div className="swiper-ctlr" style={{cursor: 'pointer', left: '0', right: '0', top: '12rem'}}>
+	        <div className="swiper-ctrl" style={{cursor: 'pointer', left: '0', right: '0', top: '10.5rem'}}>
 	          {[0,2].map((i, index) => (
-	            <span key={index} onClick={this.setIndex.bind(this, 'navIdx',index)}>
-	              {this.state.navIdx === index ? '\u25CF' : '\u25CB'}
+	            <span key={index} onClick={this.setIndex.bind(this, 'navIdx',index)} 
+							className={this.state.navIdx === index ? 'active-type-page' : 'other-type-page'}>
+	              {/* {this.state.navIdx === index ? '\u25CF' : '\u25CB'} */}
 	            </span>
 	          ))}
 	        </div>
 					
 			{/* 热卖推介 */}
-			<div className="list-item list-item-middle">
-				<div className="list-left-border"></div>
-				<div className="list-content">热卖推介</div>
-				<div className="list-more">更多 <img className="posi-ab" style={{top:'1px',right:'0',bottom:'0'}} src='img/more.png'></img></div>
+			<div className="model-box-bald-title">
+				<div className="model-box-bald-title-text">热卖推介</div>
+				<div className="model-box-bald-title-more">更多 <img className="posi-ab" style={{top:'1px',right:'0',bottom:'0'}} src='img/more.png'></img></div>
 			</div>
 
 			<div className="flex-j-sb flex-wrap" style={{padding: '.32rem'}}>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import {AppCore,resetTo,loadPage,Enum} from '../util/core';
-import {pullHook,loginToPlay} from '../util/com';
+import {AppCore,resetTo,loadMore,loadIfEmpty,Enum,goTo} from '../util/core';
+import {pullHook,loginToPlay,search} from '../util/com';
 
 import {Page} from 'react-onsenui';
 import { connect } from 'react-redux';
@@ -11,79 +11,25 @@ class GroupPage extends Component{
 
 	constructor(props) {
 	    super(props);
-	    this.state = {state:'initial',pageList:[],pd_nav:'1',pd_tag:'0',pd_subTag:'0'};
-	    this.url = '/op/Group/read?';
-		this.mod = '团队管理';
+		this.state = {state:'initial',data:[],pd_nav:'1'};
+		this.mod = '团队报名';
 	}
-
-	setNav(i){
-		this.setState({pd_nav: i,pd_tag: '0'})
-	}
-	setTag(i){
-		this.setState({pd_tag: i})
-		// 如果i==='0' 则直接搜索,i=其他则展开3级列表
-		if(i === '0'){
-
-		}
-	}
-	setSubTag(i){
-		this.setState({pd_subTag: i})
-		// 选中3级菜单,就搜索
-		
-	}
-	renderToolbar(){
-		return (
-		  	<ons-toolbar>
-			<div>
-		      <div className="header-img"><img src="img/back.png" /></div>
-			  <div className=""></div>
-			  <div className=""></div>
-			</div>
-		  	</ons-toolbar>
-		);
-	}
-
-	preHandler(e){
-		console.log(e.target)
-		e.preventDefault()
-		e.returnValue=false
-
-	}
-	preHandler1(e){
-		console.log(1)
-		e.preventDefault()
-		e.returnValue=false
-	}
-
-    onShow() {
-    	this.props.s.user.employee_id &&
-    	this.state.pageList.length == 0 &&
-    	loadPage(this)
-    }
 
 	render(){
 		return (
-			<Page renderToolbar={_=>this.renderToolbar()} onInfiniteScroll={done=>loadPage(this,done)} onShow={_=>this.onShow()}>
+			<Page renderToolbar={_=>search()} onInfiniteScroll={done=>loadMore(this,done)} onShow={_=>loadIfEmpty(this)}>
 			{
 			  	!this.state.search && this.props.s.user.employee_id && pullHook(this)	
 		    }
 		    {
 		    	this.props.s.user.employee_id && 
 
-	    		<div className="group-body" onTouchMove={this.preHandler1.bind(this)}>
-					<div className="group-modal"
-					onTouchMove={this.preHandler.bind(this)}
-					>
-						<div className="input-box">
-						    <ons-search-input style={{width:'100%'}}
-						      placeholder="Search"
-						      onchange="ons.notification.alert('Searched for: ' + this.value)"
-						    ></ons-search-input>
-						</div>
+	    		<div className="group-body">
+					<div className="group-modal" style={{height:this.state.search?'100%':'auto'}}>
 						<ons-row  class="option-type">
 						  <ons-col onClick={_=>this.setState({search:'tag'})}>产品标签</ons-col>
 						  <ons-col onClick={_=>this.setState({search:'date'})}>出发日期</ons-col>
-						  <ons-col onClick={_=>this.setState({search:'city'})}>出发城市</ons-col>
+						  <ons-col onClick={_=>this.setState({search:'dep_city'})}>出发城市</ons-col>
 						  <ons-col onClick={_=>this.setState({search:'theme'})}>产品主题</ons-col>
 						</ons-row>
 
@@ -96,32 +42,40 @@ class GroupPage extends Component{
 											<ul className="select-nav select-item">
 											{
 												Object.keys(Enum.PdNav).map(i=>
-													<li onClick={this.setNav.bind(this,i)} key={i} 
-													className={i === this.state.pd_nav ? 'active-select-item' : '' + " " + 'select-item-main'}
-													>{Enum.PdNav[i]}</li>
+													<li onClick={_=>this.setState({pd_nav:i,pd_tag:undefined,pd_subTag:undefined})} key={i} 
+														className={i == this.state.pd_nav ? 'active-select-item' : 'select-item-main'} >
+														{Enum.PdNav[i]}
+													</li>
 												)
 											}
 											</ul>
 											<ul className="select-big select-item">
+												<li onClick={_=>this.setState({pd_tag:undefined,pd_subTag:undefined})}
+													className={this.state.pd_tag ? 'select-item-main' : 'active-select-item'} >
+													全部
+												</li>
 											{
-												['0'].concat(Object.keys(Enum.PdTag)).map(i=>
-													<li onClick={this.setTag.bind(this, i)} key={i} 
-													className={i === this.state.pd_tag ? 'active-select-item' : '' + " " + 'select-item-main'}
-													>{ i === '0' ? '不限' : Enum.PdTag[i]}</li>
+												Object.keys(Enum.PdTag).map(i=>
+													<li onClick={_=>this.setState({pd_tag:i,pd_subTag:undefined})} key={i} 
+														className={i == this.state.pd_tag ? 'active-select-item' : 'select-item-main'}>
+														{Enum.PdTag[i]}
+													</li>
 												)
 											}
 											</ul>
-											{(this.state.pd_nav && (this.state.pd_tag && this.state.pd_tag !== '0')) && (
-												<ul className="select-sma select-item">
-												{
-													['0'].concat(Object.keys(Enum.PdTag)).map(i=>
-														<li onClick={this.setSubTag.bind(this, i)} key={i}
-														className={i === this.state.pd_subTag ? 'active-select-item' : '' + " " + 'select-item-main'}
-														>{ i === '0' ? '不限' : Enum.PdSubTag[i]}</li>
-													)
-												}
-												</ul>
-											)}
+											{
+												this.state.pd_tag && 
+													<ul className="select-sma select-item">
+													{
+														Object.keys(Enum.PdSubTag).filter(i=>Enum.PdSubTagBelong[i]==this.state.pd_tag).map(i=>
+															<li onClick={_=>this.setState({pd_subTag:i})} key={i}
+																className={i == this.state.pd_subTag ? 'active-select-item' : 'select-item-main'}>
+																{Enum.PdSubTag[i]}
+															</li>
+														)
+													}
+													</ul>
+											}
 
 										</div>
 										{/* <div className="options-btn">
@@ -132,13 +86,57 @@ class GroupPage extends Component{
 								</div>	
 							)
 						}
+						{/* 日期-选择框 */
+							this.state.search=='date' && (
+								<div className="dialog-box">
+									<div className="text-center options-popup">
+										<div className="selected-date">
+											<input type="date" className="selected-date-input" placeholder="最早出发日期" name="start"/>
+											至
+											<input type="date" className="selected-date-input" placeholder="最晚出发日期" name="end"/>
+										</div>
+										<div className="options-btn">
+										  <div className="options-reset">重置</div>
+										  <div className="options-submit">确定</div>
+										</div>
+									</div>
+								</div>	
+							)
+						}
+						{/* 出发城市-选择框 */
+							this.state.search=='dep_city' && (
+								<div className="dialog-box">
+									<div className="text-center options-popup">
+										<div className="selected-dep_city">
+											{Object.keys(this.props.s.pub.dep_city).map( i => 
+												<div className="dep_city-item" key={i}>{this.props.s.pub.dep_city[i]}</div> 
+											)}
+										</div>
+									</div>
+								</div>	
+							)
+						}
+						{/* 主题-选择框 */
+							this.state.search=='theme' && (
+								<div className="dialog-box">
+									<div className="text-center options-popup">
+										<div className="selected-dep_city">
+											{Object.keys(this.props.s.pub.theme).map( i => 
+												<div className="dep_city-item" key={i}>{this.props.s.pub.theme[i]}</div> 
+											)}
+										</div>
+									</div>
+								</div>	
+							)
+						}
+						<div style={{height:'100%',backgroundColor:'rgba(0,0,0,.3)'}} onClick={_=>this.setState({search:''})}></div>
 					</div>
 					<div className="pro-list">
 					    {
-					    	this.state.pageList.map(item =>
-								<div className="pro-item" key={item.id}>
+					    	this.state.data.map(item =>
+								<div className="pro-item" key={item.id} onClick={_=>goTo('产品详情页',{pd_id:item.product_id})}>
 					      			<div className="pro-item-left">
-										<img className="img-size" src={'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1530677101117&di=5ada5f831c0373638a3f7c56dd683750&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fb7003af33a87e95053e42ae21c385343faf2b449.jpg'} />
+										<img className="img-size" src={AppCore.HOST+'/'+item.thumb} />
 										<div className="pro-item-pro_id">产品编号: {item.product_id}</div>
 									</div>
 					      			<div className="pro-item-right">
@@ -155,14 +153,15 @@ class GroupPage extends Component{
 									</div>
 								</div>
 					    	)
-					    }
+						}
 				    </div>
 				  	{
-				  		!this.state.loading &&
+				  		this.state.loading &&
 							<div className="after-list text-center">
 						      <ons-icon icon="fa-spinner" size="26px" spin></ons-icon>
 						    </div>
 				  	}
+
 	    		</div>
 		    }
 		    {

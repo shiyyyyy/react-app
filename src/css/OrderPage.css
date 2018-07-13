@@ -1,11 +1,14 @@
 /* 类型选择 */
 .order-state{
+    width: 100%;
     height: 1.2rem;
     line-height: 1.2rem;
     box-sizing: border-box;
     text-align: center;
     background-color: #fff;
     display: flex;
+    position: fixed;
+    z-index: 1;
 }
 .order-state-item{
     font-size: .373333rem;
@@ -13,6 +16,8 @@
     transition: all .3s;
 }
 .cur-order-state{
+    font-size: .373333rem;
+    flex: 1;
     color: #6FC5D8;
     border-bottom: 2px solid #6FC5D8;
 }
@@ -38,7 +43,7 @@
 
 .order-list{
     font-size: .32rem;
-    padding-top: 1px solid #fff;
+    padding-top: 1.2rem;
     box-sizing: border-box;
 }
 
@@ -76,15 +81,15 @@
 .order-btn{
     font-size: .346667rem;
     height: 1.2rem;
-    padding: 0 .613333rem;
+    padding: .08rem .426667rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 .order-btn-item{
     width: 1.52rem;
-    height: .56rem;
-    line-height: .56rem;
+    height: .746667rem;
+    line-height: .746667rem;
     text-align: center;
     border: 1px solid #E6E6E6;
     border-radius: .106667rem;
@@ -92,4 +97,82 @@
 .order-btn-item:last-child{
     color: #6FC5D8;
     border: 1px solid #6FC5D8;
+}
+
+
+/* --------------------------- 录入游客列表-- enter-tour-list ------------------------------- */
+.enter-tour-list-btn{
+    padding: 1.706667rem .426667rem 0;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+}
+.enter-tour-list-btn-default{
+    width: 4.266667rem;
+    height: .96rem;
+    line-height: .96rem;
+    color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    border-radius: .08rem;
+    box-sizing: border-box;
+}
+.enter-tour-list-btn-submit{
+    width: 4.266667rem;
+    height: .96rem;
+    line-height: .96rem;
+    color: #fff;
+    background-color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    border-radius: .08rem;
+    box-sizing: border-box;
+}
+
+
+/* --------------------------  添加游客 弹窗  --------------------------------- */
+.tourist-modal{
+    padding: 3.2rem .64rem 0 .64rem;
+    background-color: rgba(0,0,0, .4);
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+.tourist-popup{
+    font-size: .32rem;
+    width: 100%;
+    /* height: 100%; */
+    text-align: center;
+    border-radius: .16rem;
+    background-color: #fff;
+    padding-top: .213333rem;
+}
+.tourist-popup-title{
+    height: 1.173333rem;
+    line-height: 1.173333rem;
+}
+.tourist-popup-info-item{
+    height: 1.173333rem;
+    line-height: 1.173333rem;
+    padding: 0 .64rem 0 1.146667rem;
+    display: flex;
+}
+.tourist-popup-info-item-left{
+    color: #666;
+    margin-right: .64rem;
+}
+.tourist-popup-info-item-right{
+    color: #333;
+}
+.tourist-popup-btn{
+    font-size: .373333rem;
+    width: 3.2rem;
+    height: .96rem;    
+    line-height: .96rem;
+    color: #fff;
+    border-radius: .8rem;
+    background-color: #6FC5D8;
+    margin: .533333rem 0 .64rem;
+    display: inline-block;
 }

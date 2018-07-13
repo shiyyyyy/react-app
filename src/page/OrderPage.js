@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 import {Page} from 'react-onsenui';
 
-import {AppCore,goTo,loadPage} from '../util/core';
-import {pullHook,loginToPlay} from '../util/com';
+import {AppCore,goTo,loadMore,loadIfEmpty} from '../util/core';
+import {pullHook,loginToPlay,search} from '../util/com';
 import { connect } from 'react-redux';
 
 import '../css/OrderPage.css'
@@ -11,53 +11,35 @@ class OrderPage extends Component{
 
 	constructor(props) {
 	    super(props);
-		this.state = {state:'initial',
-		pageList:[],
-		order_state:['全部','未提交','占位中','已审核','已确认','变更中'],
-		ord_state:['未提交','占位中','已审核','已确认','变更中'],
-		cur_state: 0
-	};
-	    this.url = '/sale/Order/read?';
-		this.mod = '订单管理';
+		this.state = {
+			state:'initial',
+			data:[],
+			order_state:['全部','未提交','占位中','已审核','已确认','变更中'],
+			ord_state:['未提交','占位中','已审核','已确认','变更中'],
+			cur_state: 0
+		};
+		this.mod = '订单受理';
 	}
 
-	changeState(i){
-		console.log(i)
-		this.setState({cur_state: i})
-	}
-	renderToolbar(){
-		return (
-		  	<ons-toolbar>
-		      <div className="center">订单</div>
-		  	</ons-toolbar>
-		);
-	}
 
 	render(){
 		return (
-			<Page renderToolbar={_=>this.renderToolbar()} onInfiniteScroll={done=>loadPage(this,done)}>
+			<Page renderToolbar={_=>search()} onInfiniteScroll={done=>loadMore(this,done)} onShow={_=>loadIfEmpty(this)}>
 			{
 			  	this.props.s.user.employee_id && pullHook(this)	
 		    }
 		    {
 		    	this.props.s.user.employee_id && 
-		    		<div>
-						<div className="input-box">
-						    <ons-search-input style={{width:'100%'}}
-						      placeholder="Search"
-						      onchange="ons.notification.alert('Searched for: ' + this.value)"
-						    ></ons-search-input>
-						</div>
-						{/*  */}
+		    		<div style={{overflow: 'hidden'}}>
 						<div className="order-state">
 							{this.state.order_state.map( (item, i) => 
-								<div className={(i === this.state.cur_state ? 'cur-order-state' : '') + " " + 'order-state-item'} 
-								onClick={this.changeState.bind(this, i)} key={i}>{item}</div>
+								<div className={i == this.state.cur_state ? 'cur-order-state' :  'order-state-item'} 
+								onClick={_=>this.setState({cur_state:i})} key={i}>{item}</div>
 							)}
 						</div>
-						{/*  */}
+
 						<div className="order-list">
-						    {this.state.pageList.map(order =>
+						    {this.state.data.map(order =>
 						      <div className="order-item" key={order.id}>
 								  <div className="order-number">
 								  	<span style={{fontSize:'.373333rem'}}>订单号:{order.order_id}</span>
@@ -97,15 +79,21 @@ class OrderPage extends Component{
 									</div>
 								  </div>
 								  <div className="order-btn">
-								  	<div className="order-btn-item">删除</div>
-								  	<div className="order-btn-item">撤回</div>
+								  	<div className="order-btn-item" onClick={_=>goTo('实报')}>删除</div>
+								  	<div className="order-btn-item" onClick={_=>goTo('录入游客名单')}>撤回</div>
 								  	<div className="order-btn-item" onClick={_=>goTo('订单修改页')}>修改</div>
-								  	<div className="order-btn-item">订单</div>
-								  	<div className="order-btn-item">提交</div>
+								  	<div className="order-btn-item" onClick={_=>goTo('订单查看页')}>订单</div>
+								  	<div className="order-btn-item" onClick={_=>goTo('占位')}>提交</div>
 								  </div>
 						      </div>
 						    )}
 					    </div>
+					  	{
+					  		this.state.loading &&
+								<div className="after-list text-center">
+							      <ons-icon icon="fa-spinner" size="26px" spin></ons-icon>
+							    </div>
+					  	}
 					</div>
 		    }
 		    {

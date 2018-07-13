@@ -21,24 +21,24 @@ export default class TabPage extends Component{
 		const Profile = pages['个人页'];
 		return [
 	      {
-	        content: <Home key={'首页'}  />,
-	        tab: <Tab label='首页' icon='md-home' />
+	        content: <Home key={'首页'} />,
+	        tab: <Tab label='首页' icon='md-home' key={'首页'} />
 	      },
 	      {
 	        content: <Order key={'订单页'} />,
-	        tab: <Tab label='订单' icon='md-shopping-cart' />
+	        tab: <Tab label='订单' icon='md-shopping-cart' key={'订单页'}  />
 	      },
 	      {
 	        content: <Group key={'团队页'} />,
-	        tab: <Tab label='搜团' icon='md-search' />
+	        tab: <Tab label='搜团' icon='md-search' key={'团队页'} />
 	      },
 	      {
 	        content: <Approve key={'审批页'} />,
-	        tab: <Tab label='审批' icon='md-shield-check' />
+	        tab: <Tab label='审批' icon='md-shield-check' key={'审批页'} />
 	      },
 	      {
 	        content: <Profile key={'个人页'} />,
-	        tab: <Tab label='我' icon='md-account' />
+	        tab: <Tab label='我' icon='md-account' key={'个人页'} />
 	      }
 	    ];
 	}

@@ -11,7 +11,12 @@ $css = file_get_contents("build/${manifest['main.css']}");
 foreach ($manifest as $k => $v) {
 	$k = explode('?',$k)[0];
 	if(substr($k,0,6)==='static'){
-		$css = str_replace('/'.$v,'../../'.$k,$css);
+		//without "homepage": ".",
+		// $css = str_replace('/'.$v,'../../'.$k,$css);
+
+		//with "homepage": ".",
+		$css = str_replace($v,$k,$css);
+		
 		system("ditto build/$v $dest/$k");
 	}
 }

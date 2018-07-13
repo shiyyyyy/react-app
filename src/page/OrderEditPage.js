@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 
 import {Page} from 'react-onsenui';
 
-import {AppCore,resetTo,loadPage} from '../util/core';
+import {AppCore,resetTo} from '../util/core';
 import {pullHook,loginToPlay} from '../util/com';
 import { connect } from 'react-redux';
 
 import '../css/OrderEditPage.css'
+import {footer} from '../util/com';
 
 
 export default class OrderEditPage extends Component{
@@ -210,7 +211,7 @@ export default class OrderEditPage extends Component{
 					</div>
 				</div>
 				{/* 订单备注 */}
-				<div class="model-box" style={{marginBottom: '1.866667rem'}}>
+				<div class="model-box" style={{marginBottom: '1.653333rem'}}>
 					<div className="box-title">
 						<div className="box-title-text">订单备注</div>
 					</div>
@@ -223,18 +224,7 @@ export default class OrderEditPage extends Component{
 					</div>
 				</div>
 				{/* 底部 footer */}
-				<div className="order-edit-footer">
-					<div className="">
-						<img src="img/gys.png" />
-						<span>联系供应商</span>
-					</div>
-					<div className="">
-						<img src="img/zs.png" />
-						<span>联系总社</span>
-					</div>
-					<div className="order-edit-footer-save">保存</div>
-					<div className="order-edit-footer-submit">提交</div>
-				</div>
+				{footer('临时保存','提交时报','order-edit-footer-save','order-edit-footer-submit')}
 
 		    </Page>
 		);

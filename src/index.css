@@ -28,6 +28,9 @@ margin:auto;
   display: flex;
   justify-content: space-between;
 }
+.hide{
+  display: none !important;
+}
 .img-size{
   width: 100%;
   height: 100%;
@@ -62,9 +65,86 @@ margin:auto;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
+.m-10{
+  margin:10px;
+}
+textarea{
+  width: 100%;
+  border: none;
+  resize: none;
+}
+textarea:disabled{
+  background-color: #fff;
+}
+input{
+  border: none;
+}
+input:disabled{
+  background-color: #fff;
+}
+select{
+  border: none;
+}
+option{
+  border: 1px solid #ccc;
+  box-shadow: 0;
+}
+pre{
+  white-space: pre-wrap;
+}
 ul,ol,li{
   padding: 0;
   margin: 0;
 }
 li{list-style-type:none;}
+
+strong{
+  font-weight: 100;
+}
+
+/* 分享 样式 */
+.share-box{
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+.share-cancel{
+  height: 74.663%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.share{
+  height: 25.337%;
+  color: #000;
+  background-color: #fff;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.share-options{
+  height: 3.2rem;
+  padding: .586667rem 1.92rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+}
+.wx-friends{
+
+}
+.wx-friends img, .wx-friends-circle img {
+  width: 1.493333rem;
+  height: 1.493333rem;
+}
+.wx-friends-circle{
+
+}
+
+.share-options-cancel{
+  height: 1.28rem;
+  line-height: 1.28rem;
+  border-top: 1px solid #ccc;
+}

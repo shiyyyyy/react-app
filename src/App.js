@@ -10,7 +10,7 @@ class App extends Component {
   renderPage(route, navigator) {
     setNav(navigator);
     return (
-      <route.page key={route.key} />
+      <route.page key={route.key} p={route.p} />
     );
   }
 

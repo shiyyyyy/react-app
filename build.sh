@@ -7,8 +7,8 @@ cordova prepare android ios
 cp platforms/android/app/src/main/AndroidManifest.xml platforms/android/app/
 cd platforms/android
 #release
+rm app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-unsigned-aligned.apk app/build/outputs/apk/release/app-release.apk
 ./gradlew assembleRelease
-rm app/build/outputs/apk/release/app-release-unsigned-aligned.apk app/build/outputs/apk/release/app-release.apk
 ~/Library/Android/sdk/build-tools/27.0.3/zipalign -v -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-unsigned-aligned.apk
 echo 111111 | ~/Library/Android/sdk/build-tools/27.0.3/apksigner sign --ks ~/www/key.jks --out app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/app-release-unsigned-aligned.apk
 cp app/build/outputs/apk/release/app-release.apk ~/www/dl/

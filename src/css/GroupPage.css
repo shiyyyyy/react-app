@@ -1,17 +1,52 @@
+/* 顶部搜索 */
+.search-input-box-box{
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.search-input-box{
+    width: 95%;
+    height: 65%;
+    position: relative;
+    border-radius: .8rem;
+    background-color: #fff;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
 
+.search-input-box-input{
+    font-size: .373333rem;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border: none;
+}
+.search-input-box-img{
+    height: 100%;
+    transform: scale(.8);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: .266667rem;
+}
+
+/*  */
 .group-body{
     position: relative;
     box-sizing: border-box;
-    border-top: 1px solid rgba(0,0,0,0);
     background-color: #F4F8F9;
+    overflow: hidden;
     position: relative;
 }
 .group-modal{
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     position: fixed;
     z-index: 1;
-    background-color: rgba(0,0,0,.3);
 }
 .input-box{
     width: 95%;
@@ -51,6 +86,43 @@
     line-height: 1rem;
     display: flex;
 }
+/* selected-date */
+.selected-date{
+    padding: 0 .533333rem;
+    margin: .533333rem 0;
+    display: flex;
+    justify-content: space-between;
+}
+.selected-date-input{
+    text-align: center;
+    height: .746667rem;
+    border: 1px solid #ccc;
+    border-radius: .106667rem;
+    background-color: #fff;
+}
+/* selected-dep_city */
+.selected-dep_city{
+    text-align: center;
+    /* padding: 0 .32rem; */
+    margin: .426667rem;
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-between; */
+}
+.dep_city-item{
+    width: 22%;
+    font-size: .373333rem;
+    line-height: .746667rem;
+    border-radius: .106667rem;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin: .213333rem 1.5%;
+}
+.active-dep_city-item{
+    border: 1px solid #6FC5D8;
+    background-color: #6FC5D8;
+}
+/*  */
 .select-item{
     -ms-flex: 1 1;
     flex: 1 1;
@@ -103,6 +175,7 @@
 /* ---------------------- 产品 列表 ----------------------- */
 .pro-list{
     padding: 0 .32rem;
+    margin: 1.68rem 0 .32rem 0;
 }
 .pro-item{
     height:2.8rem;
