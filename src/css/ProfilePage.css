@@ -63,6 +63,10 @@
     background: url(/img/next1.png) no-repeat center right;
     background-size: 38%;
 }
+.model-box-bald-title-delete{
+    font-size: .533333rem;
+    color: #A3A5A4;
+}
 
 
 .model-box-bald-main{
@@ -182,8 +186,10 @@
     margin-top: .16rem;
 }
 .model-box-bald-main-msg-item-right{
+    font-size: .373333rem;
     width: 1.386667rem;
     height: .693333rem;
+    line-height: .693333rem;
     text-align: center;
     border-left: 1px solid #ccc;
 }

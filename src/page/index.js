@@ -16,17 +16,30 @@ import ShibaoPage from './ShibaoPage';
 import reservePage from './reservePage';
 import Search from './Search';
 
+import DocPage from './DocPage';
+// import DocZJSK from './DocZJSK';
+// import DocYWSK from './DocYWSK';
 
-import DocYWJK from './DocYWJK';
-import DocZJJK from './DocZJJK';
+// import DocYWJK from './DocYWJK';
+// import DocZJJK from './DocZJJK';
 
-import DocYWNZ from './DocYWNZ';
-import DocYWZC from './DocYWZC';
-import DocYWTK from './DocYWTK';
-import DocZJNZ from './DocZJNZ';
-import DocZJZC from './DocZJZC';
-import DocZJTK from './DocZJTK';
+// import DocYWZC from './DocYWZC';
+// import DocZJZC from './DocZJZC';
 
+// import DocYWNZ from './DocYWNZ';
+// import DocZJNZ from './DocZJNZ';
+
+// import DocYWTK from './DocYWTK';
+// import DocZJTK from './DocZJTK';
+
+// import DocYWTH from './DocYWTH';
+// import DocZJTH from './DocZJTH';
+
+// import DocGZ from './DocGZ';
+// import DocHK from './DocHK';
+
+// import DocKK from './DocKK';
+// import DocTZ from './DocTZ';
 
 export default {
 	'日志页': LogPage,
@@ -41,20 +54,39 @@ export default {
 	'审批页': ApprovePage,
 	'个人页': ProfilePage,
 	'底栏菜单': TabPage,
-	'业务借款单': DocYWJK,
-	'资金借款单': DocZJJK,
 	'游客名单': TouristList,
 	'录入游客名单': InputTourist,
 	'实报': ShibaoPage,
 	'占位': reservePage,
 	'搜索': Search,
 
-		'业务内转单':DocYWNZ,
-		'业务支出单':DocYWZC,
-		'业务退款单':DocYWTK,
-		'资金内转单':DocZJNZ,
-		'资金支出单':DocZJZC,
-		'资金退款单':DocZJTK,
+	'单据审批页': DocPage,
+		// '资金收款审批':DocZJSK,
+		// '业务收款审批':DocYWSK,
+
+		// '业务借款审批': DocYWJK,
+		// '资金借款审批': DocZJJK,
+
+		// '业务支出审批':DocYWZC,
+		// '资金支出审批':DocZJZC,
+
+
+		// '业务内转审批':DocYWNZ,
+		// '资金内转审批':DocZJNZ,
+		
+
+		// '退业务收款审批':DocYWTK,
+		// '退资金收款审批':DocZJTK,
+
+		// '业务退回审批':DocYWTH,
+		// '资金退回审批':DocZJTH,
+		
+
+		// '工资审批':DocGZ,
+		// '还款审批':DocHK,
+
+		// '扣款审批':DocKK,
+		// '调整审批':DocTZ,
 
 	
 };

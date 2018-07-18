@@ -8,6 +8,10 @@ let retry_delay = 0;
 let timer;
 let dev = (process.env.NODE_ENV === `development`);
 
+//1.可反复调用,只会维持一个连接
+//2.连接失败则重试，直至连接成功
+//3.重试延迟不断加大，最大5分钟
+//4.若返回会话不存在等消息则不再重试连接
 export function pollInit() {
     hasPlugin('device') && (plugin('device').platform.toLowerCase() === 'android') && checkNotify();
     

@@ -16,5 +16,11 @@ export default {
   },
   '更新公开数据': (pub) => {
     return {type:'更新公开数据',pub:pub};
-  }
+  },
+  '加载等待': () => {
+    return {type:'加载等待',progress:true};
+  },
+  '取消等待': () => {
+    return {type:'取消等待',progress:false};
+  },
 };

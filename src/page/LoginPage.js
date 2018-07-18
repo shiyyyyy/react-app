@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 
-import { Input } from 'react-onsenui';
+import { Input,ProgressCircular,Icon, Page, Modal } from 'react-onsenui';
 
-import {AppCore,clickToLog,resetTo,post,encUrl,trigger} from '../util/core';
+import {AppCore,clickToLog,resetTo,post,encUrl,trigger,store} from '../util/core';
 
+import {progress} from '../util/com';
+
+import { connect } from 'react-redux';
 
 import '../css/LoginPage.css'
 
-export default class LoginPage extends Component{
+class LoginPage extends Component{
 	constructor(props) {
 	    super(props);
 	    this.state = {
@@ -21,20 +24,34 @@ export default class LoginPage extends Component{
 	}
 
 	login(){
-        post('/Session/login?'+encUrl({app:1,user:this.state.user}),this.state).then(
-          r=>{
-            trigger('更新用户',r.user);
-            resetTo('底栏菜单');
-          }
-        );
+
+		trigger('加载等待');
+		// setTimeout(_=>{
+	        post('/Session/login?'+encUrl({app:1,user:this.state.user}),this.state).then(
+	          r=>{
+	            trigger('更新用户',r.user);
+	            return '保持等待';
+	          }
+	        );
+    	// },2000)
+
 	}
+
+	renderToolbar(){
+		return (
+		  <ons-toolbar>
+		      <div className="center" onClick={_=>clickToLog(this)}>用户登录</div>
+		  </ons-toolbar>
+		);
+	}
+
 
 	render(){
 		return (
-			<ons-page>
-			  <ons-toolbar>
-			      <div className="center" onClick={_=>clickToLog(this)}>用户登录</div>
-			  </ons-toolbar>
+			<Page 
+				renderToolbar={_=>this.renderToolbar()} 
+				renderModal={_=>progress(this)}>
+
 			  <div className="login">
 					<div className="login-top-bg">
 						<img src="img/avatar.png" className="user-img" />
@@ -55,7 +72,10 @@ export default class LoginPage extends Component{
 						</div>
 					</div>
 			  </div>
-			</ons-page>
+			  
+			</Page>
 		);
 	}
-};
+}
+
+export default connect(s=>({s:s}))(LoginPage)

@@ -1,3 +1,4 @@
+/*  ------------------------- header input search--------------------------   */
 .search-input-box-box{
     margin: 0 !important;
     display: flex;
@@ -20,12 +21,12 @@
     justify-content: center;
     align-items: center;
 }
-.search-center{
-    background-color: #6FC5D8;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+.close-search{
+    font-size: .426667rem;
+    color: #666;
+    position: absolute;
+    right: .266667rem;
 }
 .search-right{
     width: 1.066667rem;
@@ -42,6 +43,7 @@
     height: .64rem;
 }
 /* 中间 */
+
 .search-center > input{
     width: 100%;
     height: 100%;
@@ -49,8 +51,36 @@
     border: none;
     border-radius: 1.066667rem;
     padding-left: .533333rem;
+    padding-right: .8rem;
     display: inline-block;
     vertical-align: top;
     box-sizing: border-box;
 }
+.search-center{
+    background-color: #6FC5D8;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+}
 /* 右侧 */
+
+
+
+
+/*      -----------------------历史记录-------------------             */
+.model-box-bald-history{
+    padding: 0 .32rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+}
+.model-box-bald-history-item{
+    background-color: #eaeaea;
+    border-radius: .16rem;
+    padding: .16rem .266667rem;
+    margin: 0 .133333rem .32rem .133333rem; 
+    box-sizing: border-box;
+}

@@ -1,3 +1,4 @@
+
 /* 顶部搜索 */
 .search-input-box-box{
     margin: 0 !important;
@@ -34,14 +35,7 @@
     left: .266667rem;
 }
 
-/*  */
-.group-body{
-    position: relative;
-    box-sizing: border-box;
-    background-color: #F4F8F9;
-    overflow: hidden;
-    position: relative;
-}
+
 .group-modal{
     width: 100%;
     /* height: 100%; */
@@ -65,20 +59,12 @@
 }
 
 .dialog-box{
-    /* background-color: #fff;
-    position: relative;
-    top: 1px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 10; */
-}
-.options-popup{
     width: 100%;
-    background-color: #fff;
-    /* padding: .266667rem .426667rem; */
-    position: fixed;    
     box-sizing: border-box;
+    background-color: #fff;
+    color: #000;
+    position: absolute;
+    top: 0;
 }
 
 .selected{
@@ -174,8 +160,8 @@
 
 /* ---------------------- 产品 列表 ----------------------- */
 .pro-list{
-    padding: 0 .32rem;
-    margin: 1.68rem 0 .32rem 0;
+    padding: 50px 10px 0px 10px;
+    box-sizing: border-box;
 }
 .pro-item{
     height:2.8rem;

@@ -89,20 +89,26 @@
 /* ---------------------------------------- 底部 footer ----------------------------------- */
 /* ---------------------------------------- 底部 footer ----------------------------------- */
 /* ---------------------------------------- 底部 footer ----------------------------------- */
-
+.box-shadow-top{
+    box-shadow: 4px 5px 19px rgba(0,0,0,.5);
+}
 .order-edit-footer{
-    height: 1.386667rem;
+    height: 1.173333rem;
     text-align: center;
     background-color: #fff;
-    box-shadow: 0px 0px 5px rgba(0,0,0,.2);
+    box-shadow: 0px 0px 5px rgba(0,0,0,.3);
     display: flex;
-    position: fixed;
+    
+    /* position: fixed;
     bottom: 0;
     right: 0;
-    left: 0;
+    left: 0; */
 }
 .order-edit-footer > div{
     flex: 1;
+}
+.order-edit-footer-box{
+    font-size: 0;
 }
 .order-edit-footer > div:nth-child(-n+2){
     padding: .106667rem 0;
@@ -116,9 +122,10 @@
 .order-edit-footer > div > span{
     font-size: .32rem;
     line-height: .32rem;
+    color: #333;
 }
 .order-edit-footer > div:nth-last-child(-n+2){
-    line-height: 1.386667rem;
+    line-height: 1.173333rem;
     color: #fff;
     box-shadow: 0px 0px 5px rgba(0,0,0,.2);
 }

@@ -50,6 +50,12 @@
     color: #666;
 }
 
+.swiper-ctlr{
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 4.533333rem;
+}
 /* -------------------------- 团期日历  ------------------------------- */
 
 
@@ -82,7 +88,6 @@
 .pro-tab{
     margin-top: .32rem;
     background-color: #fff;
-    margin-bottom: 1.706667rem;
 }
 .pro-tab-title{
     height: 1.173333rem;
@@ -168,7 +173,7 @@
 /* 定位 */
 .how-days{
     font-weight: bold;
-    position: absolute;
+    position: fixed;
     left: -0.96rem;
     top: .32rem;
 }
@@ -246,10 +251,16 @@
     width: 3.2rem;
     height: .96rem;    
     line-height: .96rem;
-    color: #fff;
     border-radius: .8rem;
     background-color: #6FC5D8;
     margin: .533333rem 0 .64rem;
+    display: inline-block;
+}
+.zs-popup-btn a{
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    text-decoration: none;
     display: inline-block;
 }
 
@@ -418,3 +429,69 @@
     color: #fff;
   }
   
+
+  /* --------------------------------- PDF 控制器 菜单------------------------------------------- */
+  .pdf-ctrl{
+    font-size: 1.066667rem;
+    line-height: 1.146667rem;
+
+    color: rgba(0,0,0,0.45);
+    text-align: center;
+    padding: .426667rem .64rem;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 1.333333rem;
+
+    z-index: 3000;
+  }
+  .pdf-ctrl-item-show{
+    animation: menu_show 1s 1;
+    transform: scale(1)
+  }
+  .pdf-ctrl-item-hide{
+    animation: menu_hide 1s 1;
+    transform: scale(0)
+  }
+  .pdf-ctrl-item-page{
+      font-size: .373333rem;
+      animation: menu_show 1ms 1;
+      transform: scale(1)
+  }
+  .pdf-ctrl-item-page-box{
+      font-size: .426667rem;
+      line-height: .533333rem;
+      color: #fff;
+      border: 1px solid rgba(111,197,216,.7);
+      background-color: rgba(111,197,216,.5);
+      box-sizing: border-box;
+      padding: 0 .16rem;
+  }
+
+  @keyframes menu_show
+    {
+        from {transform: scale(0)}
+        80%{transform: scale(1.2)}
+        to {transform: scale(1)}
+    }
+@keyframes menu_hide
+    {
+        from {transform: scale(1)}
+        20%{transform: scale(1.2)}
+        to {transform: scale(0)}
+    }
+
+  /* -----------------------PDF-box  canvas盒子 样式--------------------------- */
+  .PDF-view{
+    margin-top: .32rem;
+    margin-bottom: 1.493333rem;
+  }
+
+  .pdf-canvas{
+    z-index: 10;
+  }

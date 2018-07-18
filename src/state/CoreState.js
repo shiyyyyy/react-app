@@ -1,5 +1,5 @@
-import {AppCore} from '../util/core';
-import {cacheUser} from '../util/db';
+import {AppCore,resetTo,Enum} from '../util/core';
+import {setCache} from '../util/db';
 import {userInit} from '../util/data';
 
 export const sharedData = (state = [], action) => {
@@ -37,7 +37,7 @@ export const user = (state = {}, action) => {
           userInit();
         }
         if(action.type == '更新用户'){
-          cacheUser(action.user);
+          setCache('user_cache',JSON.stringify(action.user));
         }
       }
       return action.user;
@@ -50,6 +50,16 @@ export const pub = (state = {slide:[],recommend:[]}, action) => {
   switch (action.type) {
     case '更新公开数据':
       return action.pub;
+    default:
+      return state
+  }
+}
+
+export const progress = (state = false, action) => {
+  switch (action.type) {
+    case '加载等待':
+    case '取消等待':
+      return action.progress;
     default:
       return state
   }

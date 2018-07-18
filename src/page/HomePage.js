@@ -33,18 +33,18 @@ class HomePage extends Component{
 	}
 
     onShow() {
-    	//  this.timer && clearInterval(this.timer);
-	  	//  this.timer = setInterval(_=>{
-	  	//  	let picIdx = this.state.picIdx + 1;
-	  	//  	let navIdx = this.state.navIdx + 1;
-	  	//  	if(picIdx>3){
-	  	//  		picIdx = 0;
-	  	//  	}
-	  	//  	if(navIdx>1){
-	  	// 		navIdx = 0;
-	  	//  	}
-	  	// 	this.setState({picIdx:picIdx,navIdx:navIdx});
-	  	//  },5000);
+    	 this.timer && clearInterval(this.timer);
+	  	 this.timer = setInterval(_=>{
+	  	 	let picIdx = this.state.picIdx + 1;
+	  	 	let navIdx = this.state.navIdx + 1;
+	  	 	if(picIdx>3){
+	  	 		picIdx = 0;
+	  	 	}
+	  	 	if(navIdx>1){
+	  			navIdx = 0;
+	  	 	}
+	  		this.setState({picIdx:picIdx/*,navIdx:navIdx*/});
+	  	 },5000);
     }
 
     onHide() {
@@ -147,7 +147,7 @@ class HomePage extends Component{
 			{/* 热卖推介 */}
 			<div className="model-box-bald-title">
 				<div className="model-box-bald-title-text">热卖推介</div>
-				<div className="model-box-bald-title-more">更多 <img className="posi-ab" style={{top:'1px',right:'0',bottom:'0'}} src='img/more.png'></img></div>
+				<div className="model-box-bald-title-more">更多</div>
 			</div>
 
 			<div className="flex-j-sb flex-wrap" style={{padding: '.32rem'}}>
@@ -172,4 +172,4 @@ class HomePage extends Component{
 }
 
 
-export default connect(s=>({s:s}),undefined)(HomePage)
+export default connect(s=>({s:s}))(HomePage)

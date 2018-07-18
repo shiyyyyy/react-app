@@ -7,21 +7,19 @@ import {pubInit} from './data';
 
 document.getElementsByTagName("html")[0].style.fontSize = document.documentElement.clientWidth / 10 + 'px';
 
-//dev or device
-pubInit();
-
 let exiting;
 
 let dev = (process.env.NODE_ENV === `development`);
 
-//dev only
+//no delay ( browser and device )
+pubInit();
+
+//no delay ( browser only )
 if(dev){
 	dbInit();
 }
 
-document.addEventListener('deviceready', init, false);
-
-//device only
+//delayed ( device only )
 function init() {
 	dbInit();
 	apnsInit();
@@ -33,6 +31,8 @@ function init() {
     document.addEventListener("resume", resume, false);
     document.addEventListener("backbutton", backbutton, false);
 }
+
+document.addEventListener('deviceready', init, false);
 
 function pause(evt) {
 	log('pause');

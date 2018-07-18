@@ -1,7 +1,7 @@
 import * as ons from 'onsenui';
 import React from 'react';
 import {PullHook,Icon,Modal,Button} from 'react-onsenui';
-import {log,reload,i18n,resetTo,goTo} from './core';
+import {log,reload,i18n,resetTo,goTo,AppCore} from './core';
 
 
 
@@ -30,16 +30,10 @@ export function shareWith(view) {
                     <div className="wx-friends" onClick={() => view.share('SESSION')}>
                         <img src="img/wx.png"/><br />
                         <span>微信好友</span>
-                      {/* <Button onClick={() => view.share('SESSION')}>
-                        微信好友
-                      </Button> */}
                     </div>
                     <div className="wx-friends-circle" onClick={() => view.share('TIMELINE')}>
                         <img src="img/wx-pyq.png"/><br />
                         <span>微信朋友圈</span>
-                      {/* <Button onClick={() => view.share('TIMELINE')}>
-                        微信朋友圈
-                      </Button> */}
                     </div>
             </div>
             <div className="share-options-cancel" onClick={_ => view.setState({shareWithOpen: false})}>
@@ -101,6 +95,15 @@ export function confirm(p) {
     };
     return ons.notification.confirm(m);
 }
+export function prompt(p) {
+    let m = {
+        message: p.message || p,
+        title: p.title || i18n.get('PROMPT'),
+        buttonLabels: p.buttonLabels || [i18n.get('CANCEL'), i18n.get('OK')]
+
+    };
+    return ons.notification.prompt(m);
+}
 export function toast(p) {
     let m = {
         message: p.message || p,
@@ -111,19 +114,28 @@ export function toast(p) {
 }
 
 
-export function footer(text1,text2,class1,class2){
+export function footer(type,view){
     return(
         <div className="order-edit-footer">
-			<div className="">
+			<div className="order-edit-footer-box" onClick={_=>view.gysModal()}>
 				<img src="img/gys.png" />
 				<span>联系供应商</span>
 			</div>
-			<div className="">
+			<div className="order-edit-footer-box" onClick={_=>view.zsModal()}>
 				<img src="img/zs.png" />
 				<span>联系总社</span>
 			</div>
-			<div className={class1}>{text1}</div>
-			<div className={class2}>{text2}</div>
+            { type == 'product' &&
+			    <div className="pro-footer-zw">占位</div>
+            }{type == 'product' &&
+			    <div className="pro-footer-sb">实报</div>
+            }
+            { type == 'orderEdit' &&
+			    <div className="order-edit-footer-save">临时保存</div>
+            }{type == 'orderEdit' &&
+			    <div className="order-edit-footer-submit">提交时报</div>
+            }
+
 		</div>
     )
 }
@@ -131,13 +143,60 @@ export function footer(text1,text2,class1,class2){
 export function search(){
     return(
         <ons-toolbar>
-			<div className="center search-input-box-box" onClick={_=>goTo('搜索')}>
+			<div id="head" className="center search-input-box-box" onClick={_=>goTo('搜索')}>
 			  <div className="search-input-box">
 				  <input className='search-input-box-input' value="" placeholder="搜索"/>
 				<img className="search-input-box-img" src="img/search.png" />
 			  </div>
 			</div>
-		  </ons-toolbar>
+		</ons-toolbar>
     )
 }
 
+
+export function progress(view) {
+    return (
+        <Modal isOpen={view.props.s.progress} style={{backgroundColor:'transparent'}}>
+            <div className="progress-box">
+              <ons-icon icon="fa-spinner" size="26px" spin></ons-icon>
+            </div>
+        </Modal>
+    );
+}
+
+export function nonBlockLoading() {
+    return (
+        <div className="after-list text-center">
+          <ons-icon icon="fa-spinner" size="26px" spin></ons-icon>
+        </div>
+    );
+}
+
+export function proList(page,data){
+    return(
+        <div className="pro-list" style={{paddingTop: (page === 'search' ? '0':'')}}>
+			{
+				data.map(item =>
+				<div className="pro-item" key={item.id} onClick={_=>goTo('产品详情页',{pd_id:item.product_id})}>
+			  		<div className="pro-item-left">
+						<img className="img-size" src={AppCore.HOST+'/'+item.thumb} />
+						<div className="pro-item-pro_id">产品编号: {item.product_id}</div>
+					</div>
+			  		<div className="pro-item-right">
+						<div className="pro-item-name">{item.pd_name}</div>
+						<div className="pro-item-date">发团日期: {item.dep_date}</div>
+						<div className="pro-item-dep_city flex-j-sb">
+							<span>{item.dep_city_id}出发</span>
+							<span>供应商: {item.pd_provider}</span>
+						</div>
+						<div className="pro-item-price flex-j-sb">
+							<img className="img-hot1" src={'img/hot1.png'} />
+							<span style={{fontSize: '.48rem'}}>￥{item.zk_price} <span style={{fontSize: '.373333rem'}}>起</span></span>
+						</div>
+					</div>
+				</div>
+				)
+			}
+		</div>
+    )
+}

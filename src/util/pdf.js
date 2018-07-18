@@ -3,7 +3,7 @@ import {error} from './com';
 
 
 let pdfjsLib = window['pdfjs-dist/build/pdf'];
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/js/pdf.worker.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'js/pdf.worker.js';
 let pdfLoadingTask;
 let pdfDoc;
 let pdfCanvas;

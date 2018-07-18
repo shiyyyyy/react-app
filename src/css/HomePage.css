@@ -15,26 +15,6 @@
 }
 
 
-.flex-j-sb {
-    display: flex;
-    justify-content: space-between;
-}
-.posi-rela{
-    position: relative;
-}
-.posi-ab{
-    position: absolute;
-}
-.no-wrap {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.over-hide {
-    overflow: hidden;
-}
-
 .w-100 {
     width: 100%;
 }

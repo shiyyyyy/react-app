@@ -17,7 +17,18 @@ width: 2.5rem;
 border-radius: 2.5rem;
 margin:auto;
 }
+/* ------------------------------- progress ------------------------------------- */
 
+.progress-box{
+    width: 2.666667rem;
+    height: 2.666667rem;
+    color: #fff;
+    box-sizing: border-box;
+    background-color: rgba(0,0,0,.65);
+    border-radius: .16rem;
+    margin: auto;
+    padding-top: .986667rem;
+}
 /* 常用 class name  */
 
 
@@ -64,6 +75,34 @@ margin:auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.flex-j-sb {
+  display: flex;
+  justify-content: space-between;
+}
+.posi-rela{
+  position: relative;
+}
+.posi-ab{
+  position: absolute;
+}
+.no-wrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.over-hide {
+  overflow: hidden;
+}
+.opacity-0{
+  opacity: 0;
+}
+.w0{
+  width: 0;
+}
+.h0{
+  height: 0;
 }
 .m-10{
   margin:10px;
@@ -147,4 +186,8 @@ strong{
   height: 1.28rem;
   line-height: 1.28rem;
   border-top: 1px solid #ccc;
+}
+
+.lose{
+  color: #ccc;
 }

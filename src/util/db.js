@@ -40,16 +40,19 @@ export function dbInit(){
     	_=>{
             db.executeSql('select * from kv where k=?', ['user_cache'],
               rs => {
-                if(rs.rows.length){
-                    let user = rs.rows.item(0).v;
-                    user = JSON.parse(user);
-                    trigger('缓存加载用户',user);
-                    pollInit();
-                }else{
-                    db.executeSql('insert into kv values (?,?)', ['user_cache','{}'],r=>0,e=>error(e));
+                if(!rs.rows.length){
+                    return;
                 }
+
+                let user = rs.rows.item(0).v;
+                user = JSON.parse(user);
+                trigger('缓存加载用户',user);
               },
               e => error(e)
+            );
+            getCache(
+                'pub_cache',
+                v => v && trigger('更新公开数据',JSON.parse(v))
             );
     	},
     	e=>error(e)
@@ -57,6 +60,27 @@ export function dbInit(){
 
 }
 
-export function cacheUser(user){
-    db.executeSql('update kv set v=? where k=?', [JSON.stringify(user),'user_cache'],r=>0,e=>error(e));
+export function setCache(key,val) {
+    db && db.sqlBatch(
+        [
+            ['delete from kv where k=?',[key]],
+            ['insert into kv values (?,?)', [key,val]]
+        ],
+        r=>0,
+        e=>error(e)
+    );
+}
+
+export function getCache(key,cb) {
+    db && db.executeSql('select * from kv where k=?', [key],
+      rs => {
+        if(rs.rows.length){
+            let v = rs.rows.item(0).v;
+            cb(v);
+        }else{
+            cb();
+        }
+      },
+      e => error(e)
+    );
 }

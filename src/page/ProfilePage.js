@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {Page} from 'react-onsenui';
 
 import {trigger,post,resetTo,loadIfEmpty,i18n} from '../util/core';
-import {pullHook,confirm} from '../util/com';
+import {pullHook,confirm,nonBlockLoading} from '../util/com';
 import { connect } from 'react-redux';
 
 
@@ -17,9 +17,10 @@ class ProfilePage extends Component{
 	    this.state = {state:'initial',data:{'订单数据':{},'账户数据':{},'消息通知':[]}};
 	    this.url = '/PublicApi/read_home?mod=HOME';
 	}
+
+
 	logout(){
 	    post('/Session/logout');
-	    trigger('更新用户',{});
 	}
 
 	render(){
@@ -31,10 +32,7 @@ class ProfilePage extends Component{
 				  	this.props.s.user.employee_id && pullHook(this)	
 			    }
 				{
-			  		this.state.loading &&
-						<div className="after-list text-center m-10">
-					      <ons-icon icon="fa-spinner" size="26px" spin></ons-icon>
-					    </div>
+			  		this.state.loading && nonBlockLoading()
 				}
 				<div className="my-top-bg">
 					<img src="img/avatar.png" className="user-avatar" /><br />

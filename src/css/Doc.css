@@ -1,0 +1,153 @@
+
+.doc{
+   
+}
+/* 基础信息 */
+.doc-module{
+    font-size: .373333rem;
+    line-height: 1.173333rem;
+    margin-top: .32rem;
+    background-color: #fff;
+    box-shadow: 6px 1px 3px rgba(0,0,0,.1);
+}
+.doc-title{
+    font-size: .373333rem;
+    padding-left: .426667rem;
+}
+.doc-main{
+    font-size: .32rem;
+}
+.doc-main-cell{
+    line-height: .96rem;
+    border-top: 1px solid #F4F8F9;
+    text-align: left;
+    display: flex;
+}
+.cell-left-4{
+    width: 2.24rem;
+    color: #696969;
+    padding-left: .426667rem;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+.cell-right{
+    text-overflow: ellipsis;
+    -ms-flex: 1 1;
+    flex: 1 1;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-right: .426667rem;
+    box-sizing: border-box;
+}
+.cell-right input[type="text"]{
+    width: 100%;
+    display: inline-block;
+}
+
+/* 结算信息 */
+.cell-left-5{
+    width: 2.56rem;
+    color: #696969;
+    padding-left: .426667rem;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+/* 应付明细 */
+.doc-main-cell-flex-3{
+    line-height: .96rem;
+    border-top: 1px solid #F4F8F9;
+    text-align: left;
+    display: flex;
+    box-sizing: border-box;
+    padding: 0 .426667rem;
+    display: flex;
+}
+.doc-main-cell-flex-3 > strong{
+    width: 33%;
+}
+.doc-main-cell-right{
+    text-align: right;
+    line-height: .96rem;
+    border-top: 1px solid #F4F8F9;
+    box-sizing: border-box;
+    padding: 0 .426667rem;
+}
+
+/* 单据备注 */
+
+
+
+/* 审批记录 */
+.doc-main-cell-num{
+    font-size: .32rem;
+    line-height: .4rem;
+    color: #696969;
+    padding: 0.28rem .213333rem;
+    text-align: center;
+    border-top: 1px solid #F4F8F9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.doc-main-cell-num>span:nth-child(1){
+    width: 22%;
+    border-right: 1px solid #E7EBED;
+}
+.doc-main-cell-num>span:nth-child(2){
+    width: 22%;    
+    border-right: 1px solid #E7EBED;
+}
+.doc-main-cell-num>span:nth-child(3){
+    width: 30%;
+    border-right: 1px solid #E7EBED;
+}
+.doc-main-cell-num>span:nth-child(4){
+    width: 26%;
+}
+
+/* 按钮 */
+.doc-btn-box{
+    font-size: .453333rem;
+    margin: 1.44rem .426667rem 2.773333rem;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+}
+.doc-btn-default{
+    width: 2.666667rem;
+    height: .933333rem;
+    line-height: .933333rem;
+    color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    border-radius: .16rem;
+    box-sizing: border-box;
+}
+.doc-btn-submit{
+    width: 2.666667rem;
+    height: .933333rem;
+    line-height: .933333rem;
+    color: #fff;
+    background-color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    border-radius: .106667rem;
+    box-sizing: border-box;
+}
+
+.doc-approve-btn-box{
+    margin: .64rem 0;
+    text-align: center;
+}
+.doc-approve-btn-box button{
+    width: 65%;
+    height: 1.066667rem;
+    font-size: .48rem;
+    color: #fff;
+    /* line-height: 1.066667rem; */
+    background: #71C7D8;
+    border-radius: 1.333333rem;
+    border: none;
+    display: inline-block;
+}

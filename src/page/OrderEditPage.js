@@ -224,8 +224,7 @@ export default class OrderEditPage extends Component{
 					</div>
 				</div>
 				{/* 底部 footer */}
-				{footer('临时保存','提交时报','order-edit-footer-save','order-edit-footer-submit')}
-
+				{footer('orderEdit',this)}
 		    </Page>
 		);
 	}
