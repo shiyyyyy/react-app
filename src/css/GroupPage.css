@@ -34,14 +34,6 @@
     bottom: 0;
     left: .266667rem;
 }
-
-
-.group-modal{
-    width: 100%;
-    /* height: 100%; */
-    position: fixed;
-    z-index: 1;
-}
 .input-box{
     width: 95%;
     margin: 5px auto;
@@ -51,6 +43,7 @@
 
 /* ------------------- 选项 弹窗 -------------------- */
 .option-type{
+    font-size: .373333rem;
     background-color: #fff;
     line-height: 50px;
     text-align: center;
@@ -59,12 +52,11 @@
 }
 
 .dialog-box{
-    width: 100%;
+    font-size: .373333rem;
     box-sizing: border-box;
     background-color: #fff;
     color: #000;
-    position: absolute;
-    top: 0;
+    text-align: center;
 }
 
 .selected{
@@ -74,8 +66,8 @@
 }
 /* selected-date */
 .selected-date{
-    padding: 0 .533333rem;
-    margin: .533333rem 0;
+    padding: .533333rem .533333rem;
+    border-top: 1px solid #f4f8f9;
     display: flex;
     justify-content: space-between;
 }
@@ -89,8 +81,8 @@
 /* selected-dep_city */
 .selected-dep_city{
     text-align: center;
-    /* padding: 0 .32rem; */
-    margin: .426667rem;
+    border-top: 1px solid #f4f8f9;
+    padding: .426667rem;
     display: flex;
     flex-wrap: wrap;
     /* justify-content: space-between; */
@@ -119,6 +111,7 @@
 }
 .active-select-item{
     color: #6FC5D8;
+    border-color: #6FC5D8;
 }
 .select-nav{
     background-color: #fff
@@ -153,14 +146,14 @@
     width: 48%;
     line-height: .853333rem;
     color: #fff;
-    background-color: #AED283;
-    border: 1px solid #AED283;
+    background-color: #6FC5D8;
+    border: 1px solid #6FC5D8;
     border-radius: .106667rem;
 }
 
 /* ---------------------- 产品 列表 ----------------------- */
 .pro-list{
-    padding: 50px 10px 0px 10px;
+    padding: 0px 10px;
     box-sizing: border-box;
 }
 .pro-item{

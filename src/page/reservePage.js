@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import {footer} from '../util/com';
 
 
-export default class OrderEditPage extends Component{
+export default class ReservePage extends Component{
 
 	constructor(props) {
 	    super(props);
@@ -145,7 +145,7 @@ export default class OrderEditPage extends Component{
 					</div>
 				</div>
                 {/* 接单人 */}
-				<div class="model-box" style={{marginBottom:'1.653333rem'}}>
+				<div class="model-box" style={{marginBottom:'1.493333rem'}}>
 					<div className="box-title">
 						<div className="box-title-text">接单人</div>
 						<div className="box-title-operate">

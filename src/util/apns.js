@@ -10,6 +10,7 @@ export function apnsInit(){
         return;
     }
 
+
     const options = {
         ios: {
             alert: "true",
@@ -26,8 +27,17 @@ export function apnsInit(){
         checkNotify();
     });
 
+    //trigger event fired correctly
+    if(hasPlugin('cordova.plugins.notification')){
+        plugin('cordova.plugins.notification').local.on('trigger',notic=>log('[apns] received ',notic));
+    }
+    //notification event never fired, due to local-notification plugin compatible problem
     push.on('notification', data => {
-
+        if(data.additionalData.foreground && hasPlugin('cordova.plugins.notification')){
+            plugin('cordova.plugins.notification').local.schedule({
+                text: data.message,
+            });
+        }
         log('[apns] received ',data);
     });
 

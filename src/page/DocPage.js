@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
-import {log,post,trigger,AppCore,AppMeta,loadIfEmpty,get_req_data,goBack,submit} from '../util/core';
-import {error,nonBlockLoading,progress} from '../util/com';
+import {log,post,trigger,AppCore,AppMeta,loadIfEmpty,get_req_data,goBack,submit,reload} from '../util/core';
+import {error,nonBlockLoading,info} from '../util/com';
 import { connect } from 'react-redux';
 
 import {Page,Button,Input,AlertDialog} from 'react-onsenui';
@@ -12,6 +12,7 @@ class DocPage extends Component{
 		super(props);
 		this.state = {dialog:false};
 		this.action = props.p.action;
+		this.pre_view = props.p.pre_view;
 	}
 
 	renderToolbar(){
@@ -34,7 +35,16 @@ class DocPage extends Component{
 
 	    this.setState({dialog:false,data:data});
 	    trigger('加载等待');
-	    submit(this,_=>goBack());
+	    submit(
+	    	this, 
+	    	_ => info('审批完成').then(
+				_=>{
+    				goBack();
+    				reload(this.pre_view);
+    				trigger('加载等待');
+				}
+			) 
+	    );
 	}
 
 	render(){
@@ -42,8 +52,7 @@ class DocPage extends Component{
 		return (
 			<Page 
 				renderToolbar={_=>this.renderToolbar()} 
-				onShow={_=>loadIfEmpty(this)}
-				renderModal={_=>progress(this)}>
+				onShow={_=>loadIfEmpty(this)}>
 				{
 				  	this.state.loading && nonBlockLoading()
 
@@ -58,7 +67,8 @@ class DocPage extends Component{
 						{/*入账详情-查看*/}
 						{
 							this.state.data['入账详情-查看'] &&
-							doc.fund(this.state.data['入账详情-查看'][0])
+							// doc.fund(this.state.data['入账详情-查看'][0])
+							doc.fund(this.state.data['入账详情-查看'])
 						}
 
 						{/* 结算信息 */}
@@ -85,7 +95,8 @@ class DocPage extends Component{
 						{/*入账详情-查看*/}
 						{
 							this.state.data['入账详情-查看'] &&
-							doc.fund(this.state.data['入账详情-查看'][0])
+							// doc.fund(this.state.data['入账详情-查看'][0])
+							doc.fund(this.state.data['入账详情-查看'])
 						}
 
 						{/* 结算信息 */}
@@ -139,7 +150,7 @@ class DocPage extends Component{
 						{/*支出关联单据*/}
 						{
 							this.state.data['支出关联单据'] &&
-							this.state.data['支出关联单据'][0] &&
+							// this.state.data['支出关联单据'][0] &&
 							doc.call_documents(this.state.data['支出关联单据'][0])
 						}
 
@@ -191,7 +202,7 @@ class DocPage extends Component{
 						{/*支出关联单据*/}
 						{
 							this.state.data['支出关联单据'] &&
-							this.state.data['支出关联单据'][0] &&
+							// this.state.data['支出关联单据'][0] &&
 							doc.call_documents(this.state.data['支出关联单据'][0])
 						}
 
@@ -304,10 +315,10 @@ class DocPage extends Component{
 						{doc.basis(this.state.data['单据信息'][0])}
 
 						{/*入账详情-查看*/}
-						{
+						{/* {
 							this.state.data['入账详情-查看'] &&
 							doc.fund(this.state.data['入账详情-查看'][0])
-						}
+						} */}
 
 						{/*业务退回结算信息*/}
 						{
@@ -337,10 +348,10 @@ class DocPage extends Component{
 						{doc.basis(this.state.data['单据信息'][0])}
 
 						{/*入账详情-查看*/}
-						{
+						{/* {
 							this.state.data['入账详情-查看'] &&
 							doc.fund(this.state.data['入账详情-查看'][0])
-						}
+						} */}
 
 						{/*资金退回结算信息*/}
 						{
@@ -388,7 +399,7 @@ class DocPage extends Component{
 						{doc.basis(this.state.data['单据信息'][0])}
 
 						{/* 还款调用借款 */}
-						{doc.hk_call_doc(this.state.data['还款调用借款'][0])}
+						{doc.hk_call_doc(this.state.data['还款调用借款'])}
 
 						{/* 单据备注 */}
 						{doc.documents_note(this.state.data['单据备注'])}
@@ -435,10 +446,12 @@ class DocPage extends Component{
 					</div>
 				}
 
-
-				<section className="doc-approve-btn-box">
-					<button onClick={_=>this.setState({dialog:true})}>审批</button>
-				</section>
+				{
+					this.state.data &&
+					<section className="doc-approve-btn-box">
+						<button onClick={_=>this.setState({dialog:true})}>审批</button>
+					</section>
+				}
 		        <AlertDialog
 		          isOpen={this.state.dialog}
 		          isCancelable={false}>
@@ -450,7 +463,7 @@ class DocPage extends Component{
 		            <button onClick={_=>this.setState({dialog:false})} className='alert-dialog-button'>
 		              取消
 		            </button>
-		            <button onClick={_=>this.approve(0)} className='alert-dialog-button'>
+		            <button onClick={_=>this.approve(2)} className='alert-dialog-button'>
 		              不通过
 		            </button>
 		            <button onClick={_=>this.approve(1)} className='alert-dialog-button'>

@@ -12,7 +12,7 @@ export default class LogPage extends Component{
 			      	<ons-toolbar-button onClick={_=>{localStorage.log=''}}>清空</ons-toolbar-button>
 		      	  </div>
 			  	</ons-toolbar>
-			  	<pre>
+			  	<pre style={{textTransform: 'none'}}>
 			  		{localStorage.log}
 			  	</pre>
 		  </ons-page>

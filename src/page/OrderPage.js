@@ -45,7 +45,7 @@ class OrderPage extends Component{
 							  	<span style={{fontSize:'.373333rem'}}>订单号:{order.order_id}</span>
 							  	<span style={{color:'#9E9E9E'}}>{order.company_name}-{order.department_name}-{order.group_employee_name}</span>
 							  </div>
-							  <div className="order-main">
+							  <div className="order-main" onClick={_=>goTo('订单查看页')}>
 							  {/* 以下为 group 里面拿过来的,应该可以放在函数里,但是HTML里面的东西不太一样 */}
 								<div className="pro-item"  key={order.id}
 								style={{backgroundColor: '#F8F8F8',borderRadius: '0',width: '100%', height:'100%',margin:'0'}}>
@@ -82,7 +82,7 @@ class OrderPage extends Component{
 							  	<div className="order-btn-item" onClick={_=>goTo('实报')}>删除</div>
 							  	<div className="order-btn-item" onClick={_=>goTo('录入游客名单')}>撤回</div>
 							  	<div className="order-btn-item" onClick={_=>goTo('订单修改页')}>修改</div>
-							  	<div className="order-btn-item" onClick={_=>goTo('订单查看页')}>订单</div>
+							  	<div className="order-btn-item" onClick={_=>goTo('订单查看页')}>名单</div>
 							  	<div className="order-btn-item" onClick={_=>goTo('占位')}>提交</div>
 							  </div>
 					      </div>

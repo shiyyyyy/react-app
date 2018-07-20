@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import {Page,Icon} from 'react-onsenui';
 
-import {AppCore,resetTo, goBack} from '../util/core';
+import {AppCore,resetTo, goBack, goTo} from '../util/core';
 import {pullHook,loginToPlay,search,proList} from '../util/com';
 import { connect } from 'react-redux';
 
@@ -19,6 +19,7 @@ export default class Search extends Component{
 		};
 	}
 	componentWillMount(){
+
 		let storage = window.localStorage;
 		if(storage && storage.getItem('history')){
 			var history = JSON.parse(storage.getItem('history'))

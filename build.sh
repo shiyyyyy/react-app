@@ -1,9 +1,18 @@
 #!/bin/sh
 npm run build
-php copy.php
+
+# php copy.php zs-app-ios
+# cp -rf build/img ../zs-app-ios/www/
+# cd ../zs-app-ios
+# cordova prepare ios
+
+# cd -
+
+php copy.php zs-app
 cp -rf build/img ../zs-app/www/
 cd ../zs-app
-cordova prepare android ios
+cordova prepare android
+
 cp platforms/android/app/src/main/AndroidManifest.xml platforms/android/app/
 cd platforms/android
 #release

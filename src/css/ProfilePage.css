@@ -45,6 +45,7 @@
 
 }
 .model-box-bald-title{
+    font-size: .373333rem;
     height: 1.173333rem;
     line-height: .426667rem;
     box-sizing: border-box;
@@ -156,7 +157,7 @@
     margin-right: .16rem;
 }
 
-/* --------------- 消息通知 定制样式------------------ */
+/* --------------- 消息通知(如果在底部) 定制样式------------------ */
 .model-box-bald-main-msg{
     font-size: .32rem;
     line-height: .426667rem;
@@ -196,4 +197,57 @@
 .model-box-bald-main-msg-item-right > img{
     width: .64rem;
     height: .64rem;
+}
+/* --------------- 消息通知(如果在顶部) 定制样式------------------ */
+.model-box-bald-main-msgPrompt{
+    background-color: #fff;
+    border-radius: .266667rem;
+    padding: .373333rem 0;
+    margin: 0 .32rem .32rem .32rem;
+    display: flex;
+    justify-content: space-between;
+}
+.model-box-bald-main-item-msg{
+    width: 50%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    text-align: center;
+    padding: .213333rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.model-box-bald-main-item-msg img{
+    width: .64rem;
+    height: .64rem;
+    padding: 0 .213333rem;
+}
+.model-box-bald-main-item-msg span{
+    font-size: .346667rem;
+}
+.on-icon{
+    font-size: .373333rem;
+    color: #77D0E4;
+    padding-left: .213333rem;
+}
+.off-icon{
+    font-size: .373333rem;
+    color: #999;
+    padding-left: .213333rem;
+}
+
+/*  */
+.set-msg-box{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.set-msg-left{
+    font-size: .373333rem;
+    flex: 1;
+}
+.set-msg-right{
+    width: 1.866667rem;
+    text-align: right;
 }

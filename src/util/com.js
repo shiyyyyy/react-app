@@ -1,8 +1,8 @@
 import * as ons from 'onsenui';
 import React from 'react';
 import {PullHook,Icon,Modal,Button} from 'react-onsenui';
-import {log,reload,i18n,resetTo,goTo,AppCore} from './core';
-
+import {log,reloadSilent,i18n,resetTo,goTo,AppCore} from './core';
+import { connect } from 'react-redux';
 
 
 //--------------------------component----------------------------
@@ -57,7 +57,7 @@ export function pullHook(view) {
         <PullHook
           thresholdHeight={800}
           onChange={ e=>view.setState({state:e.state}) }
-          onLoad={ done=>reload(view,done) } >
+          onLoad={ done=>reloadSilent(view,done) } >
 
           <Icon class="pull-hook-content" 
             spin={ refreshState[view.state.state][2] } 
@@ -142,8 +142,8 @@ export function footer(type,view){
 
 export function search(){
     return(
-        <ons-toolbar>
-			<div id="head" className="center search-input-box-box" onClick={_=>goTo('搜索')}>
+        <ons-toolbar ref="tb">
+			<div className="center search-input-box-box" onClick={_=>goTo('搜索')}>
 			  <div className="search-input-box">
 				  <input className='search-input-box-input' value="" placeholder="搜索"/>
 				<img className="search-input-box-img" src="img/search.png" />
@@ -153,16 +153,63 @@ export function search(){
     )
 }
 
-
-export function progress(view) {
+export function GYS_modal(view){
     return (
-        <Modal isOpen={view.props.s.progress} style={{backgroundColor:'transparent'}}>
+        // gys-弹窗
+        view.state.gys_modal &&
+        <div className="zs-modal" onClick={_=>view.gysModalHide()}>
+            <div className="zs-popup" onClick={_=>{_.stopPropagation()}}>
+                <div className="zs-popup-avatar">
+                    <img src="img/avatar.png" />
+                </div><br />
+                <div className="zs-popup-info">
+                    <div className="">公司全称: 张阿道夫撒旦法</div>
+                    <div className="">所属部门: 张阿道夫撒旦法</div>
+                    <div className="">员工姓名: 张阿道夫撒旦法</div>
+                    <div className="">手机号码: 13434343434343</div>
+                </div><br />
+                <div className="zs-popup-btn">
+                    <a href="tel:13434343434">拨打电话</a>
+                </div>
+            </div>
+        </div>
+    )
+}
+export function ZS_modal(view){
+    return (
+        // zs-弹窗
+		view.state.zs_modal &&
+		<div className="zs-modal" onClick={_=>view.zsModalHide()}>
+			<div className="zs-popup" onClick={_=>{_.stopPropagation()}}>
+				<div className="zs-popup-avatar">
+					<img src="img/avatar.png" />
+				</div><br />
+				<div className="zs-popup-info">
+					<div className="">所属中心: 张阿道夫撒旦法</div>
+					<div className="">所属部门: 张阿道夫撒旦法</div>
+					<div className="">员工姓名: 张阿道夫撒旦法</div>
+					<div className="">手机号码: 13434343434343</div>
+				</div><br />
+				<div className="zs-popup-btn">
+					<a href="tel:13434343434">拨打电话</a>
+				</div>
+			</div>
+		</div>
+    )
+}
+
+
+function progress({s}) {
+    return (
+        <Modal isOpen={s.progress} style={{backgroundColor:'transparent'}}>
             <div className="progress-box">
               <ons-icon icon="fa-spinner" size="26px" spin></ons-icon>
             </div>
         </Modal>
     );
 }
+
+export const Progress = connect(s=>({s:s}))(progress);
 
 export function nonBlockLoading() {
     return (
@@ -172,31 +219,3 @@ export function nonBlockLoading() {
     );
 }
 
-export function proList(page,data){
-    return(
-        <div className="pro-list" style={{paddingTop: (page === 'search' ? '0':'')}}>
-			{
-				data.map(item =>
-				<div className="pro-item" key={item.id} onClick={_=>goTo('产品详情页',{pd_id:item.product_id})}>
-			  		<div className="pro-item-left">
-						<img className="img-size" src={AppCore.HOST+'/'+item.thumb} />
-						<div className="pro-item-pro_id">产品编号: {item.product_id}</div>
-					</div>
-			  		<div className="pro-item-right">
-						<div className="pro-item-name">{item.pd_name}</div>
-						<div className="pro-item-date">发团日期: {item.dep_date}</div>
-						<div className="pro-item-dep_city flex-j-sb">
-							<span>{item.dep_city_id}出发</span>
-							<span>供应商: {item.pd_provider}</span>
-						</div>
-						<div className="pro-item-price flex-j-sb">
-							<img className="img-hot1" src={'img/hot1.png'} />
-							<span style={{fontSize: '.48rem'}}>￥{item.zk_price} <span style={{fontSize: '.373333rem'}}>起</span></span>
-						</div>
-					</div>
-				</div>
-				)
-			}
-		</div>
-    )
-}

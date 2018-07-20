@@ -10,7 +10,7 @@ import '../css/OrderCheckPage.css'
 import {footer} from '../util/com';
 
 
-export default class OrderEditPage extends Component{
+export default class OrderCheckPage extends Component{
 
 	constructor(props) {
 	    super(props);
@@ -85,11 +85,11 @@ export default class OrderEditPage extends Component{
 						<div className="model-main-box">
 							<div className="model-main-item">
 								<span>姓名: </span>
-								<input type="text" value={this.state.client.name} 
+								<input type="text" value={this.state.client.name} disabled
 								onChange={ e=>this.setState({'client.name':e.target.value}) } /></div>
 							<div className="model-main-item">
 								<span>电话: </span>
-								<input type='number' value={this.state.client.mobile} 
+								<input type='number' value={this.state.client.mobile} disabled
 								onChange={ e => this.setState({'client.mobile':e.target.value}) }/></div>						
 							</div>
 					)}
@@ -105,7 +105,7 @@ export default class OrderEditPage extends Component{
 						<div className="model.main-item-box">
 							<div className="model-main-item">
 								<span>姓名: </span>
-								<input type="text" value={this.state['接单人'].name} 
+								<input type="text" value={this.state['接单人'].name} disabled
 								onChange={ e => this.setState({'接单人["name"]': e.target.value})} /></div>
 						</div>
 					)}

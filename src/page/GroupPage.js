@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component,Fragment } from 'react';
 
 import {AppCore,resetTo,loadMore,loadIfEmpty,Enum,goTo} from '../util/core';
-import {pullHook,loginToPlay,search,nonBlockLoading,proList} from '../util/com';
+import {pullHook,loginToPlay,search,nonBlockLoading} from '../util/com';
 
 import {Page,Modal,Button} from 'react-onsenui';
 import { connect } from 'react-redux';
@@ -10,23 +10,17 @@ import '../css/GroupPage.css'
 class GroupPage extends Component{
 
 	constructor(props) {
-	    super(props);
+		super(props);
 		this.state = {
 			state:'initial',
 			data:[],
 			pd_nav:'1',
 			search: '',
-			// modal top offsetHeight
-			modalTop: 100,
 		};
 		this.mod = '团队报名';
 	}
 
-	// 设置 modal top  
-	componentWillReceiveProps(){
-		let headHeight = document.getElementById('head').offsetHeight;
-		this.setState({modalTop: headHeight + 50})
-	}
+
 	// 重置/确定 时间
 	resetDate(){
 		console.log("reset")
@@ -40,13 +34,33 @@ class GroupPage extends Component{
 		if(!(this.state.startDate && this.state.endDate)) return;
 	}
 
+	renderFixed(){
+		if(!this.refs.anchor){
+			return;
+		}
+		this.tbHeight = this.tbHeight || this.refs.anchor.parentElement.getBoundingClientRect().top;
 
-	filterModal(){
 		return (
-	      <Modal isOpen={!!this.state.search} style={{top: this.state.modalTop+'px'}} onClick={_=>{this.setState({search: ''})}}>
-	      	<div onClick={(e)=>{e.stopPropagation()}}>
-			{/* 产品标签-选择框 */
-				this.state.search=='tag' && (
+			<div style={{
+					backgroundColor:'rgba(0,0,0,.65)',
+					position:'absolute',
+					top:this.tbHeight,
+					bottom:this.state.search?'0px':'auto',
+					left:'0px',
+					right:'0px',
+					display:this.props.s.user.sid?'block':'none'
+				}}
+				onClick={_=>{this.setState({search: ''})}}
+			>
+				<ons-row  class="option-type" onClick={e=>e.stopPropagation()}>
+				  <ons-col onClick={_=>this.setState({search:'tag'})}>产品标签</ons-col>
+				  <ons-col onClick={_=>this.setState({search:'date'})}>出发日期</ons-col>
+				  <ons-col onClick={_=>this.setState({search:'dep_city'})}>出发城市</ons-col>
+				  <ons-col onClick={_=>this.setState({search:'theme'})}>产品主题</ons-col>
+				</ons-row>
+				<div onClick={e=>e.stopPropagation()}>
+				{/* 产品标签-选择框 */
+					this.state.search=='tag' && 
 
 					<div className="dialog-box">
 						<div className="selected">
@@ -92,17 +106,12 @@ class GroupPage extends Component{
 									</ul>
 							}
 						</div>
-							{/* <div className="options-btn">
-							  <div className="options-submit">重置</div>
-							  <div className="options-submit">确定</div>
-							</div> */}
 					</div>	
-				)
-			}
-			{/* 日期-选择框 */
-				this.state.search=='date' && (
+				}
+				{/* 日期-选择框 */
+					this.state.search=='date' && 
 					<div className="dialog-box">
-						<div className="text-center options-popup">
+						<div className="options-popup">
 							<div className="selected-date">
 								<input type="date" className="selected-date-input" placeholder="最早出发日期" name="start" 
 								value={this.state.startDate} onChange={e=>this.setState({startDate: e.target.value})} id="startDate" />
@@ -116,41 +125,37 @@ class GroupPage extends Component{
 							</div>
 						</div>
 					</div>	
-				)
-			}
-			{/* 出发城市-选择框 */
-				this.state.search=='dep_city' && (
+				}
+				{/* 出发城市-选择框 */
+					this.state.search=='dep_city' && 
 					<div className="dialog-box">
-						<div className="text-center options-popup">
+						<div className="options-popup">
 							<div className="selected-dep_city">
 								{Object.keys(this.props.s.pub.dep_city).map( i => 
-									<div className="dep_city-item" key={i}
+									<div className={ (this.state.dep_city === i ? 'active-select-item' : '') +" dep_city-item"} key={i}
 									onClick={_=>this.setState({dep_city: i})}>{this.props.s.pub.dep_city[i]}</div> 
 								)}
 							</div>
 						</div>
 					</div>	
-				)
-			}
-			{/* 主题-选择框 */
-				this.state.search=='theme' && (
+				}
+				{/* 主题-选择框 */
+					this.state.search=='theme' && 
 					<div className="dialog-box">
-						<div className="text-center options-popup">
+						<div className="options-popup">
 							<div className="selected-dep_city">
 								{Object.keys(this.props.s.pub.theme).map( i => 
-									<div className="dep_city-item" key={i}
+									<div className={ (this.state.theme === i ? 'active-select-item' : '') +" dep_city-item"} key={i}
 									onClick={_=>this.setState({theme: i})}>{this.props.s.pub.theme[i]}</div> 
 								)}
 							</div>
 						</div>
 					</div>	
-				)
-			}
+				}
+				</div>
 			</div>
-	      </Modal>
 		);
 	}
-
 
 	render(){
 		return (
@@ -158,32 +163,50 @@ class GroupPage extends Component{
 				renderToolbar={_=>search()} 
 				onInfiniteScroll={done=>loadMore(this,done)} 
 				onShow={_=>loadIfEmpty(this)}
-				renderModal={_=>this.filterModal()}>
-			{
-			  	!this.state.search && this.props.s.user.sid && pullHook(this)	
-		    }
-		    {
-		    	this.props.s.user.sid && 
+				renderFixed={_=>this.renderFixed()}>
 
-	    		<div className="group-body">
-					<div className="group-modal" id="group-tab">
-						<ons-row  class="option-type">
-						  <ons-col onClick={_=>this.setState({search:'tag'})}>产品标签</ons-col>
-						  <ons-col onClick={_=>this.setState({search:'date'})}>出发日期</ons-col>
-						  <ons-col onClick={_=>this.setState({search:'dep_city'})}>出发城市</ons-col>
-						  <ons-col onClick={_=>this.setState({search:'theme'})}>产品主题</ons-col>
-						</ons-row>
-					</div>
-					{proList('group',this.state.data)}
-				  	{
-				  		this.state.loading && nonBlockLoading()
-				  	}
+				<div style={{height:"50px"}} ref="anchor"></div>
 
-	    		</div>
-		    }
-		    {
-		  		!this.props.s.user.sid && loginToPlay()
-		    }
+				{
+				  	!this.state.search && this.props.s.user.sid && pullHook(this)	
+			    }
+
+			    {
+			    	this.props.s.user.sid && 
+
+		    		<Fragment>
+				        <div className="pro-list">
+							{
+								this.state.data.map(item =>
+								<div className="pro-item" key={item.id} onClick={_=>goTo('产品详情页',{pd_id:item.product_id})}>
+							  		<div className="pro-item-left">
+										<img className="img-size" src={AppCore.HOST+'/'+item.thumb} />
+										<div className="pro-item-pro_id">产品编号: {item.product_id}</div>
+									</div>
+							  		<div className="pro-item-right">
+										<div className="pro-item-name">{item.pd_name}</div>
+										<div className="pro-item-date">发团日期: {item.dep_date}</div>
+										<div className="pro-item-dep_city flex-j-sb">
+											<span>{item.dep_city_id}出发</span>
+											<span>供应商: {item.pd_provider}</span>
+										</div>
+										<div className="pro-item-price flex-j-sb">
+											<img className="img-hot1" src={'img/hot1.png'} />
+											<span style={{fontSize: '.48rem'}}>￥{item.zk_price} <span style={{fontSize: '.373333rem'}}>起</span></span>
+										</div>
+									</div>
+								</div>
+								)
+							}
+						</div>
+					  	{this.state.loading && nonBlockLoading()}
+
+		    		</Fragment>
+			    }
+
+			    {
+			  		!this.props.s.user.sid && loginToPlay()
+			    }
 		    </Page>
 		);
 	}

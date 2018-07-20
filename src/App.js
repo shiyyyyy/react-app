@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component,Fragment } from 'react';
 
 import { Navigator } from 'react-onsenui';
 
 import {setNav} from './util/core';
 import pages from './page';
+
+import {Progress} from './util/com';
 
 
 class App extends Component {
@@ -17,14 +19,17 @@ class App extends Component {
 
   render() {
     return (
-      <Navigator
-        swipeable
-        renderPage={this.renderPage.bind(this)}
-        initialRoute={{
-          page: pages['底栏菜单'],
-          key: '底栏菜单'
-        }}
-      />
+      <Fragment>
+        <Navigator
+          swipeable
+          renderPage={this.renderPage.bind(this)}
+          initialRoute={{
+            page: pages['底栏菜单'],
+            key: '底栏菜单'
+          }}
+        />
+        <Progress/>
+      </Fragment>
     );
   }
 }

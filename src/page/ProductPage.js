@@ -29,7 +29,13 @@ export default class ProductPage extends Component{
 	}
 
 	afterLoad() {
-		loadPdf('http://b2b.tongyeju.com/zs-back/test.pdf',this.refs.canvas,this.refs.pdfCt.offsetWidth);
+		let attach = this.state.data['产品详情'].attach;
+		attach = JSON.parse(attach);
+		if(!attach.length){
+			return;
+		}
+		let url = attach[attach.length-1].save_path;
+		loadPdf(AppCore.HOST+'/'+url,this.refs.canvas,this.refs.pdfCt.offsetWidth);
 	}
 
 	handleChange(key,e) {
@@ -47,7 +53,7 @@ export default class ProductPage extends Component{
 		this.setState({cur_tab_i: i})
 	}
 
-	// 设置modal显示隐藏
+	// 设置modal显示隐藏 和 footer 连动(还有两个按钮的事件没加上)
 	zsModal(){
 		if(this.state.zs_modal || this.state.gys_modal) return;
 		this.setState({zs_modal: true})

@@ -211,7 +211,7 @@ export default class OrderEditPage extends Component{
 					</div>
 				</div>
 				{/* 订单备注 */}
-				<div class="model-box" style={{marginBottom: '1.653333rem'}}>
+				<div class="model-box" style={{marginBottom: '1.493333rem'}}>
 					<div className="box-title">
 						<div className="box-title-text">订单备注</div>
 					</div>

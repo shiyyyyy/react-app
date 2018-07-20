@@ -6,10 +6,10 @@ import {AppCore,resetTo} from '../util/core';
 import {pullHook,loginToPlay} from '../util/com';
 import { connect } from 'react-redux';
 
-import {footer} from '../util/com';
+import {footer,ZS_modal,GYS_modal} from '../util/com';
 
 
-export default class OrderEditPage extends Component{
+export default class ShibaoPage extends Component{
 
 	constructor(props) {
 	    super(props);
@@ -27,6 +27,23 @@ export default class OrderEditPage extends Component{
 			'订单应收':{receivable: '3388', receivad: '2266', uncollected: '1122' },
 			'订单应转':{receivable: '8848', receivad: '6626', uncollected: '2222' }
 		};
+	}
+
+	// 设置modal显示隐藏 和 footer 连动(还有两个按钮的事件没加上)
+	zsModal(){
+		if(this.state.zs_modal || this.state.gys_modal) return;
+		this.setState({zs_modal: true})
+	}
+	zsModalHide(){
+		this.setState({zs_modal: false})
+	}
+
+	gysModal(){
+		if(this.state.zs_modal || this.state.gys_modal) return;		
+		this.setState({gys_modal: true})		
+	}
+	gysModalHide(){
+		this.setState({gys_modal: false})		
 	}
 
 
@@ -68,11 +85,11 @@ export default class OrderEditPage extends Component{
 						<div className="model-main-box">
 							<div className="model-main-item">
 								<span>姓名: </span>
-								<input type="text" value={this.state.client.name} 
+								<input type="text" value={this.state.client.name} disabled
 								onChange={ e=>this.setState({'client.name':e.target.value}) } /></div>
 							<div className="model-main-item">
 								<span>电话: </span>
-								<input type='number' value={this.state.client.mobile} 
+								<input type='number' value={this.state.client.mobile} disabled
 								onChange={ e => this.setState({'client.mobile':e.target.value}) }/></div>						
 							</div>
 					)}
@@ -91,7 +108,7 @@ export default class OrderEditPage extends Component{
 						<div className="model.main-item-box">
 							<div className="model-main-item">
 								<span>姓名: </span>
-								<input type="text" value={this.state['接单人'].name} 
+								<input type="text" value={this.state['接单人'].name} disabled
 								onChange={ e => this.setState({'接单人["name"]': e.target.value})} /></div>
 						</div>
 					)}
@@ -171,7 +188,7 @@ export default class OrderEditPage extends Component{
 					</div>
 				</div>
 				{/* 订单备注 */}
-				<div class="model-box" style={{marginBottom: '1.653333rem'}}>
+				<div class="model-box" style={{marginBottom: '1.493333rem'}}>
 					<div className="box-title">
 						<div className="box-title-text">订单备注</div>
 					</div>
@@ -184,7 +201,8 @@ export default class OrderEditPage extends Component{
 					</div>
 				</div>
 				{/* 底部 footer */}
-				{footer('orderEdit',this)}
+				{footer('orderEdit',this)}{ZS_modal(this)}{GYS_modal(this)}
+
 		    </Page>
 		);
 	}

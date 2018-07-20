@@ -3,7 +3,7 @@
 $manifest = file_get_contents('build/asset-manifest.json');
 $manifest = json_decode($manifest,true);
 
-$dest = '../zs-app/www';
+$dest = '../'.$argv[1].'/www';
 
 system("rm -rf $dest/static");
 

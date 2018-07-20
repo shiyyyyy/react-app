@@ -99,10 +99,10 @@
     box-shadow: 0px 0px 5px rgba(0,0,0,.3);
     display: flex;
     
-    /* position: fixed;
+    position: fixed;
     bottom: 0;
     right: 0;
-    left: 0; */
+    left: 0;
 }
 .order-edit-footer > div{
     flex: 1;
@@ -137,4 +137,11 @@
 .order-edit-footer-submit{
     font-size: .373333rem;
     background-color: #6FC5D8;
+}
+
+/*  */
+.cell-right span{
+    height: 100%;
+    padding-right: .64rem;
+    display: inline-block;
 }

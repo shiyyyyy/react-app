@@ -12,7 +12,12 @@
 }
 .doc-title{
     font-size: .373333rem;
-    padding-left: .426667rem;
+    padding-left: .373333rem;
+    padding-top: .32rem;
+    padding-bottom: .32rem;
+    line-height: .533333rem;
+    background-color: #e7f2f4;
+    border-left: 1px solid #71C7D8;
 }
 .doc-main{
     font-size: .32rem;
@@ -53,6 +58,14 @@
     box-sizing: border-box;
     display: inline-block;
 }
+.cell-left-6{
+    width: 2.933333rem;
+    color: #696969;
+    padding-left: .426667rem;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
 
 /* 应付明细 */
 .doc-main-cell-flex-3{
@@ -76,7 +89,15 @@
 }
 
 /* 单据备注 */
-
+.cell-right-wrap{
+    -ms-flex: 1 1;
+    flex: 1 1;
+    padding-right: .426667rem;
+    box-sizing: border-box;
+    white-space: normal;
+    line-height: .533333rem;
+    padding: .213333rem .426667rem .213333rem 0;
+}
 
 
 /* 审批记录 */
@@ -143,7 +164,7 @@
 .doc-approve-btn-box button{
     width: 65%;
     height: 1.066667rem;
-    font-size: .48rem;
+    font-size: .426667rem;
     color: #fff;
     /* line-height: 1.066667rem; */
     background: #71C7D8;

@@ -4,13 +4,11 @@ import { Input,ProgressCircular,Icon, Page, Modal } from 'react-onsenui';
 
 import {AppCore,clickToLog,resetTo,post,encUrl,trigger,store} from '../util/core';
 
-import {progress} from '../util/com';
-
 import { connect } from 'react-redux';
 
 import '../css/LoginPage.css'
 
-class LoginPage extends Component{
+export default class LoginPage extends Component{
 	constructor(props) {
 	    super(props);
 	    this.state = {
@@ -45,18 +43,36 @@ class LoginPage extends Component{
 		);
 	}
 
+	goTest(){
+		let page = this;
+	    page.click_history.push(new Date().getTime());
+	    if (page.click_history.length >= 5) {
+	        let interval = page.click_history[4] - page.click_history[0];
+	        if (interval < 2000) {
+	        	AppCore.HOST = 'http://b2b.tongyeju.com/zs-back';
+	            page.setState({testing:true});
+	        }
+	        page.click_history.splice(0, page.click_history.length);
+	    }
+	}
+
 
 	render(){
 		return (
 			<Page 
-				renderToolbar={_=>this.renderToolbar()} 
-				renderModal={_=>progress(this)}>
+				renderToolbar={_=>this.renderToolbar()} >
 
-			  <div className="login">
+			    <div className="login">
 					<div className="login-top-bg">
-						<img src="img/avatar.png" className="user-img" />
+						<img src="img/avatar.png" className="user-img" onClick={_=>this.goTest()} />
+						{
+							AppCore.HOST == 'http://b2b.tongyeju.com/zs-back' && 
+							<p>已进入测试模式</p>
+						}
+						
 					</div>
 					<div className="login-input-box">
+
 						<p>
 							<img src="img/user.png"/>
 			    	  		<input value={this.state.account} onChange={ e=>this.setState({account:e.target.value}) } 
@@ -71,11 +87,9 @@ class LoginPage extends Component{
 							<button onClick={_=>this.login()}>登录</button>
 						</div>
 					</div>
-			  </div>
+			    </div>
 			  
 			</Page>
 		);
 	}
 }
-
-export default connect(s=>({s:s}))(LoginPage)

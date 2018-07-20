@@ -8,7 +8,7 @@ import stateTransfer from '../state';
 import {updateEnum} from './data';
 
 const pageSize = 10;
-const loadDelay = 500;
+const loadDelay = 300;
 
 let i =0;
 
@@ -127,7 +127,7 @@ export function post(url, body) {
                 error('网络连接失败');
             }
         ).then(
-            r=>{r==='保持等待' || trigger('取消等待')}
+            r => r!=='保持等待' && store.getState().progress && trigger('取消等待')
         );
     });
 }
@@ -298,11 +298,15 @@ export function loadIfEmpty(view,done) {
     if(!AppCore.sid || view.state.loading || view.state.filled){
         return;
     }
-    view.setState({loading:true});
     reload(view,done);
 }
 
 export function reload(view,done) {
+    view.setState({loading:true});
+    setTimeout(_=>_reload(view,done),loadDelay);
+}
+
+export function reloadSilent(view,done) {
     setTimeout(_=>_reload(view,done),loadDelay);
 }
 

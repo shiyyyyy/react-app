@@ -156,10 +156,10 @@ class HomePage extends Component{
 					<div className="content-item-top"><img src={AppCore.HOST+'/'+item.img} className="img-size"></img></div>
 					<div className="content-item-bottom">
 						<div className="flex-j-sb line-h-40">
-							<span style={{fontSize: '.48rem', fontWeight: 'bold'}}>￥{item.zk_price * 1}</span>
-							<span style={{fontSize: '.373333rem', color: '#666'}}>{item.dep_date}</span>
+							<span style={{fontSize: '.426667rem', fontWeight: 'bold'}}>￥{item.zk_price * 1}</span>
+							<span style={{fontSize: '.32rem', color: '#666'}}>{item.dep_date}</span>
 						</div>
-						<div className="text-overflow-2" style={{fontSize: '.373333rem', width: '100%'}}>{item.pd_name}</div>
+						<div className="text-overflow-2" style={{fontSize: '.32rem', width: '100%'}}>{item.pd_name}</div>
 					</div>
 				</div>
 			))}

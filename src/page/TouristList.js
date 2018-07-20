@@ -6,7 +6,7 @@ import {Page} from 'react-onsenui';
 import {footer} from '../util/com';
 
 
-export default class OrderEditPage extends Component{
+export default class TouristList extends Component{
 
 	constructor(props) {
 	    super(props);
