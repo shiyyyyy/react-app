@@ -203,25 +203,17 @@
 /* footer */
 .pro-footer-zw{
     font-size: .373333rem;
+    line-height: 1.173333rem;
     background-color: #F78A16;
 }
 
 .pro-footer-sb{
     font-size: .373333rem;
+    line-height: 1.173333rem;
     background-color: #D0021B;
 }
 
 /* --------------------------  zs-modal 总社弹窗  --------------------------------- */
-.zs-modal{
-    padding: 5.44rem .64rem 5.573333rem .64rem;
-    background-color: rgba(0,0,0, .4);
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    top: 0;
-    z-index: 1;
-}
 .zs-popup{
     width: 100%;
     height: 100%;
@@ -231,6 +223,7 @@
 }
 .zs-popup-avatar{
     width: 1.493333rem;
+    height: 1.493333rem;
     margin: .533333rem 0 .32rem;
     border-radius: 50%;
     overflow: hidden;
@@ -256,7 +249,7 @@
     margin: .533333rem 0 .64rem;
     display: inline-block;
 }
-.zs-popup-btn a{
+.zs-popup-btn span{
     width: 100%;
     height: 100%;
     color: #fff;
@@ -325,6 +318,8 @@
     justify-content: space-between;
   }
   .calender-body-date-week-item{
+      border: 1px solid #fff;
+      box-sizing: border-box;
       flex: 1;
       position: relative;
   }
@@ -345,32 +340,40 @@
   /* 非当前月  非当前月不显示团期 */
   .not-cur-month{
     color: #ccc;
+    background-color: #fff;
   }
   /*  */
   .main-seat-surplus{
     font-size: .266667rem;
+    color: #6FC5D8;
     display: inline-block;
     margin: .266667rem 0 .106667rem 0;
   }
-  .active-main-seat-surplus{
+  /* .active-main-seat-surplus{
     color: #6FC5D8;
-  }
+  } */
   .main-zk-price{
     font-size: .266667rem;
-  }
-  .active-main-zk-price{
     color: #db3737;
   }
+  /* .active-main-zk-price{
+    color: #db3737;
+  } */
   /* 存在团期,才能点 */
 .exist{
     font-size: 0;
     width: 100%;
     height: 100%;
+    border: 1px solid #fff;
     position: absolute;
     top: 0;
     left: 0;
     box-sizing: border-box;
     padding-top: .693333rem;
+}
+.active-exist{
+    border: 1px solid #A7DAE5;
+    border-radius: 3px;
 }
   /*  */
   .date {
@@ -442,13 +445,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 1.333333rem;
-
-    z-index: 3000;
   }
   .pdf-ctrl-item-show{
     animation: menu_show 1s 1;

@@ -64,3 +64,14 @@ export const progress = (state = false, action) => {
       return state
   }
 }
+
+export const forceUpdate = (state = {}, action) => {
+  switch (action.type) {
+    case '强制升级':
+      return {way:action.way};
+    case '强制升级开始':
+      return {...state,running:true};
+    default:
+      return state
+  }
+}

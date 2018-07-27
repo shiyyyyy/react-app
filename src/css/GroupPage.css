@@ -1,6 +1,7 @@
 
 /* 顶部搜索 */
 .search-input-box-box{
+    background-color: #6FC5D8;
     margin: 0 !important;
     display: flex;
     align-items: center;
@@ -175,15 +176,16 @@
     margin-right: .32rem;
 }
 .pro-item-pro_id{
-    font-size: .32rem;
-    line-height: .853333rem;
+    height: .533333rem;
+    line-height: .533333rem;
+    font-size: .213333rem;
     color: #fff;
-    background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.8));
     text-align: center;
+    background-color: #48A5FF;
     position: absolute;
+    bottom: 0;
     left: 0;
     right: 0;
-    bottom: 0;
 }
 /* 右侧 */
 .pro-item-right{
@@ -193,23 +195,32 @@
 }
 .pro-item-name{
     width: 100%;
-    font-size: .373333rem;
-    line-height: .426667rem;
-    max-height: .853333rem;
-    overflow: hidden;
-}
-.pro-item-date{
+    height: .853333rem;
     font-size: .32rem;
-    margin: .16rem 0;
-    color: #666;
+    line-height: .426667rem;
+    overflow: hidden;
+    padding-top: .106667rem;
+}
+.pro-item-theme{
+    font-size: .213333rem;
+    color: #6fc5d8;
+    border: 1px solid #6FC5D8;
+    border-radius: .08rem;
+    padding: .053333rem .106667rem;
+    margin-right: .213333rem;
+    display: inline-block;
 }
 .pro-item-dep_city{
-    font-size: .32rem;
+    font-size: .266667rem;
     margin: .16rem 0;
     color: #666;
 }
 .pro-item-price{
-
+    align-items: center;
+}
+.pro-item-gys{
+    font-size: .266667rem;
+    color: #666;
 }
 .img-hot1{
     width: 1.706667rem;

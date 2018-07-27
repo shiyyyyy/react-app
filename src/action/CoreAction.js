@@ -23,4 +23,10 @@ export default {
   '取消等待': () => {
     return {type:'取消等待',progress:false};
   },
+  '强制升级': (way) => {
+    return {type:'强制升级',way:way};
+  },
+  '强制升级开始': () => {
+    return {type:'强制升级开始'};
+  },
 };

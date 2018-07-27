@@ -1,8 +1,9 @@
 import * as ons from 'onsenui';
 import React from 'react';
-import {PullHook,Icon,Modal,Button} from 'react-onsenui';
+import {PullHook,Icon,Modal,Button,Dialog,ProgressBar} from 'react-onsenui';
 import {log,reloadSilent,i18n,resetTo,goTo,AppCore} from './core';
 import { connect } from 'react-redux';
+import { doForceUpdate } from './update';
 
 
 //--------------------------component----------------------------
@@ -19,6 +20,50 @@ export function loginToPlay() {
             </div>
         </div>
     );
+}
+
+function pageCrash() {
+    return (
+        <ons-page>
+            <ons-toolbar>
+              <div className='left'><ons-back-button></ons-back-button></div>
+              <div className="center">崩溃</div>
+            </ons-toolbar>
+            <div className="prompt-login">
+                <div className="prompt-img-box">
+                    <img src="img/prompt-login.png" className="prompt-img" />
+                    <span>页面崩溃了</span><br />
+                    <span>请联系供应商</span>
+                </div>
+            </div>
+        </ons-page>
+    );
+}
+
+export class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null, errorInfo: null };
+  }
+  
+  componentDidCatch(error, errorInfo) {
+    // Catch errors in any components below and re-render with error message
+    this.setState({
+      error: error,
+      errorInfo: errorInfo
+    })
+    // You can also log error messages to an error reporting service here
+  }
+  
+  render() {
+    if (this.state.errorInfo) {
+      // Error path
+      log(this.state.error,this.state.errorInfo.componentStack);
+      return pageCrash();
+    }
+    // Normally, just render children
+    return this.props.children;
+  }  
 }
 
 export function shareWith(view) {
@@ -121,19 +166,20 @@ export function footer(type,view){
 				<img src="img/gys.png" />
 				<span>联系供应商</span>
 			</div>
-			<div className="order-edit-footer-box" onClick={_=>view.zsModal()}>
+			<div className="order-edit-footer-box" onClick={_=>view.zsModal()} style={{lineHeight: '.32rem'}}>
 				<img src="img/zs.png" />
 				<span>联系总社</span>
 			</div>
-            { type == 'product' &&
-			    <div className="pro-footer-zw">占位</div>
-            }{type == 'product' &&
-			    <div className="pro-footer-sb">实报</div>
+            { type == 'group' &&
+			    <div className="pro-footer-zw" onClick={_=>view.holdSeat()}>占位</div>
+            }{type == 'group' &&
+			    <div className="pro-footer-sb" onClick={_=>view.realSignUp()}>实报</div>
             }
-            { type == 'orderEdit' &&
-			    <div className="order-edit-footer-save">临时保存</div>
-            }{type == 'orderEdit' &&
-			    <div className="order-edit-footer-submit">提交时报</div>
+            {/* type == 'orderEdit' &&
+			     <div className="order-edit-footer-save" onClick={_=>view.submit()}>临时保存</div>
+             */}
+            {type == 'orderEdit' &&
+			    <div className="order-edit-footer-submit" onClick={_=>view.submit()}>提交实报</div>
             }
 
 		</div>
@@ -142,7 +188,7 @@ export function footer(type,view){
 
 export function search(){
     return(
-        <ons-toolbar ref="tb">
+        <ons-toolbar>
 			<div className="center search-input-box-box" onClick={_=>goTo('搜索')}>
 			  <div className="search-input-box">
 				  <input className='search-input-box-input' value="" placeholder="搜索"/>
@@ -153,48 +199,71 @@ export function search(){
     )
 }
 
-export function GYS_modal(view){
-    return (
-        // gys-弹窗
-        view.state.gys_modal &&
-        <div className="zs-modal" onClick={_=>view.gysModalHide()}>
-            <div className="zs-popup" onClick={_=>{_.stopPropagation()}}>
-                <div className="zs-popup-avatar">
-                    <img src="img/avatar.png" />
-                </div><br />
-                <div className="zs-popup-info">
-                    <div className="">公司全称: 张阿道夫撒旦法</div>
-                    <div className="">所属部门: 张阿道夫撒旦法</div>
-                    <div className="">员工姓名: 张阿道夫撒旦法</div>
-                    <div className="">手机号码: 13434343434343</div>
-                </div><br />
-                <div className="zs-popup-btn">
-                    <a href="tel:13434343434">拨打电话</a>
-                </div>
-            </div>
-        </div>
+export function footer_ctrl(type ,view){
+    return(
+    <div className="order-edit-footer">
+		<div className="order-edit-footer-box" onClick={_=>view.setState({open_supplier:true})}>
+			<img src="img/gys.png" />
+			<span>联系供应商</span>
+		</div>
+		<div className="order-edit-footer-box" onClick={_=>view.setState({open_op:true})}>
+			<img src="img/zs.png" />
+			<span>联系总社</span>
+		</div>
+	    { type === 'product' && <div className="pro-footer-zw">占位</div>}
+        { type === 'product' && <div className="pro-footer-sb">实报</div>}
+        { type === 'order' && <div className="order-edit-footer-save">临时保存</div>}
+	    { type === 'order' && <div className="order-edit-footer-submit">提交时报</div>}
+	</div>
     )
 }
-export function ZS_modal(view){
+
+export function gys_dialog(view){
+    return (
+        // gys-弹窗
+        <Dialog
+		isOpen={view.state.open_supplier}
+		isCancelable={true}
+		onCancel={_=>view.setState({open_supplier:false})}>
+			<div className="zs-popup">
+			    <div className="zs-popup-avatar">
+			    	<img src="img/avatar.png" />
+			    </div><br />
+			    <div className="zs-popup-info">
+			    	<div className="">公司全称: </div>
+			    	<div className="">所属部门: </div>
+			    	<div className="">员工姓名: </div>
+			    	<div className="">手机号码: </div>
+			    </div><br />
+			    <div className="zs-popup-btn">
+			    	<a href="tel:13584882787">拨打电话</a>
+			    </div>
+			</div>
+		</Dialog>
+    )
+}
+export function zs_dialog(view){
     return (
         // zs-弹窗
-		view.state.zs_modal &&
-		<div className="zs-modal" onClick={_=>view.zsModalHide()}>
-			<div className="zs-popup" onClick={_=>{_.stopPropagation()}}>
-				<div className="zs-popup-avatar">
-					<img src="img/avatar.png" />
-				</div><br />
-				<div className="zs-popup-info">
-					<div className="">所属中心: 张阿道夫撒旦法</div>
-					<div className="">所属部门: 张阿道夫撒旦法</div>
-					<div className="">员工姓名: 张阿道夫撒旦法</div>
-					<div className="">手机号码: 13434343434343</div>
-				</div><br />
-				<div className="zs-popup-btn">
-					<a href="tel:13434343434">拨打电话</a>
-				</div>
-			</div>
-		</div>
+		<Dialog
+		isOpen={view.state.open_op}
+		isCancelable={true}
+		onCancel={_=>view.setState({open_op:false})}>
+			<div className="zs-popup">
+			    <div className="zs-popup-avatar">
+			    	<img src="img/avatar.png" />
+			    </div><br />
+			    <div className="zs-popup-info">
+			    	<div className="">所属中心: </div>
+			    	<div className="">所属部门: </div>
+			    	<div className="">员工姓名: </div>
+			    	<div className="">手机号码: </div>
+			    </div><br />
+			    <div className="zs-popup-btn">
+			    	<a href="tel:13584882787">拨打电话</a>
+			    </div>
+		    </div>
+		</Dialog>
     )
 }
 
@@ -210,6 +279,29 @@ function progress({s}) {
 }
 
 export const Progress = connect(s=>({s:s}))(progress);
+
+export function forceUpdate({s}) {
+    return (
+        <Dialog
+          isOpen={!!s.forceUpdate.way}
+          isCancelable={false}>
+          <div style={{textAlign: 'center', margin: '20px'}}>
+            <p style={{opacity: 0.5}}>{s.forceUpdate.running ? '应用正在升级，请稍等' : '应用需要升级才可使用'}</p>
+            <p style={{height:"20px"}}>
+                { 
+                    s.forceUpdate.running &&
+                    <ProgressBar indeterminate />
+                }
+            </p>
+            <p>
+              <Button disabled={!!s.forceUpdate.running} onClick={_=>doForceUpdate(s.forceUpdate.way)}>升级</Button>
+            </p>
+          </div>
+        </Dialog>
+    );
+}
+
+export const ForceUpdate = connect(s=>({s:s}))(forceUpdate);
 
 export function nonBlockLoading() {
     return (

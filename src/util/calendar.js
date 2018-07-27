@@ -1,13 +1,15 @@
 import React from 'react'
 
 export default class Calendar extends React.Component {
-  constructor() {
+  constructor(props) {
     //继承React.Component
-    super()
+    super(props)
+    this.pre_view = this.props.view
+    this.groups = this.props.groups
     let now = new Date()
     this.state = {
       year: now.getFullYear(),
-      month: now.getMonth(),
+      month: now.getMonth() + 1,
       date: now.getDate(),
     }
     this.state.weeks = this.getWeeks()
@@ -115,38 +117,59 @@ export default class Calendar extends React.Component {
   }
 
   cellClass(cell){
-    return 'week-item-date'+" "+
+    let dep_date = cell.year +"-"+ cell.month +"-"+ cell.date;
+    let match = this.groups.find(i=>i.dep_date===dep_date);
+    return 'week-item-date'+" "+ 
           (this.state.month === (cell.month-0) ? '' : 'not-cur-month')+' '+
-          (this.state.cur_date === (cell.year+'-'+cell.month+'-'+cell.date) ? 'active-week-item-date':'')
+          (match ? 'active-week-item-date':'')
   }
 
   seatClass(cell){
     return 'main-seat-surplus' +' '+ 
-          (this.state.month === (cell.month-0) ? '':'hide')+' '+
-          (this.state.cur_date === (cell.year+'-'+cell.month+'-'+cell.date) ? 'active-main-seat-surplus':'')
+          (this.state.month === (cell.month-0) ? '':'hide')
+          // (this.state.cur_date === (cell.year+'-'+cell.month+'-'+cell.date) ? 'active-main-seat-surplus':'')
   }
 
   zkClass(cell){
     return 'main-zk-price' +' '+ 
-        (this.state.month === (cell.month-0) ? '':'hide')+' '+
-        (this.state.cur_date === (cell.year+'-'+cell.month+'-'+cell.date) ? 'active-main-zk-price':'')
+        (this.state.month === (cell.month-0) ? '':'hide')
+        // (this.state.cur_date === (cell.year+'-'+cell.month+'-'+cell.date) ? 'active-main-zk-price':'')
   }
+  
+  curGroup(cell){
+    let date = cell.year +"-"+ cell.month +"-"+ cell.date;
+    let cur_date = this.state.cur_date
 
+    // let cur_group = this.pre_view.state.data.select_group
+    // let group = 
+    return "calender-body-date-week-item" + " " +
+    ( date === cur_date ?'active-exist':'')
+  }
   renderCell(cell){
     let dep_date = cell.year +"-"+ cell.month +"-"+ cell.date;
-    let match = this.props.groups.find(i=>i.dep_date===dep_date);
+    let group_i;
+    let match = this.groups.find( i => {
+      if(i.dep_date===dep_date){
+        group_i = i.id;
+        return true
+      }else{
+        return false
+      }
+    });
     if(!match){
       return;
     }
     return (
-        <div onClick={_=>this.selectDate(cell)} className={'exist'}>
+        <div onClick={_=>this.selectGroup(cell,group_i)} className='exist'>
             <span className={this.seatClass(cell)}>余 {match.seat_surplus}</span><br />
             <span className={this.zkClass(cell)}>￥{match.zk_price * 1 || 0}</span>
         </div>
     );
   }
 
-  selectDate(cell){
+  selectGroup(cell,group_i){
+    if(!group_i) return
+
     let date = cell.year+'-'+cell.month+'-'+cell.date
     this.setState({cur_date: date})
   }
@@ -180,7 +203,7 @@ export default class Calendar extends React.Component {
                       <div className="calender-body-date-week" key={row[0].year+row[0].month+'-'+i}>
                       {
                         row.map( cell =>
-                          <div className="calender-body-date-week-item" key={cell.year+'-'+cell.month+'-'+cell.date}>
+                          <div className={this.curGroup(cell)} key={cell.year+'-'+cell.month+'-'+cell.date}>
                             <div className={this.cellClass(cell)}>{cell.date}</div>
                             {
                               this.renderCell(cell)

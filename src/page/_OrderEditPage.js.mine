@@ -1,0 +1,237 @@
+import React, { Component } from 'react';
+
+import {Page} from 'react-onsenui';
+
+import {AppCore,resetTo, goTo} from '../util/core';
+import {pullHook,loginToPlay, footer_ctrl,zs_dialog, gys_dialog} from '../util/com';
+import { connect } from 'react-redux';
+
+import '../css/OrderEditPage.css'
+
+import {ProDetail,CustomerInfo,PickSingle,ToursList,OrderReceivable,OrderShould,OrderProfits,OrderNote} from '../util/order'
+
+
+export default class OrderEditPage extends Component{
+
+	constructor(props) {
+	    super(props);
+		this.state = {
+			client:{
+				name:'王大拿',
+				mobile: '13888888888'
+			},
+			'接单人': [{name: '唐马儒'},{name: '唐马儒'},{name: '唐马儒'}],
+				
+			'游客名单': [
+				{name: '汪汪汪',gender:'1',birthday:'1999-09-09',ID_card_type:'身份证', ID_num:'232323199909098888'},
+				{name: '喵喵喵',gender:'2',birthday:'2222-09-09',ID_card_type:'户口本', ID_num:'343434343434343434'},			
+			],
+			'订单应收':{receivable: '3388', receivad: '2266', uncollected: '1122' },
+			'订单应转':{receivable: '8848', receivad: '6626', uncollected: '2222' },
+			'订单备注': '你好我是店主,你买的牛肉去年10月0号的,坏了时'
+		};
+	}
+
+
+	renderToolbar(){
+		return (
+		  	<ons-toolbar>
+		  		<div className='left'><ons-back-button></ons-back-button></div>
+		      	<div className="center">修改订单</div>
+		  	</ons-toolbar>
+		);
+	}
+	renderFixed(){
+		return (
+			<div style={{position: 'absolute',bottom:'0px',left:'0px',right:'0px'}}>
+	    	    { footer_ctrl('order', this) }
+	    	</div>
+		)
+	}
+
+	render(){
+		return (
+			<Page renderToolbar={_=>this.renderToolbar()}
+				  renderFixed={_=>this.renderFixed()}>
+				
+				{/* 产品详情 */}
+				{ <ProDetail view={this.state}> </ProDetail>}
+
+				{/* 客户信息 */}
+				{ <CustomerInfo view={this.state}> </CustomerInfo> }
+				{/* <div className="model-box">
+					<div className="box-title">
+						<div className="box-title-text">客户信息</div>
+						<div className="box-title-operate">
+							<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>选择客户</div>
+							<div className="box-title-operate-item">新增客户</div>
+						</div>
+					</div>
+					<div className="model-main">
+					{this.state['接单人'].map( item => 
+						<div className="model-main-box">
+							<div className="model-main-item">
+								<span>姓名: </span>
+								<input type="text" value={this.state.client.name} 
+								onChange={ e=>this.setState({'client.name':e.target.value}) } /></div>
+							<div className="model-main-item">
+								<span>电话: </span>
+								<input type='number' value={this.state.client.mobile} 
+								onChange={ e => this.setState({'client.mobile':e.target.value}) }/></div>						
+							</div>
+					)}
+					</div>
+				</div> */}
+				{/* 接单人 */}
+				{ <PickSingle view={this.state}> </PickSingle> }
+				{/* <div className="model-box">
+					<div className="box-title">
+						<div className="box-title-text">接单人</div>
+						<div className="box-title-operate">
+							<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>选择客户</div>
+						</div>
+					</div>
+					<div className="model-main">
+					{this.state['接单人'].map( item =>
+						<div className="model.main-item-box">
+							<div className="model-main-item">
+								<span>姓名: </span>
+								<input type="text" value={this.state['接单人'].name} 
+								onChange={ e => this.setState({'接单人["name"]': e.target.value})} /></div>
+						</div>
+					)}
+					</div>
+				</div> */}
+
+				{/* 游客名单 */}
+				{ <ToursList view={this.state}> </ToursList> }
+				{/* <div className="model-box">
+					<div className="box-title">
+						<div className="box-title-text">游客名单</div>
+						<div className="box-title-operate">
+							<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}
+							onClick={this.addYK.bind(this)}>添加游客</div>
+						</div>
+					</div>
+					<div className="model-main">
+					{this.state['游客名单'].map( (item,i) => 
+						<div className="model-main-item-box" onClick={_=>goTo('录入游客名单',item)}>
+							<div className="model-main-item">
+								<span>{i+1}</span> 
+								<span>{item.name}</span> 
+								<span>{item.gender}</span> 
+								<span>{item.birthday}</span>
+								<span>{item.ID_card_type}</span> 
+								<span>{item.ID_num}</span>
+								<i></i>
+							</div>
+						</div>
+					)}
+					</div>
+				</div> */}
+
+				{/* 订单应收 */}
+				{ <OrderReceivable view={this.state}> </OrderReceivable> }
+				{/* <div className="model-box">
+					<div className="box-title">
+						<div className="box-title-text">订单应收</div>
+						<div className="box-title-operate">
+							<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>录入明细</div>
+						</div>
+					</div>
+					<div className="model-main">
+						<div className="model-main-item-box">
+							<div className="model-main-item flex-j-sb">
+							{Object.keys(this.state['订单应收']).map( item => 
+								<strong>
+								{item === 'receivable' ? '应收':''}
+								{item === 'receivad' ? '已收':''}
+								{item === 'uncollected' ? '未收':''}
+								: <e>{this.state['订单应收'][item]}</e></strong>
+							)}
+							</div>
+						</div>
+					</div>
+				</div> */}
+
+				{/* 订单应转 */}
+				{ <OrderShould view={this.state}> </OrderShould> }
+				{/* <div className="model-box">
+					<div className="box-title">
+						<div className="box-title-text">订单应转</div>
+						<div className="box-title-operate">
+							<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>录入明细</div>
+						</div>
+					</div>
+					<div className="model-main">
+						<div className="model-main-item-box">
+							<div className="model-main-item flex-j-sb">
+							{Object.keys(this.state['订单应转']).map( item => 
+								<strong>
+								{item === 'receivable' ? '应转':''}
+								{item === 'receivad' ? '已转':''}
+								{item === 'uncollected' ? '未转':''}
+								: <e>{this.state['订单应转'][item]}</e></strong>
+							)}
+							</div>
+						</div>
+					</div>
+				</div> */}
+
+				{/* 订单利润 */}
+				{ <OrderProfits view={this.state}> </OrderProfits> }
+				{/* <div className="model-box">
+					<div className="box-title">
+						<div className="box-title-text">订单利润</div>
+					</div>
+					<div className="model-main">
+						<div className="model-main-item-box">
+							<div className="model-main-item flex-j-sb">
+							{Object.keys(this.state['订单应转']).map( item => 
+								<strong>
+								{item === 'receivable' ? '应转':''}
+								{item === 'receivad' ? '已转':''}
+								{item === 'uncollected' ? '未转':''}
+								: <e>{this.state['订单应转'][item]}</e></strong>
+							)}
+							</div>
+						</div>
+					</div>
+				</div> */}
+
+				{/* 订单备注 */}
+				{ <OrderNote view={this.state}> </OrderNote> }
+				{/* <div className="model-box" style={{marginBottom: '1.493333rem'}}>
+					<div className="box-title">
+						<div className="box-title-text">订单备注</div>
+					</div>
+					<div className="model-main">
+						<div className="model-main-item-box">
+							<div className="model-main-item">
+								<span style={{fontSize: '.373333rem', color: '#000'}}>申请大床房</span>
+							</div>
+						</div>
+					</div>
+				</div> */}
+				{/* 底部 footer */}
+		        {/* <div className="order-edit-footer">
+					<div className="order-edit-footer-box">
+						<img src="img/gys.png" />
+						<span>联系供应商</span>
+					</div>
+					<div className="order-edit-footer-box">
+						<img src="img/zs.png" />
+						<span>联系总社</span>
+					</div>
+				    <div className="order-edit-footer-save">临时保存</div>
+				    <div className="order-edit-footer-submit">提交时报</div>
+				</div> */}
+
+				{/* 弹窗 */}
+				{ gys_dialog(this) }
+		        { zs_dialog(this) }
+		    </Page>
+		);
+	}
+}
+

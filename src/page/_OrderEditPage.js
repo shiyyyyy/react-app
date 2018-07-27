@@ -16,11 +16,44 @@ class OrderEditPage extends Component{
 
 	constructor(props) {
 	    super(props);
+<<<<<<< .mine
+		this.state = {
+			client:{
+				name:'王大拿',
+				mobile: '13888888888'
+			},
+			'接单人': [{name: '唐马儒'},{name: '唐马儒'},{name: '唐马儒'}],
+				
+			'游客名单': [
+				{name: '汪汪汪',gender:'1',birthday:'1999-09-09',ID_card_type:'身份证', ID_num:'232323199909098888'},
+				{name: '喵喵喵',gender:'2',birthday:'2222-09-09',ID_card_type:'户口本', ID_num:'343434343434343434'},			
+			],
+			'订单应收':{receivable: '3388', receivad: '2266', uncollected: '1122' },
+			'订单应转':{receivable: '8848', receivad: '6626', uncollected: '2222' },
+			'订单备注': '你好我是店主,你买的牛肉去年10月0号的,坏了时'
+		};
+||||||| .r91
+		this.state = {
+			client:{
+				name:'王大拿',
+				mobile: '13888888888'
+			},
+			'接单人': [{name: '唐马儒'},{name: '唐马儒'},{name: '唐马儒'}],
+				
+			'游客名单': [
+				{name: '汪汪汪',gender:'1',birthday:'1999-09-09',ID_card_type:'身份证', ID_num:'232323199909098888'},
+				{name: '喵喵喵',gender:'2',birthday:'2222-09-09',ID_card_type:'户口本', ID_num:'343434343434343434'},			
+			],
+			'订单应收':{receivable: '3388', receivad: '2266', uncollected: '1122' },
+			'订单应转':{receivable: '8848', receivad: '6626', uncollected: '2222' }
+		};
+=======
 		
 		this.state = {'data':{'comment':''},'group_id':props.p.data.id,'inited':false};
 		this.action = props.p.action;
 		let cfg = AppMeta.actions[this.action];
 		this.text = cfg.text;
+>>>>>>> .r92
 	}
 
 	afterLoad(){
@@ -72,10 +105,6 @@ class OrderEditPage extends Component{
 			data['订单参团'].splice(0,1);
 		}	
 		this.setState({data:data});
-	}
-
-	editTourist(item,i){
-		goTo('录入游客名单',{action:'订单选择客户',view:this,item: item,i:i})
 	}
 
 	entryReceivable(){
@@ -134,14 +163,14 @@ class OrderEditPage extends Component{
 								<div className="pro-item-right">
 									<div className="pro-item-name"></div>
 									<div className="pro-item-dep_city flex-j-sb">
-										<span>团期: {this.state.data['订单团队'][0]['dep_date']}</span>
-										<span>供应商:{this.state.data['订单团队'][0]['pd_provider']}</span>
+										<span>团期: 2018-10-01</span>
+										<span>亚美运通</span>
 									</div>
 									<div className="pro-item-price flex-j-sb" style={{fontSize: '.32rem'}}>
-										{/*<span>客户: 张全蛋</span>*/}
-										{/*<span>人数: 2</span>*/}
+										<span>客户: 张全蛋</span>
+										<span>人数: 2</span>
 										{/* <span className={'active-order-state'+(order.state*1)}>{this.state.ord_state[order.state*1]}</span> */}
-										{/*<span>已支付</span>*/}
+										<span>已支付</span>
 									</div>
 								</div>
 							</div>
@@ -153,12 +182,12 @@ class OrderEditPage extends Component{
 						<div className="box-title">
 							<div className="box-title-text">客户信息</div>
 							<div className="box-title-operate">
-								<div onClick={_=>this.selectCstm()} style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} className='box-title-operate-item'>
+								<button onClick={_=>this.selectCstm()} className='alert-dialog-button'>
 					              选择客户
-					            </div>
-					            <div onClick={_=>this.addCstm()} style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} className='box-title-operate-item'>
+					            </button>
+					            <button onClick={_=>this.addCstm()} className='alert-dialog-button'>
 					              新增客户
-					            </div>
+					            </button>
 							</div>
 						</div>
 						<div className="model-main">
@@ -179,9 +208,9 @@ class OrderEditPage extends Component{
 						<div className="box-title">
 							<div className="box-title-text">接单人</div>
 							<div className="box-title-operate">
-								<div onClick={_=>this.selectAssitant()} style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} className='box-title-operate-item'>
+								<button onClick={_=>this.selectAssitant()} className='alert-dialog-button'>
 					              选择接单人
-					            </div>
+					            </button>
 							</div>
 						</div>
 						<div className="model-main">
@@ -206,7 +235,7 @@ class OrderEditPage extends Component{
 						</div>
 						<div className="model-main">
 						{this.state.data['订单参团'].map( (item,i) => 
-							<div className="model-main-item-box" key={i} onClick={_=>this.editTourist(item,i)}>
+							<div className="model-main-item-box" key={i}>
 								<div className="model-main-item">
 									<span>{i+1}</span> 
 									<span>{item.name}</span> 
@@ -214,8 +243,6 @@ class OrderEditPage extends Component{
 									<span>{item.birthday}</span>
 									<span>{Enum.Certificate[item.certificate_type]}</span> 
 									<span>{item.certificate_num}</span>
-									<span>{item.mobile}</span> 
-									<span>{item.comment}</span>
 									<i></i>
 								</div>
 							</div>
@@ -227,7 +254,7 @@ class OrderEditPage extends Component{
 						<div className="box-title">
 							<div className="box-title-text">订单应收</div>
 							<div className="box-title-operate">
-								<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} onClick={_=>this.entryReceivable()}>录入明细</div>
+								<button className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} onClick={_=>this.entryReceivable()}>录入明细</button>
 							</div>
 						</div>
 						<div className="model-main">
@@ -246,7 +273,7 @@ class OrderEditPage extends Component{
 							<div className="box-title">
 								<div className="box-title-text">订单应转</div>
 								<div className="box-title-operate">
-									<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} onClick={_=>this.entrySettleable()}>录入明细</div>
+									<button className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} onClick={_=>this.entrySettleable()}>录入明细</button>
 								</div>
 							</div>
 							<div className="model-main">
@@ -290,9 +317,7 @@ class OrderEditPage extends Component{
 						</div>
 					</div>
 					{/* 底部 footer */}
-					<div className="posi-footer">
-						{footer('orderEdit',this)}
-					</div>
+					{footer('orderEdit',this)}
 					</div>
 				}
 		    </Page>

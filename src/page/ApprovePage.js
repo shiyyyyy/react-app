@@ -1,6 +1,6 @@
 import React, { Component,Fragment } from 'react';
 
-import {Page,AlertDialog} from 'react-onsenui';
+import {Page} from 'react-onsenui';
 
 import {AppCore,resetTo,loadMore,loadIfEmpty,i18n,goTo} from '../util/core';
 import {pullHook,loginToPlay,search,nonBlockLoading} from '../util/com';

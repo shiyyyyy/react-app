@@ -5,7 +5,7 @@ import { Navigator } from 'react-onsenui';
 import {setNav} from './util/core';
 import pages from './page';
 
-import {Progress} from './util/com';
+import {Progress,ForceUpdate} from './util/com';
 
 
 class App extends Component {
@@ -29,6 +29,7 @@ class App extends Component {
           }}
         />
         <Progress/>
+        <ForceUpdate/>
       </Fragment>
     );
   }

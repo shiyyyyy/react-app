@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 
-import {Page} from 'react-onsenui';
+import {Page,Dialog} from 'react-onsenui';
 
 import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit} from '../util/core';
-import {pullHook,loginToPlay, footer_ctrl,zs_dialog, gys_dialog} from '../util/com';
+import {pullHook,loginToPlay} from '../util/com';
 import { connect } from 'react-redux';
 
-
-import '../css/OrderEditPage.css';
+import '../css/OrderEditPage.css'
 import {footer} from '../util/com';
 
-import {ProDetail,CustomerInfo,PickSingle,ToursList,OrderReceivable,OrderShould,OrderProfits,OrderNote} from '../util/order'
-
-class OrderEditPage extends Component{
+class RealSignUpPage extends Component{
 
 	constructor(props) {
 	    super(props);
@@ -23,6 +20,16 @@ class OrderEditPage extends Component{
 		this.text = cfg.text;
 	}
 
+
+	renderToolbar(){
+		return (
+		  	<ons-toolbar>
+		  		<div className='left'><ons-back-button></ons-back-button></div>
+		      	<div className="center">实报</div>
+		  	</ons-toolbar>
+		);
+	}
+
 	afterLoad(){
 		let data = this.state.data;
 		data['订单参团'] = data['订单参团']?data['订单参团']:[];
@@ -31,7 +38,7 @@ class OrderEditPage extends Component{
 		data['订单利润'] = [{'receivable':0,'settleable':0,'profit':0,profit_rate:'NaN'}];
 		data['客户详情'] = data['客户详情']?data['客户详情']:[{short_name:'',full_name:''}];
 		data['接单人']   = data['订单详情'][0]['assitant_id']?{'assitant_id':data['订单详情'][0]['assitant_id']}:{};
-		if(this.action=='修改订单-异部'){
+		if(this.action=='实报订单-异部'){
             data.order_yb = true;
         }else{
            data.order_yb = false;
@@ -51,6 +58,7 @@ class OrderEditPage extends Component{
 	selectAssitant(){
 		goTo('选择项目页',{items:this.state.data['可接单人'],cb:this.selectAssitantDone.bind(this),key:'接单人'})
 	}
+
 
 	selectAssitantDone(value){
 		let data = this.state.data;
@@ -85,6 +93,7 @@ class OrderEditPage extends Component{
 	entrySettleable(){
 		goTo('录入订单应转明细',{view:this,data:this.state.data['订单应转'][0].acc_item,action:'录入订单应转明细'});
 	}
+
 	submit(){
 		let data = this.state.data;
 		data['订单详情'] = [{'assitant_id':data['接单人'].id}];
@@ -92,22 +101,6 @@ class OrderEditPage extends Component{
 		this.setState({data:data});
 		trigger('加载等待');
 	    submit(this,_=>goBack());
-	}
-
-	renderToolbar(){
-		return (
-		  	<ons-toolbar>
-		  		<div className='left'><ons-back-button></ons-back-button></div>
-		      	<div className="center">{this.text}</div>
-		  	</ons-toolbar>
-		);
-	}
-	renderFixed(){
-		return (
-			<div style={{position: 'absolute',bottom:'0px',left:'0px',right:'0px'}}>
-	    	    { footer_ctrl('order', this) }
-	    	</div>
-		)
 	}
 
 	render(){
@@ -222,6 +215,8 @@ class OrderEditPage extends Component{
 						)}
 						</div>
 					</div>
+
+
 					{/* 订单应收 */}
 					<div className="model-box">
 						<div className="box-title">
@@ -289,15 +284,15 @@ class OrderEditPage extends Component{
 							</div>
 						</div>
 					</div>
-					{/* 底部 footer */}
+						{/* 底部 footer */}
 					<div className="posi-footer">
 						{footer('orderEdit',this)}
 					</div>
-					</div>
+				</div>
 				}
 		    </Page>
 		);
 	}
 }
 
-export default connect(s=>({s:s}))(OrderEditPage)
+export default connect(s=>({s:s}))(RealSignUpPage)

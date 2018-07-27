@@ -2,17 +2,10 @@ body {
   font-size: .426667rem;
 }
 
-
-
-.lv1-icon{
-text-align:center;
-border:2px solid #a1a1a1;
-background:#dddddd;
-line-height: 2.5rem;
-width: 2.5rem;
-border-radius: 2.5rem;
-margin:auto;
+.dialog-mask{
+  opacity: 1 !important;
 }
+
 /* ------------------------------- progress ------------------------------------- */
 
 .progress-box{
@@ -34,6 +27,16 @@ margin:auto;
 .flex-j-sb{
   display: flex;
   justify-content: space-between;
+}
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.center-sb{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .hide{
   display: none !important;
@@ -137,6 +140,12 @@ strong{
   font-weight: 100;
 }
 
+.btn-disabled{
+  color: #666 !important;
+  border-color: #ccc !important;
+  background-color: #ccc !important;
+}
+
 /* 分享 样式 */
 .share-box{
   display: flex;
@@ -191,4 +200,12 @@ strong{
 
 .after-list{
   margin: .426667rem auto;
+}
+
+/*  */
+.posi-footer{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }

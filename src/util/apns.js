@@ -2,11 +2,11 @@ import {plugin,hasPlugin,log,AppCore} from './core';
 import {checkNotify} from './perm';
 
 export function apnsInit(){
-    if(!hasPlugin('device','PushNotification')){
+    if(!hasPlugin('PushNotification')){
         return;
     }
 
-    if (plugin('device').platform.toLowerCase() !== 'ios') {
+    if (AppCore.os !== 'ios') {
         return;
     }
 

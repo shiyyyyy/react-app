@@ -1,12 +1,25 @@
-import React, { Component} from 'react';
+import React, { Component,Fragment} from 'react';
 import {log,post,trigger,AppCore,AppMeta,loadIfEmpty,get_req_data,goBack,submit,reload} from '../util/core';
-import {error,nonBlockLoading,info} from '../util/com';
+import {error,nonBlockLoading,info,ErrorBoundary} from '../util/com';
 import { connect } from 'react-redux';
 
 import {Page,Button,Input,AlertDialog} from 'react-onsenui';
 import * as doc from '../util/doc'
 
-class DocPage extends Component{
+export default class DocPageWrap extends Component {
+    constructor(props) {
+    	super(props);
+    }
+
+    render() {
+	  return (
+	  		<ErrorBoundary><DocPageInject p={this.props.p} /></ErrorBoundary>
+	  )
+  }  
+}
+
+
+class DocPageRender extends Component{
 
 	constructor(props) {
 		super(props);
@@ -22,6 +35,10 @@ class DocPage extends Component{
 		      <div className="center">{this.props.p.action}</div>
 		  	</ons-toolbar>
 		);
+	}
+
+	onError(error, errorInfo){
+		this.setState({data:undefined})
 	}
 
 	approve(opinion){
@@ -74,7 +91,7 @@ class DocPage extends Component{
 						{/* 结算信息 */}
 						{
 							this.state.data['资金收款结算信息'] &&
-							doc.billing_info(this.state.data['资金收款结算信息'][0])
+							doc.billing_info(this.state.data['资金收款结算信息'][0],'汇款方名称')
 						}
 
 						{/* 单据备注 */}
@@ -102,7 +119,7 @@ class DocPage extends Component{
 						{/* 结算信息 */}
 						{
 							this.state.data['业务收款结算信息'] &&
-							doc.billing_info(this.state.data['业务收款结算信息'][0])
+							doc.billing_info(this.state.data['业务收款结算信息'][0],'汇款方名称')
 						}
 
 						{/* 订单信息 */}
@@ -151,7 +168,7 @@ class DocPage extends Component{
 						{
 							this.state.data['支出关联单据'] &&
 							// this.state.data['支出关联单据'][0] &&
-							doc.call_documents(this.state.data['支出关联单据'][0])
+							doc.call_documents(this.state.data['支出关联单据'])
 						}
 
 						{/* 结算信息 */}
@@ -176,7 +193,7 @@ class DocPage extends Component{
 						{doc.basis(this.state.data['单据信息'][0])}
 
 						{/* 结算信息 */}
-						{doc.billing_info(this.state.data['支出结算信息'][0])}
+						{doc.billing_info(this.state.data['支出结算信息'][0],'业务支出')}
 
 						{/* 汇款账号 */}
 						{doc.account_info(this.state.data['汇款账号'][0])}
@@ -203,7 +220,7 @@ class DocPage extends Component{
 						{
 							this.state.data['支出关联单据'] &&
 							// this.state.data['支出关联单据'][0] &&
-							doc.call_documents(this.state.data['支出关联单据'][0])
+							doc.call_documents(this.state.data['支出关联单据'])
 						}
 
 						{/* 结算信息 */}
@@ -273,7 +290,7 @@ class DocPage extends Component{
 						{doc.tk_detail(this.state.data['退款订单'])}
 
 						{/*对方账户*/}
-						{doc.to_account_info(this.state.data['对方账户'])}
+						{doc.to_account_info(this.state.data['对方账户'][0])}
 
 						{/* 单据备注 */}
 						{doc.documents_note(this.state.data['单据备注'])}
@@ -297,7 +314,7 @@ class DocPage extends Component{
 						{doc.tk_call_sk(this.state.data['退款调用资金收款'][0])}
 
 						{/*对方账户*/}
-						{doc.to_account_info(this.state.data['对方账户'])}
+						{doc.to_account_info(this.state.data['对方账户'][0])}
 
 						{/* 单据备注 */}
 						{doc.documents_note(this.state.data['单据备注'])}
@@ -323,7 +340,7 @@ class DocPage extends Component{
 						{/*业务退回结算信息*/}
 						{
 							this.state.data['业务退回结算信息'] &&
-							doc.billing_info(this.state.data['业务退回结算信息'][0])
+							doc.billing_info(this.state.data['业务退回结算信息'][0],'汇款方名称')
 						}
 
 						{/*业务退回调用单据*/}
@@ -356,7 +373,7 @@ class DocPage extends Component{
 						{/*资金退回结算信息*/}
 						{
 							this.state.data['资金退回结算信息'] &&
-							doc.billing_info(this.state.data['资金退回结算信息'][0])
+							doc.billing_info(this.state.data['资金退回结算信息'][0],'汇款方名称')
 						}
 
 						{/*资金退回调用单据*/}
@@ -435,7 +452,7 @@ class DocPage extends Component{
 						{doc.basis(this.state.data['调整单据信息'][0])}
 
 						{/* 调整单据 */}
-						{doc.tz_call_doc(this.state.data['调整单据'])}
+						{doc.tz_call_doc(this.state.data['调整单据'][0])}
 
 						{/* 单据备注 */}
 						{doc.documents_note(this.state.data['单据备注'])}
@@ -476,4 +493,4 @@ class DocPage extends Component{
 	}
 }
 
-export default connect(s=>({s:s}))(DocPage)
+const DocPageInject = connect(s=>({s:s}))(DocPageRender)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {Page,Icon} from 'react-onsenui';
-
+import {log,AppCore,AppMeta,loadIfEmpty,goTo,Enum,goBack} from '../util/core';
 
 import {footer} from '../util/com';
 
@@ -9,26 +9,58 @@ import {footer} from '../util/com';
 export default class InputTourist extends Component{
 
 	constructor(props) {
-	    super(props);
+		super(props);
+		
+		this.action = this.props.p.action
+		this.pre_view = this.props.p.view
+		this.item = this.props.p.item
+		this.tourist_index = this.props.p.i
+
 		this.state = {
 			name: '',
-			gender: '1',
+			gender: Enum.Gender[0],
 			birthday: '',
-			id_card_type: '身份证',
-			ID_CARD_TYPE: ['身份证','军官证','户口本'],
-			card_num: '',
-			card_validity: '',
+			certificate_type: '1',
+			certificate_num: '',
 			mobile: '',
-			note: '',
+			comment: '',
 		};
+
+		console.log(Enum.Gender[0])
+		console.log(this)
+	}
+
+	componentWillMount(){
+		if(this.item.name){
+			this.setState({
+				name: this.item.name,
+				gender: this.item.gender || Enum.Gender[0],
+				birthday: this.item.birthday,
+				certificate_type: this.item.certificate_type || Enum.Certificate[0],
+				certificate_num: this.item.certificate_num,
+				mobile: this.item.mobile,
+				comment: this.item.comment,
+			})
+		}
+
+				console.log(Enum.Gender[0])
+		console.log(this)
 	}
 
 	submit(){
-		console.log(this)
+			let addTourist = this.state
+			let data = this.pre_view.state.data
+
+			data['订单参团'][this.tourist_index] = addTourist
+	
+			this.pre_view.setState({data:data})
+			goBack();
 	}
 
 	reset(){
 		console.log(this)
+		console.log(Enum)
+		// goBack()
 	}
 	
     
@@ -46,7 +78,7 @@ export default class InputTourist extends Component{
 		return (
 			<Page renderToolbar={_=>this.renderToolbar()} >
 				
-				<div className="doc-module">
+				<div className="doc-module" style={{marginTop: '0'}}>
                     <div className="doc-main">
                         <div className="doc-main-cell">
 					    	<span className="cell-left-5">游客姓名:</span>
@@ -56,13 +88,13 @@ export default class InputTourist extends Component{
                         <div className="doc-main-cell">
 					    	<span className="cell-left-5">游客性别:</span>
 							<span className="cell-right">
-								<span onClick={e=>this.setState({gender: '1'})}>
-								男<Icon className={(this.state.gender === '1' ? "hide":"")+" off-icon" } icon="md-circle-o" />
-								  <Icon className={(this.state.gender === '1' ? "":"hide")+" on-icon" } icon="md-dot-circle-alt" />
+								<span onClick={e=>this.setState({gender: Enum.Gender[0]})}>
+								男<Icon className={(this.state.gender === Enum.Gender[0] ? "hide":"")+" off-icon" } icon="md-circle-o" />
+								  <Icon className={(this.state.gender === Enum.Gender[0] ? "":"hide")+" on-icon" } icon="md-dot-circle-alt" />
 								</span>
-								<span onClick={e=>this.setState({gender: '2'})}>
-								女<Icon className={(this.state.gender === '1' ? "":"hide")+" off-icon" } icon="md-circle-o" />
-								  <Icon className={(this.state.gender === '1' ? "hide":"")+" on-icon" } icon="md-dot-circle-alt" />
+								<span onClick={e=>this.setState({gender: Enum.Gender[1]})}>
+								女<Icon className={(this.state.gender === Enum.Gender[0] ? "":"hide")+" off-icon" } icon="md-circle-o" />
+								  <Icon className={(this.state.gender === Enum.Gender[0] ? "hide":"")+" on-icon" } icon="md-dot-circle-alt" />
 								</span>
 							</span>
 					    </div>
@@ -74,9 +106,10 @@ export default class InputTourist extends Component{
                         <div className="doc-main-cell">
 					    	<span className="cell-left-5">证件类型:</span>
                             <span className="cell-right">
-                                <select onChange={e=>this.setState({id_card_type: e.target.value})}>
-									{this.state.ID_CARD_TYPE.map( (item,i) => 
-										<option value={item} key={i}>{item}</option>
+                                <select onChange={e=>this.setState({certificate_type: e.target.value})}>
+									{Object.keys(Enum.Certificate).map( (item,i) => 
+										<option value={item} key={i} 
+										selected={ Enum.Certificate[item] === this.props.p.certificate_type }>{Enum.Certificate[item]}</option>
 									)}
                                 </select>
                             </span>
@@ -84,13 +117,7 @@ export default class InputTourist extends Component{
                         <div className="doc-main-cell">
 					    	<span className="cell-left-5">证件号码:</span>
 							<span className="cell-right">
-								<input type="text" value={this.state.card_num} onChange={e=>this.setState({card_num: e.target.value})} />
-							</span>
-					    </div>
-                        <div className="doc-main-cell">
-					    	<span className="cell-left-5">证件有效期:</span>
-							<span className="cell-right">
-								<input type="date" value={this.state.card_validity} onChange={e=>this.setState({card_validity: e.target.value})} />
+								<input type="text" value={this.state.certificate_num} onChange={e=>this.setState({certificate_num: e.target.value})} />
 							</span>
 					    </div>
                         <div className="doc-main-cell">
@@ -102,7 +129,7 @@ export default class InputTourist extends Component{
                         <div className="doc-main-cell">
 					    	<span className="cell-left-5">添加备注:</span>
 							<span className="cell-right">
-								<input type="text" value={this.state.note} onChange={e=>this.setState({note: e.target.value})} />
+								<input type="text" value={this.state.comment} onChange={e=>this.setState({comment: e.target.value})} />
 							</span>
 					    </div>
                     </div>
@@ -112,9 +139,6 @@ export default class InputTourist extends Component{
                     <div className="enter-tour-list-btn-default" onClick={this.reset.bind(this)}>取消</div>
                     <div className="enter-tour-list-btn-submit" onClick={this.submit.bind(this)}>确定</div>
 				</div>
-				{/* 底部 footer */}
-				{/* {footer('临时保存','提交时报','order-edit-footer-save','order-edit-footer-submit')} */}
-
 		    </Page>
 		);
 	}

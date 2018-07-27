@@ -4,12 +4,12 @@ import {Page} from 'react-onsenui';
 
 
 import {footer} from '../util/com';
-
+import {AppCore,resetTo, goTo} from '../util/core';
 
 export default class TouristList extends Component{
 
 	constructor(props) {
-	    super(props);
+		super(props);
 		this.state = {
 			client:{
 				name:'王大拿',
@@ -44,7 +44,7 @@ export default class TouristList extends Component{
 					{/* 订单页面 HTML */}
 					<div className="order-item" style={{paddingBottom: '1.013333rem'}}>
 						<div className="order-number">
-							<span style={{fontSize:'.373333rem'}}>订单号:RP-12334324</span>
+							<span style={{fontSize:'.373333rem'}}>订单号: D0 12334324</span>
 							<span style={{color:'#9E9E9E', fontSize:'.32rem'}}>门管中心-潘家园门市-李阿斯蒂芬</span>
 						</div>
 						<div className="order-main">
@@ -76,15 +76,12 @@ export default class TouristList extends Component{
 					<div className="box-title">
 						<div className="box-title-text">游客名单</div>
 						<div className="box-title-operate">
-							<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-							<img src="img/jia.png" style={{width:'.64rem', height: '.64rem'}} /></div>
-							<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-							<img src="img/jian.png" style={{width:'.64rem', height: '.64rem'}} /></div>
+							<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>添加游客</div>
 						</div>
 					</div>
 					<div className="model-main">
 					{this.state['游客名单'].map( (item,i) => 
-						<div className="model-main-item-box">
+						<div className="model-main-item-box" onClick={_=>goTo('录入游客名单')}>
 							<div className="model-main-item">
 								<span>{i+1}</span> 
 								<span>{item.name}</span> 

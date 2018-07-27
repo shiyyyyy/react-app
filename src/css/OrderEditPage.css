@@ -24,13 +24,12 @@
     align-items: center;
 }
 .box-title-operate-item{
-    width: 1.733333rem;
-    height: .533333rem;
     line-height: .533333rem;
     color: #999;
     border: 1px solid #999;
     border-radius: .106667rem;
     margin-left: .426667rem;
+    padding: 1px 5px;
 }
 .model-main{
 
@@ -98,11 +97,6 @@
     background-color: #fff;
     box-shadow: 0px 0px 5px rgba(0,0,0,.3);
     display: flex;
-    
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    left: 0;
 }
 .order-edit-footer > div{
     flex: 1;
@@ -129,6 +123,7 @@
     color: #fff;
     box-shadow: 0px 0px 5px rgba(0,0,0,.2);
 }
+
 .order-edit-footer-save{
     font-size: .373333rem;
     background-color: #88D6E8;

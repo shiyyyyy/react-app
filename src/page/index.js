@@ -17,6 +17,14 @@ import ReservePage from './ReservePage';
 import Search from './Search';
 
 import DocPage from './DocPage';
+import HoldSeatPage from './HoldSeatPage';
+import RealSignUpPage from './RealSignUpPage';
+import OrderSelectCstmPage from './OrderSelectCstmPage';
+import NewCstmPage from './NewCstmPage';
+import OrderReceivableDetail from './OrderReceivableDetail';
+import OrderSettleableDetail from './OrderSettleableDetail';
+
+import SelectItemPage from './SelectItemPage';
 
 
 export default {
@@ -38,7 +46,19 @@ export default {
 	'占位': ReservePage,
 	'搜索': Search,
 
-	'单据审批页': DocPage,
+	//团
+	'占位订单':HoldSeatPage,
+	'实报订单-异部':RealSignUpPage,
+	'实报订单-同部':RealSignUpPage,
+	'修改订单-异部':OrderEditPage,
+	'修改订单-同部':OrderEditPage,
+	'订单选择客户':OrderSelectCstmPage,
+	'录入订单应收明细':OrderReceivableDetail,
+	'录入订单应转明细':OrderSettleableDetail,
 
+	'单据审批页': DocPage,
+	'选择项目页': SelectItemPage,
 	
+	'占位新增客户':NewCstmPage,
+	'订单新增客户':NewCstmPage,
 };

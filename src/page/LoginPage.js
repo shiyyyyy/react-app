@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Input,ProgressCircular,Icon, Page, Modal } from 'react-onsenui';
 
-import {AppCore,clickToLog,resetTo,post,encUrl,trigger,store} from '../util/core';
+import {AppCore,clickToLog,resetTo,post,encUrl,trigger,store,testing,goTest} from '../util/core';
 
 import { connect } from 'react-redux';
 
@@ -49,7 +49,7 @@ export default class LoginPage extends Component{
 	    if (page.click_history.length >= 5) {
 	        let interval = page.click_history[4] - page.click_history[0];
 	        if (interval < 2000) {
-	        	AppCore.HOST = 'http://b2b.tongyeju.com/zs-back';
+	        	goTest();
 	            page.setState({testing:true});
 	        }
 	        page.click_history.splice(0, page.click_history.length);
@@ -66,8 +66,8 @@ export default class LoginPage extends Component{
 					<div className="login-top-bg">
 						<img src="img/avatar.png" className="user-img" onClick={_=>this.goTest()} />
 						{
-							AppCore.HOST == 'http://b2b.tongyeju.com/zs-back' && 
-							<p>已进入测试模式</p>
+							testing() && 
+							<p>已进入测试模式。若要退出测试，重启APP</p>
 						}
 						
 					</div>

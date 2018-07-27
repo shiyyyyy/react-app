@@ -1,37 +1,49 @@
 import moment from 'moment';
 import pages from '../page';
-import {actions} from '../action';
-import {error} from './com';
+import { actions } from '../action';
+import { error } from './com';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import stateTransfer from '../state';
-import {updateEnum} from './data';
+import { updateEnum } from './data';
 
 const pageSize = 10;
 const loadDelay = 300;
 
-let i =0;
+let i = 0;
 
 export const Enum = {
-    Doc:{1:['业务收款单','receipt'][i]
-                ,2:['业务支出单','pay'][i]
-                ,3:['业务内转单','business internal transfer'][i]
-                ,4:['资金内转单','fund internal transfer'][i]
-                ,5:['业务退款单','receipt refund'][i]
-                ,8:['业务借款单','lend'][i]
-                ,11:['调整单','variable'][i]
-                ,12:['扣款单','deduct'][i]
-                ,13:['资金收款单','fund receipt'][i]
-                ,14:['资金退款单','fund refund'][i]
-                ,15:['资金借款单','fund lend'][i]
-                ,16:['资金支出单','fund pay'][i]
-                ,17:['还款单','repayment'][i]
-                ,18:['工资单','wage'][i]
-                ,19:['资金退回单','fund return'][i]
-                ,20:['业务退回单','yw return'][i]},
-    Opinion:{0:['提交','submit'][i],1:['通过','accept'][i],2:['不通过','reject'][i],3:['取消','cancel'][i],4:['撤销','revoke'][i],5:['通过(越级审批)','leapfrog pass'][i],6:['不通过(越级审批)','leapfrog reject'][i]},
-    Country:{AO:['安哥拉','Angola'][i],AF:['阿富汗','Afghanistan'][i],AL:['阿尔巴尼亚','Albania'][i],DZ:['阿尔及利亚','Algeria'][i],AD:['安道尔共和国','Andorra'][i],AI:['安圭拉岛','Anguilla'][i],AG:['安提瓜和巴布达','Barbuda Antigua'][i],AR:['阿根廷','Argentina'][i],AM:['亚美尼亚','Armenia'][i],AU:['澳大利亚','Australia'][i],AT:['奥地利','Austria'][i],AZ:['阿塞拜疆','Azerbaijan'][i],BS:['巴哈马','Bahamas'][i],BH:['巴林','Bahrain'][i],BD:['孟加拉国','Bangladesh'][i],BB:['巴巴多斯','Barbados'][i],BY:['白俄罗斯','Belarus'][i],BE:['比利时','Belgium'][i],BZ:['伯利兹','Belize'][i],BJ:['贝宁','Benin'][i],BM:['百慕大群岛','Bermuda Is.'][i],BO:['玻利维亚','Bolivia'][i],BW:['博茨瓦纳','Botswana'][i],BR:['巴西','Brazil'][i],BN:['文莱','Brunei'][i],BG:['保加利亚','Bulgaria'][i],BF:['布基纳法索','Burkina-faso'][i],MM:['缅甸','Burma'][i],BI:['布隆迪','Burundi'][i],CM:['喀麦隆','Cameroon'][i],CA:['加拿大','Canada'][i],CF:['中非共和国','Central African Republic'][i],TD:['乍得','Chad'][i],CL:['智利','Chile'][i],CN:['中国','China'][i],CO:['哥伦比亚','Colombia'][i],CG:['刚果','Congo'][i],CK:['库克群岛','Cook Is.'][i],CR:['哥斯达黎加','Costa Rica'][i],CU:['古巴','Cuba'][i],CY:['塞浦路斯','Cyprus'][i],CZ:['捷克','Czech Republic'][i],DK:['丹麦','Denmark'][i],DJ:['吉布提','Djibouti'][i],DO:['多米尼加共和国','Dominica Rep.'][i],EC:['厄瓜多尔','Ecuador'][i],EG:['埃及','Egypt'][i],SV:['萨尔瓦多','EI Salvador'][i],EE:['爱沙尼亚','Estonia'][i],ET:['埃塞俄比亚','Ethiopia'][i],FJ:['斐济','Fiji'][i],FI:['芬兰','Finland'][i],FR:['法国','France'][i],GF:['法属圭亚那','French Guiana'][i],GA:['加蓬','Gabon'][i],GM:['冈比亚','Gambia'][i],GE:['格鲁吉亚','Georgia'][i],DE:['德国','Germany'][i],GH:['加纳','Ghana'][i],GI:['直布罗陀','Gibraltar'][i],GR:['希腊','Greece'][i],GD:['格林纳达','Grenada'][i],GU:['关岛','Guam'][i],GT:['危地马拉','Guatemala'][i],GN:['几内亚','Guinea'][i],GY:['圭亚那','Guyana'][i],HT:['海地','Haiti'][i],HN:['洪都拉斯','Honduras'][i],HK:['香港','Hongkong'][i],HR:['克罗地亚','Croatia'][i],HU:['匈牙利','Hungary'][i],IS:['冰岛','Iceland'][i],IN:['印度','India'][i],ID:['印度尼西亚','Indonesia'][i],IR:['伊朗','Iran'][i],IQ:['伊拉克','Iraq'][i],IE:['爱尔兰','Ireland'][i],IL:['以色列','Israel'][i],IT:['意大利','Italy'][i],JM:['牙买加','Jamaica'][i],JP:['日本','Japan'][i],JO:['约旦','Jordan'][i],KH:['柬埔寨','Kampuchea (Cambodia )'][i],KZ:['哈萨克斯坦','Kazakstan'][i],KE:['肯尼亚','Kenya'][i],KR:['韩国','Korea'][i],KW:['科威特','Kuwait'][i],KG:['吉尔吉斯坦','Kyrgyzstan'][i],LA:['老挝','Laos'][i],LV:['拉脱维亚','Latvia'][i],LB:['黎巴嫩','Lebanon'][i],LS:['莱索托','Lesotho'][i],LR:['利比里亚','Liberia'][i],LY:['利比亚','Libya'][i],LI:['列支敦士登','Liechtenstein'][i],LT:['立陶宛','Lithuania'][i],LU:['卢森堡','Luxembourg'][i],MO:['澳门','Macao'][i],MG:['马达加斯加','Madagascar'][i],MW:['马拉维','Malawi'][i],MY:['马来西亚','Malaysia'][i],MV:['马尔代夫','Maldives'][i],ML:['马里','Mali'][i],MT:['马耳他','Malta'][i],MU:['毛里求斯','Mauritius'][i],MX:['墨西哥','Mexico'][i],MD:['摩尔多瓦','Moldova'][i],MC:['摩纳哥','Monaco'][i],MN:['蒙古','Mongolia'][i],MS:['蒙特塞拉特岛','Montserrat Is.'][i],MA:['摩洛哥','Morocco'][i],MZ:['莫桑比克','Mozambique'][i],NA:['纳米比亚','Namibia'][i],NR:['瑙鲁','Nauru'][i],NP:['尼泊尔','Nepal'][i],NL:['荷兰','Netherlands'][i],NZ:['新西兰','New Zealand'][i],NI:['尼加拉瓜','Nicaragua'][i],NE:['尼日尔','Niger'][i],NG:['尼日利亚','Nigeria'][i],KP:['朝鲜','North Korea'][i],NO:['挪威','Norway'][i],OM:['阿曼','Oman'][i],PK:['巴基斯坦','Pakistan'][i],PA:['巴拿马','Panama'][i],PG:['巴布亚新几内亚','Papua New Cuinea'][i],PY:['巴拉圭','Paraguay'][i],PE:['秘鲁','Peru'][i],PH:['菲律宾','Philippines'][i],PL:['波兰','Poland'][i],PF:['法属玻利尼西亚','French Polynesia'][i],PT:['葡萄牙','Portugal'][i],PR:['波多黎各','Puerto Rico'][i],QA:['卡塔尔','Qatar'][i],RO:['罗马尼亚','Romania'][i],RU:['俄罗斯','Russia'][i],LC:['圣卢西亚','Saint Lueia'][i],VC:['圣文森特岛','Saint Vincent'][i],SM:['圣马力诺','San Marino'][i],ST:['圣多美和普林西比','Sao Tome and Principe'][i],SA:['沙特阿拉伯','Saudi Arabia'][i],SN:['塞内加尔','Senegal'][i],SC:['塞舌尔','Seychelles'][i],SL:['塞拉利昂','Sierra Leone'][i],SG:['新加坡','Singapore'][i],SK:['斯洛伐克','Slovakia'][i],SI:['斯洛文尼亚','Slovenia'][i],SB:['所罗门群岛','Solomon Is.'][i],SO:['索马里','Somali'][i],ZA:['南非','South Africa'][i],ES:['西班牙','Spain'][i],LK:['斯里兰卡','Sri Lanka'][i],SD:['苏丹','Sudan'][i],SR:['苏里南','Suriname'][i],SZ:['斯威士兰','Swaziland'][i],SE:['瑞典','Sweden'][i],CH:['瑞士','Switzerland'][i],SY:['叙利亚','Syria'][i],TW:['台湾省','Taiwan'][i],TJ:['塔吉克斯坦','Tajikstan'][i],TZ:['坦桑尼亚','Tanzania'][i],TH:['泰国','Thailand'][i],TG:['多哥','Togo'][i],TO:['汤加','Tonga'][i],TT:['特立尼达和多巴哥','Trinidad and Tobago'][i],TN:['突尼斯','Tunisia'][i],TR:['土耳其','Turkey'][i],TM:['土库曼斯坦','Turkmenistan'][i],UG:['乌干达','Uganda'][i],UA:['乌克兰','Ukraine'][i],AE:['阿拉伯联合酋长国','United Arab Emirates'][i],GB:['英国','United Kiongdom'][i],US:['美国','United States of America'][i],UY:['乌拉圭','Uruguay'][i],UZ:['乌兹别克斯坦','Uzbekistan'][i],VE:['委内瑞拉','Venezuela'][i],VN:['越南','Vietnam'][i],YE:['也门','Yemen'][i],YU:['南斯拉夫','Yugoslavia'][i],ZW:['津巴布韦','Zimbabwe'][i],ZR:['扎伊尔','Zaire'][i],ZM:['赞比亚','Zambia'][i],},
-    Flow:{0:['未进行','not started'][i],1:['未提交','not submitted'][i],2:['待审批','waiting'][i],3:['拒审批','rejected'][i],4:['审批通过','approved'][i]},
+    Doc: {
+        1: ['业务收款单', 'receipt'][i],
+        2: ['业务支出单', 'pay'][i],
+        3: ['业务内转单', 'business internal transfer'][i],
+        4: ['资金内转单', 'fund internal transfer'][i],
+        5: ['业务退款单', 'receipt refund'][i],
+        8: ['业务借款单', 'lend'][i],
+        11: ['调整单', 'variable'][i],
+        12: ['扣款单', 'deduct'][i],
+        13: ['资金收款单', 'fund receipt'][i],
+        14: ['资金退款单', 'fund refund'][i],
+        15: ['资金借款单', 'fund lend'][i],
+        16: ['资金支出单', 'fund pay'][i],
+        17: ['还款单', 'repayment'][i],
+        18: ['工资单', 'wage'][i],
+        19: ['资金退回单', 'fund return'][i],
+        20: ['业务退回单', 'yw return'][i]
+    },
+    Opinion: { 0: ['提交', 'submit'][i], 1: ['通过', 'accept'][i], 2: ['不通过', 'reject'][i], 3: ['取消', 'cancel'][i], 4: ['撤销', 'revoke'][i], 5: ['通过(越级审批)', 'leapfrog pass'][i], 6: ['不通过(越级审批)', 'leapfrog reject'][i] },
+    Country: { AO: ['安哥拉', 'Angola'][i], AF: ['阿富汗', 'Afghanistan'][i], AL: ['阿尔巴尼亚', 'Albania'][i], DZ: ['阿尔及利亚', 'Algeria'][i], AD: ['安道尔共和国', 'Andorra'][i], AI: ['安圭拉岛', 'Anguilla'][i], AG: ['安提瓜和巴布达', 'Barbuda Antigua'][i], AR: ['阿根廷', 'Argentina'][i], AM: ['亚美尼亚', 'Armenia'][i], AU: ['澳大利亚', 'Australia'][i], AT: ['奥地利', 'Austria'][i], AZ: ['阿塞拜疆', 'Azerbaijan'][i], BS: ['巴哈马', 'Bahamas'][i], BH: ['巴林', 'Bahrain'][i], BD: ['孟加拉国', 'Bangladesh'][i], BB: ['巴巴多斯', 'Barbados'][i], BY: ['白俄罗斯', 'Belarus'][i], BE: ['比利时', 'Belgium'][i], BZ: ['伯利兹', 'Belize'][i], BJ: ['贝宁', 'Benin'][i], BM: ['百慕大群岛', 'Bermuda Is.'][i], BO: ['玻利维亚', 'Bolivia'][i], BW: ['博茨瓦纳', 'Botswana'][i], BR: ['巴西', 'Brazil'][i], BN: ['文莱', 'Brunei'][i], BG: ['保加利亚', 'Bulgaria'][i], BF: ['布基纳法索', 'Burkina-faso'][i], MM: ['缅甸', 'Burma'][i], BI: ['布隆迪', 'Burundi'][i], CM: ['喀麦隆', 'Cameroon'][i], CA: ['加拿大', 'Canada'][i], CF: ['中非共和国', 'Central African Republic'][i], TD: ['乍得', 'Chad'][i], CL: ['智利', 'Chile'][i], CN: ['中国', 'China'][i], CO: ['哥伦比亚', 'Colombia'][i], CG: ['刚果', 'Congo'][i], CK: ['库克群岛', 'Cook Is.'][i], CR: ['哥斯达黎加', 'Costa Rica'][i], CU: ['古巴', 'Cuba'][i], CY: ['塞浦路斯', 'Cyprus'][i], CZ: ['捷克', 'Czech Republic'][i], DK: ['丹麦', 'Denmark'][i], DJ: ['吉布提', 'Djibouti'][i], DO: ['多米尼加共和国', 'Dominica Rep.'][i], EC: ['厄瓜多尔', 'Ecuador'][i], EG: ['埃及', 'Egypt'][i], SV: ['萨尔瓦多', 'EI Salvador'][i], EE: ['爱沙尼亚', 'Estonia'][i], ET: ['埃塞俄比亚', 'Ethiopia'][i], FJ: ['斐济', 'Fiji'][i], FI: ['芬兰', 'Finland'][i], FR: ['法国', 'France'][i], GF: ['法属圭亚那', 'French Guiana'][i], GA: ['加蓬', 'Gabon'][i], GM: ['冈比亚', 'Gambia'][i], GE: ['格鲁吉亚', 'Georgia'][i], DE: ['德国', 'Germany'][i], GH: ['加纳', 'Ghana'][i], GI: ['直布罗陀', 'Gibraltar'][i], GR: ['希腊', 'Greece'][i], GD: ['格林纳达', 'Grenada'][i], GU: ['关岛', 'Guam'][i], GT: ['危地马拉', 'Guatemala'][i], GN: ['几内亚', 'Guinea'][i], GY: ['圭亚那', 'Guyana'][i], HT: ['海地', 'Haiti'][i], HN: ['洪都拉斯', 'Honduras'][i], HK: ['香港', 'Hongkong'][i], HR: ['克罗地亚', 'Croatia'][i], HU: ['匈牙利', 'Hungary'][i], IS: ['冰岛', 'Iceland'][i], IN: ['印度', 'India'][i], ID: ['印度尼西亚', 'Indonesia'][i], IR: ['伊朗', 'Iran'][i], IQ: ['伊拉克', 'Iraq'][i], IE: ['爱尔兰', 'Ireland'][i], IL: ['以色列', 'Israel'][i], IT: ['意大利', 'Italy'][i], JM: ['牙买加', 'Jamaica'][i], JP: ['日本', 'Japan'][i], JO: ['约旦', 'Jordan'][i], KH: ['柬埔寨', 'Kampuchea (Cambodia )'][i], KZ: ['哈萨克斯坦', 'Kazakstan'][i], KE: ['肯尼亚', 'Kenya'][i], KR: ['韩国', 'Korea'][i], KW: ['科威特', 'Kuwait'][i], KG: ['吉尔吉斯坦', 'Kyrgyzstan'][i], LA: ['老挝', 'Laos'][i], LV: ['拉脱维亚', 'Latvia'][i], LB: ['黎巴嫩', 'Lebanon'][i], LS: ['莱索托', 'Lesotho'][i], LR: ['利比里亚', 'Liberia'][i], LY: ['利比亚', 'Libya'][i], LI: ['列支敦士登', 'Liechtenstein'][i], LT: ['立陶宛', 'Lithuania'][i], LU: ['卢森堡', 'Luxembourg'][i], MO: ['澳门', 'Macao'][i], MG: ['马达加斯加', 'Madagascar'][i], MW: ['马拉维', 'Malawi'][i], MY: ['马来西亚', 'Malaysia'][i], MV: ['马尔代夫', 'Maldives'][i], ML: ['马里', 'Mali'][i], MT: ['马耳他', 'Malta'][i], MU: ['毛里求斯', 'Mauritius'][i], MX: ['墨西哥', 'Mexico'][i], MD: ['摩尔多瓦', 'Moldova'][i], MC: ['摩纳哥', 'Monaco'][i], MN: ['蒙古', 'Mongolia'][i], MS: ['蒙特塞拉特岛', 'Montserrat Is.'][i], MA: ['摩洛哥', 'Morocco'][i], MZ: ['莫桑比克', 'Mozambique'][i], NA: ['纳米比亚', 'Namibia'][i], NR: ['瑙鲁', 'Nauru'][i], NP: ['尼泊尔', 'Nepal'][i], NL: ['荷兰', 'Netherlands'][i], NZ: ['新西兰', 'New Zealand'][i], NI: ['尼加拉瓜', 'Nicaragua'][i], NE: ['尼日尔', 'Niger'][i], NG: ['尼日利亚', 'Nigeria'][i], KP: ['朝鲜', 'North Korea'][i], NO: ['挪威', 'Norway'][i], OM: ['阿曼', 'Oman'][i], PK: ['巴基斯坦', 'Pakistan'][i], PA: ['巴拿马', 'Panama'][i], PG: ['巴布亚新几内亚', 'Papua New Cuinea'][i], PY: ['巴拉圭', 'Paraguay'][i], PE: ['秘鲁', 'Peru'][i], PH: ['菲律宾', 'Philippines'][i], PL: ['波兰', 'Poland'][i], PF: ['法属玻利尼西亚', 'French Polynesia'][i], PT: ['葡萄牙', 'Portugal'][i], PR: ['波多黎各', 'Puerto Rico'][i], QA: ['卡塔尔', 'Qatar'][i], RO: ['罗马尼亚', 'Romania'][i], RU: ['俄罗斯', 'Russia'][i], LC: ['圣卢西亚', 'Saint Lueia'][i], VC: ['圣文森特岛', 'Saint Vincent'][i], SM: ['圣马力诺', 'San Marino'][i], ST: ['圣多美和普林西比', 'Sao Tome and Principe'][i], SA: ['沙特阿拉伯', 'Saudi Arabia'][i], SN: ['塞内加尔', 'Senegal'][i], SC: ['塞舌尔', 'Seychelles'][i], SL: ['塞拉利昂', 'Sierra Leone'][i], SG: ['新加坡', 'Singapore'][i], SK: ['斯洛伐克', 'Slovakia'][i], SI: ['斯洛文尼亚', 'Slovenia'][i], SB: ['所罗门群岛', 'Solomon Is.'][i], SO: ['索马里', 'Somali'][i], ZA: ['南非', 'South Africa'][i], ES: ['西班牙', 'Spain'][i], LK: ['斯里兰卡', 'Sri Lanka'][i], SD: ['苏丹', 'Sudan'][i], SR: ['苏里南', 'Suriname'][i], SZ: ['斯威士兰', 'Swaziland'][i], SE: ['瑞典', 'Sweden'][i], CH: ['瑞士', 'Switzerland'][i], SY: ['叙利亚', 'Syria'][i], TW: ['台湾省', 'Taiwan'][i], TJ: ['塔吉克斯坦', 'Tajikstan'][i], TZ: ['坦桑尼亚', 'Tanzania'][i], TH: ['泰国', 'Thailand'][i], TG: ['多哥', 'Togo'][i], TO: ['汤加', 'Tonga'][i], TT: ['特立尼达和多巴哥', 'Trinidad and Tobago'][i], TN: ['突尼斯', 'Tunisia'][i], TR: ['土耳其', 'Turkey'][i], TM: ['土库曼斯坦', 'Turkmenistan'][i], UG: ['乌干达', 'Uganda'][i], UA: ['乌克兰', 'Ukraine'][i], AE: ['阿拉伯联合酋长国', 'United Arab Emirates'][i], GB: ['英国', 'United Kiongdom'][i], US: ['美国', 'United States of America'][i], UY: ['乌拉圭', 'Uruguay'][i], UZ: ['乌兹别克斯坦', 'Uzbekistan'][i], VE: ['委内瑞拉', 'Venezuela'][i], VN: ['越南', 'Vietnam'][i], YE: ['也门', 'Yemen'][i], YU: ['南斯拉夫', 'Yugoslavia'][i], ZW: ['津巴布韦', 'Zimbabwe'][i], ZR: ['扎伊尔', 'Zaire'][i], ZM: ['赞比亚', 'Zambia'][i], },
+    Flow: { 0: ['未进行', 'not started'][i], 1: ['未提交', 'not submitted'][i], 2: ['待审批', 'waiting'][i], 3: ['拒审批', 'rejected'][i], 4: ['审批通过', 'approved'][i] },
+    //发票
+    Invoice:{1:['开票','invoice'][i],3:['借票','invoice lend'][i]},
+    InvoiceState:{1:['待开','making'][i],2:['已开','made'][i],3:['废票','abolish'][i]},
+    InvoiceEditState:{1:['待开','making'][i],2:['已开','made'][i]},
+    InvoiceBusinessType:{1:['出境','exit'][i],2:['入境','enter'][i],3:['国内','domestic'][i],4:['其他','other'][i]},
+    InvoiceType:{1:['普票','common invoice'][i],2:['专票','professional invoice'][i]},
+
+    Certificate:{1:['身份证','Id Card'][i],2:['护照','Passport'][i],3:['台证','Taiwan Entry Permit '][i],4:['港证','Hong Kong Certificate'][i]
+                ,5:['军官证','Military Documents'][i]},
+    Gender:{0:['男','male'][i],1:['女','female'][i]},
 };
 
 export const AppMeta = {};
@@ -43,20 +55,26 @@ export const AppCore = {
     HOST: 'http://b2b.tongyeju.com/zs-back',
     // HOST: 'https://www.bytserp.com/zs-back',
     // HOST: 'http://localhost:8080/zs-back',
+    SHARE_HOST: 'https://www.bytserp.com/exh/'
 };
-
+export function testing() {
+    return AppCore.HOST != 'https://www.bytserp.com/zs-back';
+}
+export function goTest() {
+    AppCore.HOST = 'http://b2b.tongyeju.com/zs-back';
+}
 //-------------------------core----------------------------
 
 const middleware = [thunk];
 if (process.env.NODE_ENV === `development`) {
-  const { logger } = require(`redux-logger`);
-  middleware.push(logger);
+    const { logger } = require(`redux-logger`);
+    middleware.push(logger);
 }
 
 export const store = createStore(
-  stateTransfer,
-  undefined,
-  applyMiddleware(...middleware)
+    stateTransfer,
+    undefined,
+    applyMiddleware(...middleware)
 );
 
 //redux usage:
@@ -72,7 +90,7 @@ export const store = createStore(
 //3. use sharedData : this.props.s.data1  this.props.s.data2 ...
 //4. dispatch event : trigger('事件1')  trigger('事件2')
 
-export function trigger(action,...args) {
+export function trigger(action, ...args) {
     store.dispatch(actions[action](...args));
 }
 //promise hint:
@@ -95,7 +113,7 @@ export function post(url, body) {
         body.sid = AppCore.sid;
     }
 
-    log('[http] '+url);
+    log('[http] ' + url);
 
     return new Promise((rs, rj) => {
         fetch(url, {
@@ -105,15 +123,15 @@ export function post(url, body) {
             r => r.text()
         ).then(
             r => {
-                try{
+                try {
                     r = JSON.parse(r);
-                }catch(e){
+                } catch (e) {
                     error(r);
                     return;
                 }
                 if (!r.success) {
                     if (r.message == -1) {
-                        trigger('更新用户',{});
+                        trigger('更新用户', {});
                         return;
                     }
                     error(r.message);
@@ -127,30 +145,30 @@ export function post(url, body) {
                 error('网络连接失败');
             }
         ).then(
-            r => r!=='保持等待' && store.getState().progress && trigger('取消等待')
+            r => r !== '保持等待' && store.getState().progress && trigger('取消等待')
         );
     });
 }
 
 let navigator;
-export function curRoute(){
-    return navigator.routes[navigator.routes.length-1].key;
+export function curRoute() {
+    return navigator.routes[navigator.routes.length - 1].key;
 }
 
-export function setNav(nav){
+export function setNav(nav) {
     navigator = nav;
 }
 
-export function goTo(key,p) {
+export function goTo(key, p) {
 
-  navigator.pushPage({
-    page: pages[key],
-    key: key,
-    p: p||{}
-  });
+    navigator.pushPage({
+        page: pages[key],
+        key: key,
+        p: p || {}
+    });
 }
 export function goBack() {
-  return navigator.popPage();
+    return navigator.popPage();
 }
 
 export function resetTo(key) {
@@ -159,25 +177,27 @@ export function resetTo(key) {
             resetTo(key, navigator);
         },
         e => {
-            navigator.replacePage({
-                page: pages[key],
-                key: key
-            });
+            if(key != curRoute()){
+                navigator.replacePage({
+                    page: pages[key],
+                    key: key
+                });
+            }
         }
     );
 }
 
-export function share(scene,title,des,thumb,link) {
-    if(!hasPlugin('Wechat')){
+export function share(scene, title, des, thumb, link) {
+    if (!hasPlugin('Wechat')) {
         error('请在手机上使用该功能');
         return;
     }
     scene = plugin('Wechat').Scene[scene];
-    if(scene === undefined){
-        error('不支持分享至'+scene);
+    if (scene === undefined) {
+        error('不支持分享至' + scene);
         return;
     }
-    let param = {scene:scene};
+    let param = { scene: scene };
     param.message = {
         title: title,
         description: des,
@@ -187,17 +207,47 @@ export function share(scene,title,des,thumb,link) {
             webpageUrl: link
         }
     }
-    plugin('Wechat').share(param, 
-        r=>log('[share] ok '+link), 
-        e=>log('[share] failed ' + e)
+    plugin('Wechat').share(param,
+        r => log('[share] ok ' + link),
+        e => log('[share] failed ' + e)
     );
 }
 
 //-------------------------util---------------------------
 export function encUrl(p) {
-    return Object.keys(p)
+    if (!p) {
+        return '';
+    }
+    return Object.keys(p).filter(k=>p[k]!==undefined)
         .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(p[k]))
         .join('&');
+}
+
+function parse_query_string(query) {
+    var vars = query.split("&");
+    var query_string = {};
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        var key = decodeURIComponent(pair[0]);
+        var value = decodeURIComponent(pair[1]);
+        // If first entry with this name
+        if (typeof query_string[key] === "undefined") {
+            query_string[key] = decodeURIComponent(value);
+            // If second entry with this name
+        } else if (typeof query_string[key] === "string") {
+            var arr = [query_string[key], decodeURIComponent(value)];
+            query_string[key] = arr;
+            // If third or later entry with this name
+        } else {
+            query_string[key].push(decodeURIComponent(value));
+        }
+    }
+    return query_string;
+}
+
+export function getQuery() {
+    let query = window.location.search.substring(1);
+    return parse_query_string(query);
 }
 
 export function log(...args) {
@@ -206,7 +256,7 @@ export function log(...args) {
         localStorage.log = '';
     }
     let txt = '';
-    let ts = moment().format('MM-dd hh:mm:ss');
+    let ts = moment().format('MM-DD HH:mm:ss');
     args.forEach(v => {
         txt += ts + '  ' + JSON.stringify(v) + "\n";
     });
@@ -242,221 +292,222 @@ export function plugin(p) {
 
 const eq = {};
 
-export function bind(e,fun) {
-    if(!eq[e]){
+export function bind(e, fun) {
+    if (!eq[e]) {
         eq[e] = [];
     }
     eq[e].push(fun);
 }
 
-export function unbind(e,fun) {
-    if(!eq[e]){
+export function unbind(e, fun) {
+    if (!eq[e]) {
         return;
     }
     let i = eq[e].indexOf(fun);
-    if(i !== -1){
-        eq[e].splice(i,1);
+    if (i !== -1) {
+        eq[e].splice(i, 1);
     }
 }
 
 export function emit(e) {
-    if(!eq[e]){
+    if (!eq[e]) {
         return;
     }
-    eq[e].forEach(f=>f());
+    eq[e].forEach(f => f());
 }
 
-function _loadMore(view,done){
-  
-  if(view.lastIndex == view.state.data.length){
-    view.setState({loading:false});
-    done && done();
-    return;
-  }
+function _loadMore(view, done) {
 
-  view.lastIndex = view.state.data.length;
-  let cfg = get_mod_cfg(view.mod);
-  let url = cfg.read.url + '?' + encUrl({
-        start:view.state.data.length+1,
-        limit:pageSize,
-        mod:view.mod,
-        front_enum:Enum.ver
-  });
-  post(url).then(
-    r => {
-        view.setState({loading:false,data:[...view.state.data,...r.data]},done);
-    }
-  )
-}
+    view.lastIndex = view.state.data.length;
 
-export function loadMore(view,done){
-    view.setState({loading:true});
-    setTimeout(_=>_loadMore(view,done),loadDelay);
-}
+    let param = encUrl({
+        ...view.state.search,
+        start: view.state.data.length + 1,
+        limit: pageSize,
+        mod: view.mod,
+        front_enum: Enum.ver
+    });
 
-export function loadIfEmpty(view,done) {
-    if(!AppCore.sid || view.state.loading || view.state.filled){
-        return;
-    }
-    reload(view,done);
-}
-
-export function reload(view,done) {
-    view.setState({loading:true});
-    setTimeout(_=>_reload(view,done),loadDelay);
-}
-
-export function reloadSilent(view,done) {
-    setTimeout(_=>_reload(view,done),loadDelay);
-}
-
-function _reload(view,done) {
     let url;
-    if(view.url)
-    {
-        url = view.url;
-    }
-    else if(view.mod)
-    {
+    if (view.url) {
+        url = view.url + '?' + param;
+    } else if (view.mod) {
         let cfg = get_mod_cfg(view.mod);
-        url = cfg.read.url+'?'+encUrl( {limit:pageSize,mod:view.mod,front_enum:Enum.ver} );
+        url = cfg.read.url + '?' + param;
     }
-    else if(view.action)
-    {
-        let cfg = AppMeta.actions[view.action];
-        let param = get_read_param(view.action, cfg, view.props.p.data);
-
-        url = cfg.read.url+'?'+encUrl( param );
-    }
-    else
-    {
-        return;
-    }
-    
     post(url).then(
         r => {
-          view.setState({filled:true,loading:false,data:r.data},done);
+            view.setState({ loading: false, data: [...view.state.data, ...r.data] }, done);
         }
     )
 }
 
-export function submit(view,done) {
+export function loadMore(view, done) {
+    if (view.lastIndex == view.state.data.length) {
+        done && done();
+        return;
+    }
+    view.setState({ loading: true });
+    setTimeout(_ => _loadMore(view, done), loadDelay);
+}
+
+export function loadIfEmpty(view, done) {
+    if (!AppCore.sid || view.state.loading || view.state.filled) {
+        return;
+    }
+    reload(view, done);
+}
+
+export function reload(view, done) {
+    view.setState({ loading: true });
+    setTimeout(_ => _reload(view, done), loadDelay);
+}
+
+export function reloadSilent(view, done) {
+    setTimeout(_ => _reload(view, done), loadDelay);
+}
+
+function _reload(view, done) {
+    let url;
+    if (view.url) {
+        url = view.url;
+    } else if (view.mod) {
+        let cfg = get_mod_cfg(view.mod);
+        url = cfg.read.url + '?' + encUrl({...view.state.search, limit: pageSize, mod: view.mod, front_enum: Enum.ver });
+    } else if (view.action) {
+        let cfg = AppMeta.actions[view.action];
+        let param = get_read_param(view.action, cfg, view.props.p.data);
+
+        url = cfg.read.url + '?' + encUrl(param);
+    } else {
+        return;
+    }
+
+    post(url).then(
+        r => {
+            view.setState({ filled: true, loading: false, data: r.data }, done);
+            view.lastIndex = 0;
+        }
+    )
+}
+
+export function submit(view, done) {
     let cfg = AppMeta.actions[view.action];
 
-    post( cfg.submit.url, get_req_data(cfg.submit.data, view.state.data) ).then(
-      r=>{
-        done && done();
-      }
+    post(cfg.submit.url, get_req_data(cfg.submit.data, view.state.data)).then(
+        r => {
+            done && done(r);
+        }
     );
 }
 
 function get_mod_cfg(mod) {
-    
-    if(AppMeta.mods[mod].read){
+
+    if (AppMeta.mods[mod].read) {
         return AppMeta.mods[mod];
     }
 
     let cfg;
     for (var lv1 in AppMeta.menu) {
         for (var lv2 in AppMeta.menu[lv1]) {
-            if(lv2 === mod){
+            if (lv2 === mod) {
                 cfg = AppMeta.menu[lv1][lv2];
                 break;
             }
         }
-        if(cfg){
+        if (cfg) {
             break;
         }
     }
     return cfg;
 }
 
-function get_read_param(action,cfg,data) {
-    var param = {action:action,front_enum:Enum.ver};
+function get_read_param(action, cfg, data) {
+    var param = { action: action, front_enum: Enum.ver };
 
-    if(cfg.mod){
+    if (cfg.mod) {
         param.mod = cfg.mod;
     }
-    if(data && data.search){
-        Object.assign(param,data.search);
+    if (data && data.search) {
+        Object.assign(param, data.search);
     }
 
-    if(cfg.read.data){
+    if (cfg.read.data) {
         Object.assign(param, get_req_data(cfg.read.data, data));
     }
     return param;
 }
 
-function get_req_data(cfg,data){
-    if(!cfg){
+function get_req_data(cfg, data) {
+    if (!cfg) {
         return data;
     }
-    
-    if(typeof(cfg) === 'string'){
+
+    if (typeof(cfg) === 'string') {
         return data[cfg];
     }
     let rst = {};
 
-    Object.keys(cfg).forEach(function(k){
+    Object.keys(cfg).forEach(function(k) {
         let item = cfg[k];
 
         //'订单信息.id'
-        if(item.indexOf('.') > 0){
+        if (item.indexOf('.') > 0) {
 
-            let fd = item.split(' ');//fields
-            let flt = item.split('|');//filter
+            let fd = item.split(' '); //fields
+            let flt = item.split('|'); //filter
 
-            if(fd.length>1){
-                fd[fd.length-1] = fd[fd.length-1].split('|')[0];
-            }else{
+            if (fd.length > 1) {
+                fd[fd.length - 1] = fd[fd.length - 1].split('|')[0];
+            } else {
                 fd = [flt[0]];
             }
-            if(flt.length>1){
+            if (flt.length > 1) {
                 flt = flt[1];
-            }else{
+            } else {
                 flt = undefined;
             }
-            let blk = fd[0].split('.')[0];//block
+            let blk = fd[0].split('.')[0]; //block
             fd[0] = fd[0].split('.')[1];
 
-            let pk;//picked value
-            if(fd.length>1){
-                pk = data[blk].map(function(_item){
+            let pk; //picked value
+            if (fd.length > 1) {
+                pk = data[blk].map(function(_item) {
                     let d = {};
-                    fd.forEach(function(f){
+                    fd.forEach(function(f) {
                         d[f] = _item[f];
                     });
                     return d;
                 });
-            }else{
-                pk = data[blk].map(i=>i[fd[0]]);
+            } else {
+                pk = data[blk].map(i => i[fd[0]]);
             }
 
-            if(flt){//filter : '订单详情.flow_id|first'
-                switch(flt){
+            if (flt) { //filter : '订单详情.flow_id|first'
+                switch (flt) {
                     case 'first':
                         rst[k] = data[blk][0][fd[0]];
                         break;
                     default:
-                        data[blk].forEach(function(_item){
-                            if(_item[flt]){
+                        data[blk].forEach(function(_item) {
+                            if (_item[flt]) {
                                 rst[k] = _item[fd[0]];
                             }
                         });
                         break;
                 }
-            }else{
-                if(k*1 != NaN){//['订单详情.id']无映射
+            } else {
+                if (k * 1 != NaN) { //['订单详情.id']无映射
                     rst[blk] = pk;
-                }else{//['订单详情.id':'id_arr']映射
+                } else { //['订单详情.id':'id_arr']映射
                     rst[k] = pk;
                 }
             }
-        }else{
+        } else {
 
-            if(k*1 != NaN){//['id']无映射
+            if (k * 1 != NaN) { //['id']无映射
                 rst[item] = data[item];
-            }else{//['id':'uid']映射
+            } else { //['id':'uid']映射
                 rst[k] = data[item];
             }
         }
@@ -501,4 +552,3 @@ export const i18n = {
     }
 
 }
-

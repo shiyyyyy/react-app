@@ -1,7 +1,47 @@
 import React from 'react';
 import {Enum} from '../util/core';
+import {appConst} from './const';
 
 import '../css/Doc.css'
+
+function get_doc_id(row){
+	let v = row.id;
+	switch(row.doc_type_id){
+		case appConst.DOC_ORDER_SK:
+		case appConst.DOC_ZJ_SK:
+			return v?'SK0'+v:'';
+		case appConst.DOC_YJ:
+			return v?'YJ0'+v:'';
+		case appConst.DOC_YW_TK:
+		case appConst.DOC_YJ_TK:
+		case appConst.DOC_ZJ_TK:
+			return v?'TK0'+v:'';
+		case appConst.DOC_YW_JK:
+		case appConst.DOC_ZJ_JK:
+			return v?'JK0'+v:'';
+		case appConst.DOC_ACC_ZC:
+		case appConst.DOC_ZJ_ZC:
+			return v?'ZC0'+v:'';
+		case appConst.DOC_YC:
+			return v?'YC0'+v:'';
+		case appConst.DOC_YZ:
+			return v?'YZ0'+v:'';
+		case appConst.DOC_YW_NZ:
+		case appConst.DOC_ZJ_NZ:
+			return v?'NZ0'+v:'';
+		case appConst.DOC_TZ:
+			return v?'TZ0'+v:'';
+		case appConst.DOC_KK:
+			return v?'KK0'+v:'';
+		case appConst.DOC_HK:
+			return v?'HK0'+v:'';
+		case appConst.DOC_GZ:
+			return v?'GZ0'+v:'';
+		case appConst.DOC_YW_TH:
+		case appConst.DOC_ZJ_TH:
+			return v?'TH0'+v:'';
+	}
+}
 
 //  Doc  组件
 // 基础信息组件 1
@@ -14,10 +54,13 @@ export function basis(data){
 					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">单据编号:</span><span className="cell-right">{data.id}</span>
+					<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(data)}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">制单人:</span><span className="cell-right">{data.company_name}-{data.department_name}-{data.employee_name}</span>
+				</div>
+				<div className="doc-main-cell">
+					<span className="cell-left-4">部门编号:</span><span className="cell-right">{data.code}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">结算金额:</span><span className="cell-right">{data.settle_amount} &nbsp; &nbsp; ({data.cn_settle_amount})</span>
@@ -60,12 +103,12 @@ export function fund(data){
 				<div className="doc-main-cell">
 					<span className="cell-left-4">认领人:</span><span className="cell-right">{item.claimed_name}</span>
 				</div>
-				<div className="doc-main-cell-right">
+				<div className="doc-main-cell-right" style={{ borderBottom: '1px solid #F4F8F9' }}>
 					<span>本次收款:{item.amount}</span>
 				</div>
 			</div>
 			)}
-			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) }</div>
+			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100 }</div>
 		</div>
     );
 }
@@ -73,11 +116,14 @@ export function fund(data){
 
 
 // 结算信息组件 (内转单没有这个)
-export function billing_info(data) {
+export function billing_info(data,type) {
     return(
 		<div className="doc-module">
 			<div className="doc-title">结算信息</div>
 			<div className="doc-main">
+				<div className={ (type === '业务支出' ? '':'hide') +" doc-main-cell"}>
+					<span className="cell-left-5">业务类型:</span><span className="cell-right">{Enum.InvoiceBusinessType[data.business_type]}</span>
+				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">结算方式:</span><span className="cell-right">{Enum.SettleWay[data.settle_way_id]}</span>
 				</div>
@@ -86,6 +132,9 @@ export function billing_info(data) {
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">支票号:</span><span className="cell-right">{data.check_number}</span>
+				</div>
+				<div className={ (type === '汇款方名称' ? '':'hide') +" doc-main-cell"}>
+					<span className="cell-left-5">汇款方名称:</span><span className="cell-right">{data.remitter}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">结算币种:</span><span className="cell-right">{Enum.Currency[data.currency_id]}</span>
@@ -138,7 +187,7 @@ export function receivable_detail(data){
 				</div>
 				)
 			}
-			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: {data[0].amount}</div>
+			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: {Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100}</div>
     </div>
     )
 }
@@ -161,12 +210,12 @@ export function payable_detail(data){
 						<span className="cell-left-4">订单号: </span><span className="cell-right">D0{item.order_id}</span> 
 					</div>
 					<div className="doc-main-cell">
-						<span className="cell-left-4">报名人: </span><span className="cell-right">{item.employee_name}</span>
+						<span className="cell-left-4">报名人: </span><span className="cell-right">{item.sign_up_employee_name}</span>
 					</div>
 					<div className="doc-main-cell-flex-3">
 						<strong>应转: {item.settle_amount}</strong> 
 						<strong>已转: {item.settled_amount}</strong>
-						<strong>未转: {item.settle_diff}</strong> 
+				    	<strong>未转: {item.settle_diff}</strong> 
 					</div>
 					<div className="doc-main-cell">
 						<span className="cell-left-4">结算对象: </span><span className="cell-right">{item.settle_obj}</span>
@@ -176,13 +225,13 @@ export function payable_detail(data){
 						<strong>已付: {item.paid}</strong>
 				    	<strong>未付: {item.pay_diff}</strong> 
 					</div>
-					<div className="doc-main-cell-right">
+					<div className="doc-main-cell-right" style={{ borderBottom: '1px solid #F4F8F9' }}>
 						<span>本次支出: {item.amount}</span>					
 		            </div>
 				</div>
 				)
 			}
-			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) }</div>
+			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100 }</div>
     </div>
     )
 }
@@ -242,11 +291,11 @@ export function to_account_info(data){
 export function call_documents(data){
     return(
 		<div className="doc-module">
-			<div className="doc-title">调用单据</div>
+			<div className="doc-title">关联单据</div>
 			{data.map( item => 
 				<div className="doc-main">
-					<div className="doc-main-cell">
-						<span className="cell-left-4">单据编号:</span><span className="cell-right">{item.doc_id}</span>
+					<div className="doc-main-cell">							{/* 这里用的是doc_id而不是id,但是id==doc_id */}
+						<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(item)}</span>
 					</div>
 					<div className="doc-main-cell">
 						<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[item.doc_type_id]}</span>
@@ -267,15 +316,15 @@ export function call_documents(data){
 						<span className="cell-left-4">已用金额:</span><span className="cell-right">{item.used}</span>
 					</div>
 					<div className="doc-main-cell">
-						<span className="cell-left-4">超支金额:</span><span className="cell-right">{item.excess_amount}</span>
+						<span className="cell-left-4">超支金额:</span><span className="cell-right">{ (Math.round( (parseFloat(item.used) + parseFloat(item.amount) - parseFloat(item.settle_amount) ) * 100)/100).toFixed(2) }</span>
 					</div>
 					<div className="doc-main-cell-flex-3">
 					</div>
-					<div className="doc-main-cell-right">本次调用: <span style={{fontSize:'.373333rem'}}>{item.amount}</span></div>
+					<div className="doc-main-cell-right" style={{ borderBottom: '1px solid #F4F8F9' }}>本次调用: <span style={{fontSize:'.373333rem'}}>{item.amount}</span></div>
 				</div>
 				)
 			}
-			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) }</div>
+			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100 }</div>
 		</div>
     )
 }
@@ -313,11 +362,11 @@ export function nz_detail(data){
 					<span>已付/转: {item.paid}</span>
 					<span>未付/转: {item.pay_diff}</span>
 				</div>
-				<div className="doc-main-cell-right"><span>本次支出:{item.amount}</span></div>					
+				<div className="doc-main-cell-right" style={{ borderBottom: '1px solid #F4F8F9' }}><span>本次支出:{item.amount}</span></div>					
 		    </div>
 			)
 		}
-		<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) }</div>
+		<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100 }</div>
     </div>
     )
 }
@@ -431,13 +480,13 @@ export function th_detail(data){
 					<strong>已付:{item.paid}</strong>
 					<strong>未付:{item.pay_diff}</strong>
 				</div>
-				<div className="doc-main-cell-right"> 
+				<div className="doc-main-cell-right" style={{ borderBottom: '1px solid #F4F8F9' }}> 
 					<span>当时支出:{item.amount}</span>
 				</div>
 		    </div>
 			)
 		}
-		<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) }</div>
+		<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100 }</div>
     </div>
     )
 }
@@ -451,8 +500,8 @@ export function tk_call_sk(data){
 				<div className="doc-main-cell">
 					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
 				</div>
-				<div className="doc-main-cell">
-					<span className="cell-left-4">单据编号:</span><span className="cell-right">{data.doc_id}</span>
+				<div className="doc-main-cell">						{/* 这里用的是doc_id而不是id,但是id==doc_id */}
+					<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(data)}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">制单人:</span><span className="cell-right">{data.company_name}-{data.department_name}-{data.employee_name}</span>
@@ -487,7 +536,7 @@ export function th_call_doc(data){
 					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">单据编号:</span><span className="cell-right">{data.id}</span>
+					<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(data)}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">制单人:</span><span className="cell-right">{data.company_name}-{data.department_name}-{data.employee_name}</span>
@@ -502,7 +551,7 @@ export function th_call_doc(data){
 					<span className="cell-left-4">结算金额:</span><span className="cell-right">{data.settle_amount}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">已开票额:</span><span className="cell-right">{Enum.Flow[data.flow]}</span>
+					<span className="cell-left-4">单据审批:</span><span className="cell-right">{Enum.Flow[data.flow]}</span>
 				</div>
 			</div>
 		</div>
@@ -520,7 +569,7 @@ export function hk_call_doc(data){
 					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[item.doc_type_id]}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">单据编号:</span><span className="cell-right">{item.id}</span>
+					<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(item)}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">制单人:</span><span className="cell-right">{item.company_name}-{item.department_name}-{item.employee_name}</span>
@@ -548,10 +597,10 @@ export function hk_call_doc(data){
 				</div>
 				<div className="doc-main-cell-flex-3">
 				</div>
-				<div className="doc-main-cell-right">本次还款: <span style={{fontSize:'.373333rem'}}>{item.amount}</span></div>
+				<div className="doc-main-cell-right" style={{ borderBottom: '1px solid #F4F8F9' }}>本次还款: <span style={{fontSize:'.373333rem'}}>{item.amount}</span></div>
 			</div>
 			)}
-			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) }</div>
+			<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100 }</div>
 		</div>
     )
 }
@@ -560,13 +609,13 @@ export function hk_call_doc(data){
 export function tz_call_doc(data){
     return(
 		<div className="doc-module">
-			<div className="doc-title">借款详情</div>
+			<div className="doc-title">调整单据</div>
 			<div className="doc-main">
 				<div className="doc-main-cell">
 					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">单据编号:</span><span className="cell-right">{data.id}</span>
+					<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(data)}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">制单人:</span><span className="cell-right">{data.company_name}-{data.department_name}-{data.employee_name}</span>
@@ -604,7 +653,7 @@ export function kk_info(data){
 				data.map((item,i)=>
 				<div className="doc-main" key={i}>
 					<div className="doc-main-cell">
-						<span className="cell-left-4">单据编号: </span><span className="cell-right">{item.id}</span> 
+						<span className="cell-left-4">单据编号: </span><span className="cell-right">{get_doc_id(item)}</span> 
 					</div>
 					<div className="doc-main-cell">
 						<span className="cell-left-4">被扣部门: </span><span className="cell-right">{Enum.Department[item.pay_department_id]}</span>

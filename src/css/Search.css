@@ -1,5 +1,6 @@
 /*  ------------------------- header input search--------------------------   */
 .search-input-box-box{
+    background-color: #6FC5D8;
     margin: 0 !important;
     display: flex;
     align-items: center;

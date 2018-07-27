@@ -229,11 +229,13 @@
     font-size: .373333rem;
     color: #77D0E4;
     padding-left: .213333rem;
+    vertical-align: bottom;
 }
 .off-icon{
     font-size: .373333rem;
     color: #999;
     padding-left: .213333rem;
+    vertical-align: bottom;
 }
 
 /*  */

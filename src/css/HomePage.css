@@ -1,4 +1,11 @@
 
+.home-search-bottom {
+    height: .64rem;
+    width: 100%;
+    background-color: #6FC5D8;
+    position: absolute;
+}
+/*  */
 .banber-box{
     width: 100%;
     height: 5.333333rem;
@@ -9,7 +16,7 @@
     text-align: center;
 	font-size: 20px;
 	position: absolute;
-	top: 4.533333rem;
+	top: 3.866667rem;
 	left: 0px;
     right: 0px;
 }
@@ -53,18 +60,6 @@
 }
 
 /* list 样式 */
-.list-item {
-    height: 1.173333rem;
-    line-height: .426667rem;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    padding: .373333rem .426667rem .373333rem .106667rem;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-}
-
 .list-left-border {
     position: absolute;
     left: 5px;
@@ -90,7 +85,7 @@
 /* content item (带img图片) */
 .content-item{
     width: 48.5%;
-    border-radius: .375rem;
+    border-radius: .16rem;
     background-color: #fff;
     box-shadow: 0px 0px 4px #ccc;
     margin-bottom: .32rem;
@@ -101,7 +96,6 @@
 } */
 .content-item:nth-child(odd){
     margin-right: 1%;
-    
 }
 .flex-wrap{
     flex-wrap: wrap;
@@ -109,15 +103,59 @@
 .content-item-top{
     width: 100%;
     height: 3.2rem;
+    position: relative;
+}
+.content-item-top-row{
+    height: .533333rem;
+    line-height: .533333rem;
+    font-size: .213333rem;
+    color: #fff;
+    text-align: center;
+    background-color: #48A5FF;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 .content-item-bottom{
-    height: 2.133333rem;
+    height: 2.373333rem;
     padding: 0 .266667rem;
+    overflow: hidden;
 }
-.line-h-40{
-    line-height: 1.066667rem;
-    
+.content-item-bottom-title{
+    max-height: .853333rem;
+    font-size: .32rem;
+    line-height: .426667rem;
+    margin: .133333rem 0;
+    overflow: hidden;
+}
+.content-item-bottom-groupDate{
+    font-size: .266667rem;
+    color: #666;
+}
+.content-item-bottom-price{
+    line-height: .533333rem;
+    font-size: .426667rem;
+    color: #ed0c0c;
+    font-weight: bold;
+}
+.content-item-bottom-price span{
+    font-size: .32rem;
+    font-weight: normal;
+}
+.content-item-bottom-gys{
+    width: 1.386667rem;
+    height: .533333rem;
+    line-height: .346667rem;
+    font-size: .213333rem;
+    color: #fff;
+    box-sizing: border-box;
+    background-color: #F6AF06;
+    border-radius: .08rem;
+    padding: .106667rem .266667rem;
+    display: inline-block;
+    overflow: hidden;
 }
 .over-hide-y{
     overflow-y: hidden; 

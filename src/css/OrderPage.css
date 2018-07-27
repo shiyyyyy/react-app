@@ -89,15 +89,17 @@
 .order-btn-item{
     width: 1.52rem;
     height: .746667rem;
-    line-height: .746667rem;
     text-align: center;
     border: 1px solid #E6E6E6;
     border-radius: .106667rem;
+    background-color: #fff;
 }
 .order-btn-item:last-child{
     color: #6FC5D8;
     border: 1px solid #6FC5D8;
 }
+
+
 
 
 /* --------------------------- 录入游客列表-- enter-tour-list ------------------------------- */
@@ -175,4 +177,45 @@
     background-color: #6FC5D8;
     margin: .533333rem 0 .64rem;
     display: inline-block;
+}
+
+
+
+/* ---------------------------------  新增客户页面  ------------------------------------- */
+.add-cstm-left{
+    width: 1.706667rem;
+    box-sizing: border-box;
+}
+.add-cstm-right{
+    width: auto;
+    box-sizing: border-box;
+    flex: 1;
+}
+
+/* ---------------------------------  订单选择客户  ------------------------------------- */
+.select-cstm{
+    font-size: .373333rem;
+    background-color: #fff;
+    margin-bottom: .32rem;
+}
+.color-999{
+    color: #999 !important;
+}
+
+/* ---------------------------------  录入名单应转明细  ------------------------------------- */
+.order-set-detail-modal-over{
+    max-height: 10.666667rem;
+    overflow-y: auto;
+    padding: .533333rem .32rem;
+}
+.order-set-detail-modal-cell {
+    border: 1px solid #fff;
+    box-sizing: border-box;
+    padding: 4px;
+}
+.active-order-set-detail-modal-cell{
+    border: 1px solid #6FC5D8;
+}
+.order-set-detail-modal-cell-item{
+    line-height: .533333rem;
 }
