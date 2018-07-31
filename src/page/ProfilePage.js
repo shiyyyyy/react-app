@@ -24,20 +24,23 @@ class ProfilePage extends Component{
 	    post('/Session/logout');
 	}
 
-	pop_msg(e){
-		let url;
-		let pop;
-		if(e.target.checked){
-			url = '/PublicApi/enable_pop_window';
-			pop = 1;
-		}else{
-			url = '/PublicApi/disable_pop_window';
-			pop = 0
-		}
+	on_msg(){
+		let url = '/PublicApi/enable_pop_window';
+		let pop = 1;
+		this.pop_msg(url,pop)
+	}
+	off_msg(){
+		let url = '/PublicApi/disable_pop_window';
+		let pop = 0;
+		this.pop_msg(url,pop)
+	}
+
+	pop_msg(url,pop){
 		trigger('加载等待');
 		post(url).then(
 			r=>{
 				let data = this.state.data;
+				// data['员工数据'][0]['enable_pop_msg'] 0关  1开
 				data['员工数据'][0]['enable_pop_msg'] = pop;
 				this.setState({data:data});
 			}
@@ -74,9 +77,31 @@ class ProfilePage extends Component{
 					}
 				</div>
 			</div>
+			{/* 消息通知 设置 */}
+			{ this.props.s.user.sid &&
+			 <div className="model-box-bald">
+				<div  className="model-box-bald-title">
+					<div className="model-box-bald-title-text">消息通知</div>
+				</div>
+				<div className="model-box-bald-main-msgPrompt">
+					<div className="model-box-bald-main-item-msg" onClick={_=>this.on_msg()}>
+						<Icon className={this.state.data['员工数据'][0]['enable_pop_msg']>0?'on-icon':'hide'} icon="md-dot-circle-alt" />
+						<Icon className={this.state.data['员工数据'][0]['enable_pop_msg']>0?'hide':'off-icon'} icon="md-circle-o" />
+						<img src='img/on-msg.png' />
+						<span>启用</span>
+					</div>
+					<div className="model-box-bald-main-item-msg" onClick={_=>this.off_msg()}>
+						<Icon className={this.state.data['员工数据'][0]['enable_pop_msg']>0?'hide':'on-icon'} icon="md-dot-circle-alt" />
+						<Icon className={this.state.data['员工数据'][0]['enable_pop_msg']>0?'off-icon':'hide'} icon="md-circle-o" />
+						<img src='img/off-msg.png' />
+						<span>停用</span>
+					</div>
+				</div>
+			</div>
+			}
 			{/* 最近订单 */}
 			<div className="model-box-bald">
-				<div  className="model-box-bald-title">
+				<div className="model-box-bald-title">
 					<div className="model-box-bald-title-text">最近订单</div>
 					<div className="model-box-bald-title-more">详情</div>
 				</div>
@@ -126,8 +151,12 @@ class ProfilePage extends Component{
 					</div>
 					<div className="model-box-bald-main-bill-b">
 						<div className="model-box-bald-main-item-myBooks" style={{marginBottom: '0'}}>
-							<img src="img/books5.png" style={{width: '.96rem',height: '.96rem'}} /><br />
+							<img src="img/books5.png" style={{width: '.853333rem',height: '.853333rem'}} /><br />
 							<div><span style={{fontSize:'.266667rem'}}>可用余额</span><br /><span >￥{this.state.data['账户数据'].avail_balance || '0.00'}</span></div>
+						</div>
+						<div className="model-box-bald-main-item-myBooks" style={{marginBottom: '0',color: '#7B94F3'}}>
+							<img src="img/books6.png" style={{width: '.853333rem',height: '.853333rem'}} /><br />
+							<div><span style={{fontSize:'.266667rem'}}>待支金额</span><br /><span >￥{this.state.data['账户数据'].expense_to_be_approved || '0.00'}</span></div>
 						</div>
 						<div className="posi-ab-left"></div>
 						<div className="posi-ab-right"></div>
@@ -136,22 +165,22 @@ class ProfilePage extends Component{
 				</div>
 			</div>
 			{/*设置*/
-				this.props.s.user.sid && 
-				<div className="model-box-bald">
-					<div  className="model-box-bald-title">
-						<div className="model-box-bald-title-text">设置</div>
-					</div>
-					<div className="set-msg-box model-box-bald-main">
-						<div className="set-msg-left">
-							<label className="center"> 消息通知 </label>
-						</div>
-				        <div className="set-msg-right">
-				          <Switch checked={this.state.data['员工数据'][0]['enable_pop_msg']>0?true:false} onChange={e=>this.pop_msg(e)} />
-				        </div>
-				    </div>
-				</div>
+				// this.props.s.user.sid && 
+				// <div className="model-box-bald">
+				// 	<div  className="model-box-bald-title">
+				// 		<div className="model-box-bald-title-text">设置</div>
+				// 	</div>
+				// 	<div className="set-msg-box model-box-bald-main">
+				// 		<div className="set-msg-left">
+				// 			<label> 消息通知 </label>
+				// 		</div>
+				//         <div className="set-msg-right">
+				//           <Switch checked={this.state.data['员工数据'][0]['enable_pop_msg']>0?true:false} onChange={e=>this.pop_msg(e)} />
+				//         </div>
+				//     </div>
+				// </div>
 			}
-			{/* 消息通知 */
+			{/* 
 				this.props.s.user.sid && 
 				<div className="model-box-bald">
 					<div  className="model-box-bald-title">
@@ -176,7 +205,7 @@ class ProfilePage extends Component{
 					}
 					</div>
 				</div>
-			}	  
+			}	   */}
 				  
 		  </Page>
 		);

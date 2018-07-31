@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import {clickToLog,post,AppCore} from '../util/core';
+import {clickToLog,post,AppCore,reload,goBack,goTo} from '../util/core';
 
 import {Carousel,CarouselItem,Page} from 'react-onsenui';
 import { connect } from 'react-redux';
@@ -13,7 +13,15 @@ import '../css/HomePage.css'
 class HomePage extends Component{
 	constructor(props) {
 	    super(props);
-	    this.click_history = [];
+			this.click_history = [];
+			this.p = {
+				key: 'home',
+				placeholder: '请输入产品名称',
+				cb: value =>{
+					//this.setState({search:{pd_name: value, limit: 10}});
+					goBack();
+				}
+			}
 	    this.state = {
 			picIdx: 0,
 			navIdx: 0,
@@ -29,9 +37,10 @@ class HomePage extends Component{
 					10: "蒙古中亚",
 					11: "港澳台",
 					12: "中国",},{
-					13: "全球游轮"}]
+					13: "全球游轮"}],
+			search_value: '',
 		};
-
+		
 	}
 
     onShow() {
@@ -66,6 +75,8 @@ class HomePage extends Component{
 		this.setState(state);
 	}
 
+
+
 	renderFixed() {
 	    // return (
 	    //   <Fab
@@ -78,7 +89,7 @@ class HomePage extends Component{
 	}
 	render(){
 		return (
-		  <Page onShow={_=>this.onShow()} onHide={_=>this.onHide()} renderToolbar={_=>search()} 
+		  <Page onShow={_=>this.onShow()} onHide={_=>this.onHide()} renderToolbar={_=>search(this)} 
 		    renderFixed={this.renderFixed} style={{top:'-2px'}}>
 
 					<div className="home-search-bottom"></div>
@@ -165,7 +176,7 @@ class HomePage extends Component{
 								<div className="content-item-bottom-title">{item.pd_name}</div>
 								<div className="content-item-bottom-groupDate">最近班期: 04/26、06/20</div>
 								<div className="center-sb" style={{ height: '.906667rem'}}>
-									<span className="content-item-bottom-price">￥{item.zk_price * 1}<span>人/起</span></span>
+									<span className="content-item-bottom-price">￥{item.zk_price * 1}<span>起/人</span></span>
 									<span className="content-item-bottom-gys">众信旅游</span>
 								</div>
 							</div>

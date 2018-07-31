@@ -1,9 +1,9 @@
 import React, { Component} from 'react';
 import {log,AppCore,AppMeta,loadIfEmpty,goTo,Enum,goBack} from '../util/core';
-import {error,nonBlockLoading,progress,footer} from '../util/com';
+import {error,nonBlockLoading,progress,footer,sumbitCheck} from '../util/com';
 import { connect } from 'react-redux';
 
-import {Page,Button,Input,Dialog,Select} from 'react-onsenui';
+import {Page,Button,Input,Dialog,Select,Icon} from 'react-onsenui';
 import {addRowDialog,editRowDialog} from '../util/order'
 
 class OrderReceivableDetail extends Component{
@@ -116,7 +116,11 @@ class OrderReceivableDetail extends Component{
 	}
 
 	submit(){
-
+		let rq_field = sumbitCheck(this,AppMeta.actions[this.action]);
+		if(rq_field){
+            error('缺少'+rq_field);
+            return;
+        }
 		let receive_item = this.state.data['应收明细'];
 		let data = this.pre_view.state.data;
 		let receivable =0 ;
@@ -124,6 +128,10 @@ class OrderReceivableDetail extends Component{
 			receivable += + (item.num_of_people * item.unit_price );
 		});
 		data['订单应收'][0] = {receive_item:receive_item,receivable:receivable,received:data['订单应收'][0]['received'],receive_diff:(receivable - data['订单应收'][0]['received'])};
+		let settleable = (data['订单应转']&&data['订单应转'].length>0)?data['订单应转'][0]['settleable']:0;
+		let profit = Math.round((receivable - settleable)*100)/100;
+		let profit_rate = (settleable == 0) ?'NaN':(Math.round((profit/settleable)*10000)/100+'%');
+		data['订单利润'] = [{'receivable':receivable,'settleable':settleable,'profit':profit,'profit_rate':profit_rate}];
 
 		this.pre_view.setState({data:data});
 		goBack();
@@ -133,9 +141,9 @@ class OrderReceivableDetail extends Component{
 
 	render(){
 		return (
-				<Page 
-				renderToolbar={_=>this.renderToolbar()} 
-				>
+			<Page 
+			renderToolbar={_=>this.renderToolbar()} 
+			>
 				{
 					Object.keys(this.state.block_cfg).map(block=>
 					<div className="model-box" key = {block}>
@@ -143,9 +151,11 @@ class OrderReceivableDetail extends Component{
 							<div className="box-title-text">{this.state.block_cfg[block].text}</div>
 							<div className="box-title-operate">
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jia.png" style={{width:'.64rem', height: '.64rem'}} onClick={_=> this.addRow(block)}/></div>
+								<Icon icon="md-plus-circle-o" style={{fontSize: '.64rem', color: '#6FC5D8'}}
+								onClick={() => this.addRow(block)}/></div>
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jian.png" style={{width:'.64rem', height: '.64rem'}} onClick={_=> this.reduceRow(block)}/></div>
+								<Icon icon="md-minus-circle-outline" style={{fontSize: '.64rem', color: '#EE8585'}}
+								onClick={() => this.reduceRow(block)}/></div>
 							</div>
 						</div>
 						<div className="model-main">
@@ -175,7 +185,7 @@ class OrderReceivableDetail extends Component{
 				}
 				{/* 底部 footer */}
 				<div className="doc-btn-box" style={{justifyContent: 'center'}}>
-		            <div className="doc-btn-submit" onClick={_=>this.submit()}>提交</div>
+		    	    <div className="doc-btn-submit" onClick={_=>this.submit()}>提交</div>
 				</div>
 				{
 					this.state.isAdd && this.state.AddBlock &&

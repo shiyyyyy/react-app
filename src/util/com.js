@@ -1,7 +1,7 @@
 import * as ons from 'onsenui';
 import React from 'react';
 import {PullHook,Icon,Modal,Button,Dialog,ProgressBar} from 'react-onsenui';
-import {log,reloadSilent,i18n,resetTo,goTo,AppCore} from './core';
+import {log,reloadSilent,i18n,resetTo,goTo,AppCore,AppMeta,Enum} from './core';
 import { connect } from 'react-redux';
 import { doForceUpdate } from './update';
 
@@ -158,15 +158,49 @@ export function toast(p) {
     return ons.notification.toast(m);
 }
 
+export function sumbitCheck(view,cfg){
+    let rq_empty = false;
+    let blocks = cfg.block.filter(function(item,index){
+        return (!cfg.ro||!cfg.ro[index])&&(!view.block_hide||!view.block_hide[item]||view.block_hide[item]!='1');
+    });
+    blocks.forEach(function(key){
+        let block_cfg = AppMeta.blocks[key];
+        let rq_list = [];
+        Object.keys(block_cfg.list).forEach(function(field){
+            let cfg = block_cfg.list[field];
+            let ro = !cfg.ro ? block_cfg.ro:cfg.ro;
+            if(cfg.rq && !ro){
+                let _cfg = {field:field};
+                if(cfg.type&&Enum[cfg.type]){
+                    _cfg['cfg'] = cfg;
+                }
+                rq_list.push(_cfg);
+            }
+        });
+        let data = view.state.data[key];
+        data.forEach(function(item){
+            rq_list.forEach(function(_cfg){
+                if(!_cfg.cfg&&!item[_cfg.field]&&!rq_empty){
+                    rq_empty = block_cfg.list[_cfg.field].text;
+                }
+                if(_cfg.cfg&&(item[_cfg.field]===undefined||!Enum[_cfg.cfg.type][item[_cfg.field]])){
+                    rq_empty = block_cfg.list[_cfg.field].text;
+                }
+            })
+        });
+    });
+    return rq_empty;
+}
+
 
 export function footer(type,view){
     return(
         <div className="order-edit-footer">
-			<div className="order-edit-footer-box" onClick={_=>view.gysModal()}>
+			<div className="order-edit-footer-box" onClick={_=>view.setState({open_supplier:true})}>
 				<img src="img/gys.png" />
 				<span>联系供应商</span>
 			</div>
-			<div className="order-edit-footer-box" onClick={_=>view.zsModal()} style={{lineHeight: '.32rem'}}>
+			<div className="order-edit-footer-box" onClick={_=>view.setState({open_op:true})} style={{lineHeight: '.32rem'}}>
 				<img src="img/zs.png" />
 				<span>联系总社</span>
 			</div>
@@ -175,28 +209,39 @@ export function footer(type,view){
             }{type == 'group' &&
 			    <div className="pro-footer-sb" onClick={_=>view.realSignUp()}>实报</div>
             }
-            {/* type == 'orderEdit' &&
-			     <div className="order-edit-footer-save" onClick={_=>view.submit()}>临时保存</div>
-             */}
             {type == 'orderEdit' &&
-			    <div className="order-edit-footer-submit" onClick={_=>view.submit()}>提交实报</div>
+			     <div className="order-edit-footer-save" onClick={_=>view.submit()}>临时保存</div>
+             }
+            {(type == 'orderEdit' || type == 'RealSignUp')&&
+			    <div className="order-edit-footer-submit" onClick={_=>view.submitRealSignUp()}>提交实报</div>
             }
 
 		</div>
     )
 }
-
-export function search(){
+//p.placeholder 空白提示
+//p.key localstorage区分
+//p.cb 搜索回调
+export function search(view){
+    let p = view.p
+    let value = view.state.search_value || '';
     return(
         <ons-toolbar>
-			<div className="center search-input-box-box" onClick={_=>goTo('搜索')}>
+			<div className="center search-input-box-box" onClick={_=>goTo('搜索',p)}>
 			  <div className="search-input-box">
-				  <input className='search-input-box-input' value="" placeholder="搜索"/>
-				<img className="search-input-box-img" src="img/search.png" />
+				  <input className='search-input-box-input' value={value} placeholder={p.placeholder}/>
+				<img className={value?"hide":"search-input-box-img"} src="img/search.png" />
+                <Icon className={(value === '' ? 'hide' : '') +' close-search'} icon='md-close-circle'
+				onClick={_=>cancelSearchValue(_,view)} />
 			  </div>
 			</div>
 		</ons-toolbar>
     )
+}
+// 应该放在 core 里的
+export function cancelSearchValue(e,view){
+    e.stopPropagation();
+    view.setState({search_value: ''})
 }
 
 export function footer_ctrl(type ,view){
@@ -210,10 +255,10 @@ export function footer_ctrl(type ,view){
 			<img src="img/zs.png" />
 			<span>联系总社</span>
 		</div>
-	    { type === 'product' && <div className="pro-footer-zw">占位</div>}
-        { type === 'product' && <div className="pro-footer-sb">实报</div>}
-        { type === 'order' && <div className="order-edit-footer-save">临时保存</div>}
-	    { type === 'order' && <div className="order-edit-footer-submit">提交时报</div>}
+	    { type === 'product' && <div className="pro-footer-zw" onClick={_=>view.holdSeat()}>占位</div>}
+        { type === 'product' && <div className="pro-footer-sb" onClick={_=>view.realSignUp()}>实报</div>}
+        { type === 'order' && <div className="order-edit-footer-save" onClick={_=>view.submit()}>临时保存</div>}
+	    { type === 'order' && <div className="order-edit-footer-submit" onClick={_=>view.submit()}>提交时报</div>}
 	</div>
     )
 }
@@ -236,7 +281,7 @@ export function gys_dialog(view){
 			    	<div className="">手机号码: </div>
 			    </div><br />
 			    <div className="zs-popup-btn">
-			    	<a href="tel:13584882787">拨打电话</a>
+			    	<span href="tel:13584882787">拨打电话</span>
 			    </div>
 			</div>
 		</Dialog>
@@ -260,7 +305,7 @@ export function zs_dialog(view){
 			    	<div className="">手机号码: </div>
 			    </div><br />
 			    <div className="zs-popup-btn">
-			    	<a href="tel:13584882787">拨打电话</a>
+			    	<span href="tel:13584882787">拨打电话</span>
 			    </div>
 		    </div>
 		</Dialog>

@@ -2,16 +2,27 @@ import React, { Component,Fragment } from 'react';
 
 import {Page} from 'react-onsenui';
 
-import {AppCore,resetTo,loadMore,loadIfEmpty,i18n,goTo} from '../util/core';
+import {AppCore,resetTo,loadMore,loadIfEmpty,i18n,goTo,reload,goBack} from '../util/core';
 import {pullHook,loginToPlay,search,nonBlockLoading} from '../util/com';
 import { connect } from 'react-redux';
 
 class ApprovePage extends Component{
 
 	constructor(props) {
-	    super(props);
-	    this.state = {state:'initial',data:[]};
+		super(props);
+		
+	    this.state = {state:'initial',data:[], search_value: ''};
 		this.mod = '审批任务';
+
+		this.p = {
+			key: this.mod,
+			placeholder: '请输入标题',
+			cb: value => {
+				this.setState({search_value: value, search:{ limit: 10, mod: this.mod, title: value }});
+				reload(this)
+				goBack()
+			}	
+		}
 
 		//this.docArr = [ '业务借款单','业务内转单','业务退款单','业务支出单','资金借款单','资金内转单','资金退款单','资金支出单',]
 	}
@@ -37,11 +48,12 @@ class ApprovePage extends Component{
     	}
     	goTo('单据审批页',{data:{id:task.assoc_id},action:task.action,pre_view:this});
 
-    }
+	}
+
 
 	render(){
 		return (
-			<Page renderToolbar={_=>search()} onInfiniteScroll={done=>loadMore(this,done)} onShow={_=>loadIfEmpty(this)}>
+			<Page renderToolbar={_=>search(this)} onInfiniteScroll={done=>loadMore(this,done)} onShow={_=>loadIfEmpty(this)}>
 		    {
 		    	this.props.s.user.sid && 
 	    		<Fragment>

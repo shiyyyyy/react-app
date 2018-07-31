@@ -95,7 +95,7 @@ class ProductPageRender extends Component{
 	renderFixed(){
 		return (
 	      <div style={{position: 'absolute',bottom:'0px',left:'0px',right:'0px'}}>
-	      	{	this.state.open_menu &&
+	      	{/* {	this.state.open_menu &&
 	      		<div className="pdf-ctrl">
 					<div className={(this.state.menu_show ? "pdf-ctrl-item-hide":"pdf-ctrl-item-show")} onClick={_=>zoomOut()}> <Icon icon='md-minus-circle' /></div>
 					<div className={(this.state.menu_show ? "pdf-ctrl-item-hide":"pdf-ctrl-item-show")} onClick={_=>zoomIn()}> <Icon icon='md-plus-circle' /></div>
@@ -111,7 +111,7 @@ class ProductPageRender extends Component{
 						<Icon className={ this.state.menu_show ?'hide':''} icon='md-format-clear-all' />
 					</div>
 				</div>
-			}
+			} */}
 
 	        <div className="order-edit-footer">
 				<div className="order-edit-footer-box" onClick={_=>this.setState({open_supplier:true})}>
@@ -128,11 +128,10 @@ class ProductPageRender extends Component{
 	      </div>
 		);
 	}
-	scrollPage(e){
-		let open_menu = this.refs.pdfCt.offsetTop-this.refs.anchor.parentElement.scrollTop < window.innerHeight - 250;
-		this.setState({open_menu:open_menu});
-		
-	}
+	// scrollPage(e){
+		// let open_menu = this.refs.pdfCt.offsetTop-this.refs.anchor.parentElement.scrollTop < window.innerHeight - 250;
+		// this.setState({open_menu:open_menu});
+	// }
 
 	holdSeat(){
 		let id = this.state.selected_group;
@@ -150,11 +149,11 @@ class ProductPageRender extends Component{
 
 		// 优化代码
 		let group = {};
-		if(!id||id ===0) {
-			error('请选择团期');
-			return;
-		}
-		groups.forEach(function(item){
+		// if(!id||id ===0) {
+		// 	error('请选择团期');
+		// 	return;
+		// }
+		groups.find(function(item){
 			if(item['id'] == id){
 				group = item;
 			}
@@ -163,7 +162,7 @@ class ProductPageRender extends Component{
 			error('请选择团期');
 			return;
 		}
-		if(group.manager_department_id!= this.props.s.user.department_id){
+		if(group.manager_department_id != this.props.s.user.department_id){
             //$rootScope.trigger('实报订单-异部',meta,store_id,data);
             goTo('实报订单-异部',{data:group,action:'实报订单-异部'});
         }else{
@@ -179,7 +178,7 @@ class ProductPageRender extends Component{
 				renderToolbar={_=>this.renderToolbar()} 
 				renderModal={_=>shareWith(this)} 
 				renderFixed={_=>this.renderFixed()}
-				onScroll={e=>this.scrollPage(e)}
+				// onScroll={e=>this.scrollPage(e)}
 				onInit={_=>loadIfEmpty(this,this.afterLoad)} >
 				<div ref="anchor"></div>
 
@@ -203,7 +202,7 @@ class ProductPageRender extends Component{
 				      	    	)
 				      	    }
 			      	    </Carousel>
-				      	<div className="swiper-ctlr">
+				      	<div className="swiper-ctlr" style={{top: '4.16rem'}}>
 				      	  {
 				      	  	this.state.data['产品详情'].product_modular['产品图片'].map(
 				      	  		(item, index) => 
@@ -213,78 +212,100 @@ class ProductPageRender extends Component{
 					      	)
 				      	  }
 				      	</div>
-						{/* banner下 产品信息 */}
-						<div className="pro-header-info">
-							<div className="pro-name">{this.state.data['产品详情'].pd_name}</div>
-							<div className="pro-price">
-								<div className="pro-price-zk_price">￥{(this.state.data['产品团期'][0] && this.state.data['产品团期'][0].zk_price) * 1} 
-									<span style={{fontSize: '.373333rem', fontWeight: 'normal'}}>起</span>
+
+						{/* 除了banner 剩下的全部 */}
+						<div className="pro-body">
+							{/* banner下 产品信息 */}
+							<div className="pro-header-box">
+								<div className="pro-header-info">
+									<div className="pro-name">{this.state.data['产品详情'].pd_name}</div>
+									<div className="pro-price">
+										<div className="pro-price-zk_price">￥{((this.state.data['产品团期'][0] && this.state.data['产品团期'][0].zk_price) * 1) || '0.00'} 
+											<span style={{fontSize: '.373333rem', fontWeight: 'normal'}}>起/人</span>
+										</div>
+										<div className="pro-price-dep_city">{this.state.data['产品详情'].dep_city_name}出发</div>
+									</div>
+									<div className="pro-sale">
+										<div className="pro-sale-price">{ (this.state.data['产品团期'][0] && this.state.data['产品团期'][0].peer_price) }</div>
+										<div className="pro-sale-supplier">供应商: {this.state.data['产品详情'].pd_provider}</div>
+									</div>
 								</div>
-								<div className="pro-price-dep_city">{this.state.data['产品详情'].dep_city_name}出发</div>
 							</div>
-							<div className="pro-sale">
-								<div className="pro-sale-price">{ (this.state.data['产品团期'][0] && this.state.data['产品团期'][0].peer_price) }</div>
-								<div className="pro-sale-supplier">供应商: {this.state.data['产品详情'].pd_provider}</div>
+
+							{/* 团期日历 */}
+							<Calendar groups={this.state.data['产品团期']} view={this}></Calendar>
+
+							{/* 行程亮点 */}
+							<div className="tour-highlights">
+								<div className="tour-highlights-title">行程亮点</div>
+								<pre className="tour-highlights-item">{this.state.data['产品详情'].product_modular['产品特色']}</pre>
 							</div>
-						</div>
-						
 
-						{/* 团期日历 */}
-						<Calendar groups={this.state.data['产品团期']} view={this}></Calendar>
+							<div className="tour-detail-title">行程详情</div>
 
-						{/* 行程亮点 */}
-						<div className="tour-highlights">
-							<div className="tour-highlights-title">行程亮点</div>
-							<pre className="tour-highlights-item">{this.state.data['产品详情'].product_modular['产品特色']}</pre>
-						</div>
-						{/* pdf */}
-						<div style={{overflow:'scroll'}} className="PDF-view" ref="pdfCt">
-							<canvas ref="canvas" className="pdf-canvas"></canvas>
+							{/* pdf */}
+							<div className="PDF-view" ref="pdfCt">
+								<div className="PDF-box-ctrl">
+									<div className="PDF-ctrl-left">
+										<Icon icon='md-download' />
+										<Icon icon='md-zoom-in' onClick={_=>zoomIn()} />
+										<Icon icon='md-zoom-out' onClick={_=>zoomOut()} />
+									</div>
+									<div className="PDF-ctrl-right">
+										<Icon icon='md-arrow-left' onClick={_=>prePage()} />
+										<span className="pdf-ctrl-item-page-box">{1}/{20}页</span>
+										<Icon icon='md-arrow-right' onClick={_=>nextPage()} />
+									</div>
+								</div>
+								<div className="canvas-box">
+									<canvas ref="canvas" className="pdf-canvas"></canvas>
+								</div>
+							</div>
 						</div>
 				    </Fragment>
 				}
 
-		        <Dialog
-		          animation="none"
-		          isOpen={this.state.open_supplier}
-		          isCancelable={true}
-		          onCancel={_=>this.setState({open_supplier:false})}>
-				  	<div className="zs-popup">
-						<div className="zs-popup-avatar">
-							<img src="img/avatar.png" />
-						</div><br />
-						<div className="zs-popup-info">
-							<div className="">公司全称: </div>
-							<div className="">所属部门: </div>
-							<div className="">员工姓名: </div>
-							<div className="">手机号码: </div>
-						</div><br />
-						<div className="zs-popup-btn">
-							<a href="tel:13584882787">拨打电话</a>
+		        	<Dialog
+		        	  animation="none"
+		        	  isOpen={this.state.open_supplier}
+		        	  isCancelable={true}
+		        	  onCancel={_=>this.setState({open_supplier:false})}>
+					  	<div className="zs-popup">
+							<div className="zs-popup-avatar">
+								<img src="img/avatar.png" />
+							</div><br />
+							<div className="zs-popup-info">
+								<div className="">公司全称: </div>
+								<div className="">所属部门: </div>
+								<div className="">员工姓名: </div>
+								<div className="">手机号码: </div>
+							</div><br />
+							<div className="zs-popup-btn">
+								<span href="tel:13584882787">拨打电话</span>
+							</div>
 						</div>
-					</div>
-		        </Dialog>
+		        	</Dialog>
 
-		        <Dialog
-		          animation="none"
-		          isOpen={this.state.open_op}
-		          isCancelable={true}
-		          onCancel={_=>this.setState({open_op:false})}>
-				  	<div className="zs-popup">
-						<div className="zs-popup-avatar">
-							<img src="img/avatar.png" />
-						</div><br />
-						<div className="zs-popup-info">
-							<div className="">所属中心: </div>
-							<div className="">所属部门: </div>
-							<div className="">员工姓名: </div>
-							<div className="">手机号码: </div>
-						</div><br />
-						<div className="zs-popup-btn">
-							<a href="tel:13584882787">拨打电话</a>
+		        	<Dialog
+		        	  animation="none"
+		        	  isOpen={this.state.open_op}
+		        	  isCancelable={true}
+		        	  onCancel={_=>this.setState({open_op:false})}>
+					  	<div className="zs-popup">
+							<div className="zs-popup-avatar">
+								<img src="img/avatar.png" />
+							</div><br />
+							<div className="zs-popup-info">
+								<div className="">所属中心: </div>
+								<div className="">所属部门: </div>
+								<div className="">员工姓名: </div>
+								<div className="">手机号码: </div>
+							</div><br />
+							<div className="zs-popup-btn">
+								<span href="tel:13584882787">拨打电话</span>
+							</div>
 						</div>
-					</div>
-		        </Dialog>
+		        	</Dialog>
 			</Page>
 		);
 	}

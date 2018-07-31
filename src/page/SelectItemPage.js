@@ -43,8 +43,9 @@ export default class SelectItemPage extends Component{
 	        	<div className='left'><ons-back-button></ons-back-button></div>
 				<div className="center search-input-box-box">
 				  <div className="search-input-box">
-					  <input className='search-input-box-input' onChange={e=>this.setState({filter:e.target.value,page:1})}/>
-					<img className="search-input-box-img" src="img/search.png" />
+					  <input className='search-input-box-input' onChange={e=>this.setState({filter:e.target.value,page:1})} 
+					  style={{padding:'0'}} />
+					<img className="search-input-box-img" src="img/search.png" style={{left: '6px'}} />
 				  </div>
 				</div>
 			</ons-toolbar>

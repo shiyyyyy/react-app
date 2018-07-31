@@ -1,9 +1,9 @@
 import React, { Component} from 'react';
 import {log,AppCore,AppMeta,loadIfEmpty,goTo,Enum,goBack} from '../util/core';
-import {error,nonBlockLoading,progress,footer} from '../util/com';
+import {error,nonBlockLoading,progress,footer,sumbitCheck} from '../util/com';
 import { connect } from 'react-redux';
 
-import {Page,Button,Input,Dialog,Select} from 'react-onsenui';
+import {Page,Button,Input,Dialog,Icon,Select} from 'react-onsenui';
 import {addRowDialog,editRowDialog} from '../util/order'
 
 
@@ -114,7 +114,7 @@ class OrderSettleableDetail extends Component{
 		for(var field in this.state.block_cfg[block].list){
 			data['row'][field] = item[field];
 		}
-
+		
 		this.setState({isEdit:true});
 		this.setState({EditBlock:block});
 		this.setState({EditIndex:i});
@@ -175,6 +175,11 @@ class OrderSettleableDetail extends Component{
 	}
 
 	submit(){
+		let rq_field = sumbitCheck(this,AppMeta.actions[this.action]);
+		if(rq_field){
+            error('缺少'+rq_field);
+            return;
+        }
 		let acc_item = {'参团费用':this.state.data['参团费用'],'其他费用':this.state.data['其他费用']};
 
         let data = this.pre_view.state.data;
@@ -189,8 +194,33 @@ class OrderSettleableDetail extends Component{
 		data['订单应转'][0] = {acc_item:acc_item,settleable:settleable,settled:data['订单应转'][0]['settled'],settle_diff:(settleable - data['订单应转'][0]['settled'])
 								,'settle_obj_id':data['订单应转'][0]['settle_obj_id']};
 
+
+
+		let receivable =(data['订单应收']&&data['订单应收'].length>0)?data['订单应收'][0]['receivable']:0;
+		let profit = Math.round((receivable - settleable)*100)/100;
+		let profit_rate = (settleable == 0) ?'NaN':(Math.round((profit/settleable)*10000)/100+'%');
+		data['订单利润'] = [{'receivable':receivable,'settleable':settleable,'profit':profit,'profit_rate':profit_rate}];
+
 		this.pre_view.setState({data:data});
 		goBack();
+	}
+
+	// 改成函数
+	cellFun(item,i,block,field){
+		let title = this.state.block_cfg[block]['list'][field]
+		let value = Enum[this.state.block_cfg[block]['list'][field]['type']]
+		if( !(title['type'] && value) ) return;
+		return(
+			<span key={field+i}>{title['text']}:{value[item[field]]}</span>
+		)
+	}
+	cellFun1(item,i,block,field){
+		let title = this.state.block_cfg[block]['list'][field]
+		let value = Enum[this.state.block_cfg[block]['list'][field]['type']]
+		if( title['type'] && value ) return;
+		return(
+			<span key={field+i}>{title['text']}:{[item[field]]}</span>
+		)
 	}
 
 
@@ -206,10 +236,12 @@ class OrderSettleableDetail extends Component{
 						<div className="box-title">
 							<div className="box-title-text">{this.state.block_cfg[block].text}</div>
 							<div className="box-title-operate">
+							<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
+								<Icon icon="md-plus-circle-o" style={{fontSize: '.64rem', color: '#6FC5D8'}}
+								onClick={() => this.addRow(block)}/></div>
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jia.png" style={{width:'.64rem', height: '.64rem'}} onClick={_=> this.addRow(block)}/></div>
-								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jian.png" style={{width:'.64rem', height: '.64rem'}} onClick={_=> this.reduceRow(block)}/></div>
+								<Icon icon="md-minus-circle-outline" style={{fontSize: '.64rem', color: '#EE8585'}}
+								onClick={() => this.reduceRow(block)}/></div>
 							</div>
 						</div>
 						<div className="model-main">
@@ -217,8 +249,14 @@ class OrderSettleableDetail extends Component{
 							<div className="model-main-item-box" key={i}>
 								{/* 改成函数 */}
 								<div className="model-main-item" onClick={_=>this.editRow(item,i,block)}>
-									<span>{i+1}</span> 
+									<span>{i+2}</span> 
 									{
+										Object.keys(this.state.block_cfg[block].list).map(field => this.cellFun(item,i,block,field))
+									}
+									{
+										Object.keys(this.state.block_cfg[block].list).map(field => this.cellFun1(item,i,block,field))
+									}
+									{/* {
 										Object.keys(this.state.block_cfg[block].list).map(field => 
 											(this.state.block_cfg[block]['list'][field]['type'] && Enum[this.state.block_cfg[block]['list'][field]['type']])&&
 											<span key={field+i}>{this.state.block_cfg[block]['list'][field]['text']}{Enum[this.state.block_cfg[block]['list'][field]['type']][item[field]]}</span>
@@ -229,7 +267,7 @@ class OrderSettleableDetail extends Component{
 											!(this.state.block_cfg[block]['list'][field]['type'] && Enum[this.state.block_cfg[block]['list'][field]['type']])&&
 											<span key={field+i}>{this.state.block_cfg[block]['list'][field]['text']}{[item[field]]}</span>
 											)
-									}
+									} */}
 									<i></i>
 								</div>
 							</div>
@@ -295,19 +333,19 @@ class OrderSettleableDetail extends Component{
 					<Dialog
 	                isOpen={this.state.isEdit}
 	                isCancelable={true}
-	                onCancel={_=>this.CancelAddRow(this.state.EditBlock)}>
+	                onCancel={_=>this.CancelEditRow(this.state.EditBlock)}>
       				<div className="zs-popup">
 			        	<div className="zs-popup-info">
 							<div className="order-set-detail-modal-over">
 				    		{
 								this.state.price_config.map( (item,i)=>  
-								(<div key={i} className="order-set-detail-modal-cell">
-									{item.map(cell=>
-										<div className="order-set-detail-modal-cell-item"
-										onClick={_=>this.selectPriceType(item[i])} > {cell} </div>
-									)}
-								</div>)
-								)
+									(<div key={item} className={ ( i === this.state.price_type ?"active-order-set-detail-modal-cell":"")+" order-set-detail-modal-cell"}>
+										{item.map(cell=>
+											<div onClick={_=>this.selectPriceType(i)} 
+											className="order-set-detail-modal-cell-item"> {cell} </div>
+										)}
+									</div>)
+			    				)
 				    		}
 		    				</div>
 							<div className="model-main-item" style={{backgroundColor: '#f9f9f9'}}>

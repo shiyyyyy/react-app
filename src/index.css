@@ -209,3 +209,20 @@ strong{
   left: 0;
   right: 0;
 }
+
+button[disabled]{
+  background-color: #eee !important;
+  color: #666 !important;
+  border: #eee !important;
+}
+
+.ver-sub{
+  vertical-align: sub;
+}
+
+.over-x-auto{
+  overflow-x: auto !important;
+}
+.over-y-auto{
+  overflow-y: auto !important;
+}

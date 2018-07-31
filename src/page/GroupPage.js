@@ -1,6 +1,6 @@
 import React, { Component,Fragment } from 'react';
 
-import {AppCore,resetTo,loadMore,loadIfEmpty,Enum,goTo,hasPlugin,reload} from '../util/core';
+import {AppCore,resetTo,loadMore,loadIfEmpty,Enum,goTo,hasPlugin,reload,goBack} from '../util/core';
 import {pullHook,loginToPlay,search,nonBlockLoading} from '../util/com';
 
 import {Page,Modal,Button} from 'react-onsenui';
@@ -13,18 +13,30 @@ class GroupPage extends Component{
 
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			state:'initial',
 			data:[],
-			pd_nav:'1',
 			open_filter: '',
-			search:{dep_date_from:moment().format('YYYY-MM-DD')}
+			search:{dep_date_from:moment().format('YYYY-MM-DD'),pd_nav:'1',},
+			search_value: '',
 		};
 		this.mod = '团队报名';
+
+		this.p = {
+			key: this.mod,
+			placeholder: '请输入团号',
+			cb: value => {
+				this.setState({search_value: value, open_filter:'',search:{...this.state.search,group_num: value}});
+				reload(this)
+				goBack()
+			}		
+		}
+		
 	}
 
 	navClick(i){
-		this.setState({open_filter:'',search:{...this.state.search,pd_nav:i,pd_tag_id:undefined,pd_subtag_id:undefined}});
+		this.setState({search:{...this.state.search,pd_nav:i,pd_tag_id:undefined,pd_subtag_id:undefined}});
 	}
 	tagClick(i){
 		if(i){
@@ -57,6 +69,8 @@ class GroupPage extends Component{
 		this.setState({open_filter:'',search:{...this.state.search,theme_id: i}});
 		reload(this);
 	}
+
+
 
 	renderFixed(){
 		if(!this.refs.anchor){
@@ -96,7 +110,7 @@ class GroupPage extends Component{
 							{
 								Object.keys(Enum.PdNav).map(i=>
 									<li onClick={_=>this.navClick(i)} key={i} 
-										className={i == this.state.pd_nav ? 'active-select-item' : 'select-item-main'} >
+										className={i == this.state.search.pd_nav ? 'active-select-item' : 'select-item-main'} >
 										{Enum.PdNav[i]}
 									</li>
 								)
@@ -188,7 +202,7 @@ class GroupPage extends Component{
 	render(){
 		return (
 			<Page 
-				renderToolbar={_=>search()} 
+				renderToolbar={_=>search(this)} 
 				onInfiniteScroll={done=>loadMore(this,done)} 
 				onShow={_=>loadIfEmpty(this)}
 				renderFixed={_=>this.renderFixed()}>
@@ -214,16 +228,16 @@ class GroupPage extends Component{
 										<div className="pro-item-name">{item.pd_name}</div>
 										<div className="pro-item-dep_city flex-j-sb">
 										<span className="pro-item-gys">供应商: {item.pd_provider}</span>
-											<span>最近班期: 04/25</span>
+											<span>最近班期: {item.dep_date}</span>
 											{/* <span>供应商: {item.pd_provider}</span> */}
 										</div>
 										<div className="pro-item-price flex-j-sb">
 											<span className="pro-item-gys">{Enum.City[item.dep_city_id]}出发</span>
-											<span style={{fontSize: '.426667rem', color: '#F29A0A',fontWeight:'bold'}}>￥{item.zk_price}<span style={{fontSize: '.373333rem',fontWeight: 'normal'}}>人/起</span></span>
+											<span style={{fontSize: '.426667rem', color: '#F29A0A',fontWeight:'bold'}}>￥{(item.zk_price * 1) || '0.00'}<span style={{fontSize: '.373333rem',fontWeight: 'normal'}}>起/人</span></span>
 										</div>
 										{/* <div className="pro-item-theme">发团日期: {item.dep_date}</div> */}
-										{['亲子','蜜月','夕阳红'].map( cell => 
-											<div className="pro-item-theme">{cell}</div>
+										{['亲子','蜜月','夕阳红'].map( (cell,i) => 
+											<div className="pro-item-theme" key={i}>{cell}</div>
 										)}
 									</div>
 								</div>

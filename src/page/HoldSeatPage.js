@@ -1,11 +1,25 @@
 import React, { Component} from 'react';
 import {log,AppCore,AppMeta,loadIfEmpty,goTo,goBack,trigger,submit,Enum} from '../util/core';
-import {error,nonBlockLoading,progress,footer,info} from '../util/com';
+import {error,nonBlockLoading,progress,footer ,ErrorBoundary ,info} from '../util/com';
 import { connect } from 'react-redux';
 
-import {Page,Button,Input,AlertDialog,Dialog} from 'react-onsenui';
+import {Page,Icon,Button,Input,AlertDialog,Dialog} from 'react-onsenui';
 
-class HoldSeatPage extends Component{
+import '../css/OrderPage.css'
+
+export default class HoldSeatWrap extends Component {
+    constructor(props) {
+    	super(props);
+    }
+
+    render() {
+	  return (
+	  		<ErrorBoundary><HoldSeatPageInject p={this.props.p} /></ErrorBoundary>
+	  )
+  }  
+}
+
+class HoldSeatPageRender extends Component{
 
 	constructor(props) {
 		super(props);
@@ -57,27 +71,28 @@ class HoldSeatPage extends Component{
 			error('请选择接单人');
 			return ;
 		}
+		let assitant_id = data['接单人'].id;
 		if(!data['num_of_people']||data['num_of_people']<=0){
 			error('请填写人数信息');
 			return ;
 		}
 	    this.setState({data:{'group_id':data.group_id,'cstm_id':data['客户详情'][0].id
-	    			,'num_of_people':data['num_of_people'],'assitant_id':1}},this.submit);
+	    			,'num_of_people':data['num_of_people'],'assitant_id':assitant_id}},this.submit);
 	}
 
 	submit(){
 		trigger('加载等待');
-	    // submit(this,_=>goBack());
-	    submit(this,r=>this.submitDone(r));
+	    submit(this,this.submitDone.bind(this));
 	}
+
 	submitDone(r){
-		// 占位确定:提示信息
-		info(r.message).then( _=>
-			{
+		info(r.message).then(
+			_=>{
 				goBack();
-				// this.state.pre_view
-			})
+			}
+		)
 	}
+
 	setNumber(value){
 		let data  = this.state.data;
 		data.num_of_people = value;
@@ -153,10 +168,17 @@ class HoldSeatPage extends Component{
 							</div>
 							<div className="model-main">
 								<div className="model-main-box">
-									<div className="model-main-item">
+									<div className="model-main-item people-num-box">
 										<span>人数</span>
-										<input type="number" value={this.state.data['num_of_people']?this.state.data['num_of_people']:''} onChange={ e => this.setNumber(e.target.value) }
-										/></div>				
+										<input type="number" value={this.state.data['num_of_people'] >= 0?this.state.data['num_of_people']:'0'} 
+										onChange={ e => this.setNumber(e.target.value-0) } className="people-num" />
+										<div className="plus-minus">
+											<Icon icon="md-minus-circle-outline" style={{color: '#EE8585'}}
+											onClick={e => this.setNumber( (this.state.data.num_of_people-1>=0?this.state.data.num_of_people-1:0) )} />
+											<Icon icon="md-plus-circle-o" style={{color: '#6FC5D8'}}
+											onClick={e => this.setNumber( (this.state.data.num_of_people-0)+1 ) } />
+										</div>
+									</div>				
 								</div>
 							</div>
 						</div>
@@ -179,4 +201,4 @@ class HoldSeatPage extends Component{
 	}
 }
 
-export default connect(s=>({s:s}))(HoldSeatPage)
+const HoldSeatPageInject = connect(s=>({s:s}))(HoldSeatPageRender)

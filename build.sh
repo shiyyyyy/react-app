@@ -31,6 +31,15 @@ androidPrepare(){
 	cd -
 }
 
+www(){
+	echo "******************************************"
+	echo "build www"
+	echo "******************************************"
+	php copy.php zs-app
+	cp -rf build/img ../zs-app/www/
+	php chcp.php $1 ../zs-app
+}
+
 androidBuild(){
 	echo "******************************************"
 	echo "androidBuild"
@@ -50,7 +59,10 @@ androidBuild(){
 
 ts=$(php -r 'date_default_timezone_set("Asia/Shanghai");echo date("Y.m.d-H.i.s");') 
 
-if [ "$1" == "prepare" ]; then
+if [ "$1" == "www" ]; then
+	npm run build
+	www $ts
+elif [ "$1" == "prepare" ]; then
 	npm run build
     iosPrepare $ts
     androidPrepare $ts

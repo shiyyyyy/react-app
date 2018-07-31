@@ -1,5 +1,5 @@
 import React, { Component} from 'react';
-import {log,AppCore,AppMeta,loadIfEmpty,goTo,Enum,goBack} from '../util/core';
+import {log,AppCore,AppMeta,loadIfEmpty,goTo,Enum,goBack,loadMore} from '../util/core';
 import {error,nonBlockLoading,progress,footer} from '../util/com';
 import { connect } from 'react-redux';
 
@@ -37,6 +37,7 @@ class OrderSelectCstmPage extends Component{
 		return (
 				<Page 
 				renderToolbar={_=>this.renderToolbar()} 
+				onInfiniteScroll={done=>loadMore(this,done)} 
 				onShow={_=>loadIfEmpty(this)} >
 				<div className="group-body">
 					<div>

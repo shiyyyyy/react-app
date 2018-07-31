@@ -1,15 +1,27 @@
 import React, { Component } from 'react';
 
-import {Page,Dialog} from 'react-onsenui';
+import {Page,Dialog,Icon} from 'react-onsenui';
 
 import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit} from '../util/core';
-import {pullHook,loginToPlay} from '../util/com';
+import {pullHook,loginToPlay,ErrorBoundary,info,zs_dialog,gys_dialog} from '../util/com';
 import { connect } from 'react-redux';
 
 import '../css/OrderEditPage.css'
 import {footer} from '../util/com';
 
-class RealSignUpPage extends Component{
+export default class RealSignUpWrap extends Component {
+    constructor(props) {
+    	super(props);
+    }
+
+    render() {
+	  return (
+	  		<ErrorBoundary><RealSignUpPageInject p={this.props.p} /></ErrorBoundary>
+	  )
+  }  
+}
+
+class RealSignUpPageRender extends Component{
 
 	constructor(props) {
 	    super(props);
@@ -28,6 +40,14 @@ class RealSignUpPage extends Component{
 		      	<div className="center">实报</div>
 		  	</ons-toolbar>
 		);
+	}
+
+	renderFixed(){
+		return(
+			<div className="posi-footer">
+				{footer('RealSignUp',this)}
+			</div>
+		)
 	}
 
 	afterLoad(){
@@ -82,8 +102,8 @@ class RealSignUpPage extends Component{
 		this.setState({data:data});
 	}
 
-	editTourist(item,i){
-		goTo('录入游客名单',{action:'订单选择客户',view:this,item: item,i:i})
+	editTourist(item,i,block){
+		goTo('录入游客名单',{action:'录入游客名单',view:this,item: item,i:i,block:block})
 	}
 
 	entryReceivable(){
@@ -94,18 +114,27 @@ class RealSignUpPage extends Component{
 		goTo('录入订单应转明细',{view:this,data:this.state.data['订单应转'][0].acc_item,action:'录入订单应转明细'});
 	}
 
-	submit(){
+	submitRealSignUp(){
 		let data = this.state.data;
 		data['订单详情'] = [{'assitant_id':data['接单人'].id}];
 		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
 		this.setState({data:data});
 		trigger('加载等待');
-	    submit(this,_=>goBack());
+	    submit(this,this.submitDone.bind(this));
+	}
+
+	submitDone(r){
+		info(r.message).then(
+			_=>{
+				goBack();
+			}
+		)
 	}
 
 	render(){
 		return (
-			<Page renderToolbar={_=>this.renderToolbar()} onShow={_=>loadIfEmpty(this,this.afterLoad)}>
+			<Page renderToolbar={_=>this.renderToolbar()} onShow={_=>loadIfEmpty(this,this.afterLoad)}
+			renderFixed={_=>this.renderFixed()} >
 				{
 
 					this.state.inited &&
@@ -192,14 +221,16 @@ class RealSignUpPage extends Component{
 							<div className="box-title-text">游客名单</div>
 							<div className="box-title-operate">
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jia.png" style={{width:'.64rem', height: '.64rem'}} onClick={() => this.addTourist()}/></div>
+								<Icon icon="md-plus-circle-o" style={{fontSize: '.64rem', color: '#6FC5D8'}}
+								onClick={() => this.addTourist()}/></div>
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jian.png" style={{width:'.64rem', height: '.64rem'}} onClick={() => this.reduceTourist()}/></div>
+								<Icon icon="md-minus-circle-outline" style={{fontSize: '.64rem', color: '#EE8585'}}
+								onClick={() => this.reduceTourist()}/></div>
 							</div>
 						</div>
 						<div className="model-main">
 						{this.state.data['订单参团'].map( (item,i) => 
-							<div className="model-main-item-box" key={i} onClick={_=>this.editTourist(item,i)}>
+							<div className="model-main-item-box" key={i} onClick={_=>this.editTourist(item,i,'订单参团')}>
 								<div className="model-main-item">
 									<span>{i+1}</span> 
 									<span>{item.name}</span> 
@@ -262,7 +293,7 @@ class RealSignUpPage extends Component{
 						</div>
 						<div className="model-main">
 							<div className="model-main-item-box">
-								<div className="model-main-item flex-j-sb">
+								<div className="model-main-item flex-j-sb over-x-auto">
 								<span>应收:{this.state.data['订单利润'][0].receivable}</span> 
 								<span>应转:{this.state.data['订单利润'][0].settleable}</span> 
 								<span>利润:{this.state.data['订单利润'][0].profit}</span> 
@@ -279,20 +310,18 @@ class RealSignUpPage extends Component{
 						<div className="model-main">
 							<div className="model-main-item-box">
 								<div className="model-main-item">
-									<input type='text' style={{fontSize: '.373333rem', color: '#000'}} value={this.state.data['comment']}>{this.state.data['comment']}</input>
+									<input type='text' style={{fontSize: '.373333rem', color: '#000', width: '100%'}} value={this.state.data['comment']}>{this.state.data['comment']}</input>
 								</div>
 							</div>
 						</div>
 					</div>
-						{/* 底部 footer */}
-					<div className="posi-footer">
-						{footer('orderEdit',this)}
-					</div>
 				</div>
 				}
+			{zs_dialog(this)}
+			{gys_dialog(this)}
 		    </Page>
 		);
 	}
 }
 
-export default connect(s=>({s:s}))(RealSignUpPage)
+const RealSignUpPageInject = connect(s=>({s:s}))(RealSignUpPageRender)

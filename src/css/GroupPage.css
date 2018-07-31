@@ -16,6 +16,7 @@
     overflow: hidden;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .search-input-box-input{
@@ -26,6 +27,7 @@
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border: none;
+    padding: 0 .8rem;
 }
 .search-input-box-img{
     height: 100%;
@@ -33,7 +35,8 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: .266667rem;
+    /* left: .266667rem; */
+    left: 29%;
 }
 .input-box{
     width: 95%;

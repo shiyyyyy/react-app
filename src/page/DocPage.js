@@ -242,7 +242,7 @@ class DocPageRender extends Component{
 					<div className="doc">
 
 						{/* 基础信息 */}
-						{doc.basis(this.state.data['业务内转单据信息'][0])}
+						{doc.basis(this.state.data['业务内转单据信息'][0], '业务内转')}
 
 						{/*内转明细*/}
 						{doc.nz_detail(this.state.data['内转核算'])}
@@ -311,7 +311,7 @@ class DocPageRender extends Component{
 						{doc.billing_info(this.state.data['资金退款单结算信息'][0])}
 
 						{/*退款调用收款*/}
-						{doc.tk_call_sk(this.state.data['退款调用资金收款'][0])}
+						{doc.tk_call_sk(this.state.data['退款调用资金收款'][0],'资金退款')}
 
 						{/*对方账户*/}
 						{doc.to_account_info(this.state.data['对方账户'][0])}

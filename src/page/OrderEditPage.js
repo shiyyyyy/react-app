@@ -1,18 +1,30 @@
 import React, { Component } from 'react';
 
-import {Page} from 'react-onsenui';
+import {Page,Icon} from 'react-onsenui';
 
 import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit} from '../util/core';
-import {pullHook,loginToPlay, footer_ctrl,zs_dialog, gys_dialog} from '../util/com';
+import {pullHook,loginToPlay,zs_dialog, gys_dialog,ErrorBoundary,info,footer} from '../util/com';
 import { connect } from 'react-redux';
 
 
 import '../css/OrderEditPage.css';
-import {footer} from '../util/com';
 
 import {ProDetail,CustomerInfo,PickSingle,ToursList,OrderReceivable,OrderShould,OrderProfits,OrderNote} from '../util/order'
 
-class OrderEditPage extends Component{
+
+export default class OrderEditWrap extends Component {
+    constructor(props) {
+    	super(props);
+    }
+
+    render() {
+	  return (
+	  		<ErrorBoundary><OrderEditPageInject p={this.props.p} /></ErrorBoundary>
+	  )
+  }  
+}
+
+class OrderEditPageRender extends Component{
 
 	constructor(props) {
 	    super(props);
@@ -26,11 +38,17 @@ class OrderEditPage extends Component{
 	afterLoad(){
 		let data = this.state.data;
 		data['订单参团'] = data['订单参团']?data['订单参团']:[];
-		data['订单应收'] = data['订单应收']?data['订单应收']:[{'receivable':0,'received':0,'receive_diff':0,'receive_item':[]}];
-		data['订单应转'] = data['订单应转']?data['订单应转']:[{'settleable':0,'settled':0,'settle_diff':0,'acc_item':[],'settle_obj_id':data['订单团队'][0].manager_department_id}];
-		data['订单利润'] = [{'receivable':0,'settleable':0,'profit':0,profit_rate:'NaN'}];
+		data['订单应收'] = (data['订单应收']&&data['订单应收'].length>0)?data['订单应收']:[{'receivable':0,'received':0,'receive_diff':0,'receive_item':[]}];
+		data['订单应转'] = (data['订单应转']&&data['订单应转'].length>0)?data['订单应转']:[{'settleable':0,'settled':0,'settle_diff':0,'acc_item':[],'settle_obj_id':data['订单团队'][0].manager_department_id}];
+
+		let receivable = data['订单应收'][0]['receivable'];
+		let settleable = data['订单应转'][0]['settleable'];
+		let profit = Math.round((receivable - settleable)*100)/100;
+		let profit_rate = (settleable == 0) ?'NaN':(Math.round((profit/settleable)*10000)/100+'%');
+		data['订单利润'] = [{'receivable':receivable,'settleable':settleable,'profit':profit,'profit_rate':profit_rate}];
 		data['客户详情'] = data['客户详情']?data['客户详情']:[{short_name:'',full_name:''}];
-		data['接单人']   = data['订单详情'][0]['assitant_id']?{'assitant_id':data['订单详情'][0]['assitant_id']}:{};
+		data['接单人']   = data['订单详情'][0]['assitant_id']?{'id':data['订单详情'][0]['assitant_id'],'name':data['订单详情'][0]['assitant_name']}:{};
+		
 		if(this.action=='修改订单-异部'){
             data.order_yb = true;
         }else{
@@ -62,7 +80,7 @@ class OrderEditPage extends Component{
 
 	addTourist(){
 		let data = this.state.data;
-		data['订单参团'].push({name:'虚拟游客',certificate_type:1});
+		data['订单参团'].push({name:'虚拟游客'});
 		this.setState({data:data});
 	}
 
@@ -74,8 +92,8 @@ class OrderEditPage extends Component{
 		this.setState({data:data});
 	}
 
-	editTourist(item,i){
-		goTo('录入游客名单',{action:'订单选择客户',view:this,item: item,i:i})
+	editTourist(item,i,block){
+		goTo('录入游客名单',{action:'订单选择客户',view:this,item: item,i:i,block:block})
 	}
 
 	entryReceivable(){
@@ -87,11 +105,29 @@ class OrderEditPage extends Component{
 	}
 	submit(){
 		let data = this.state.data;
-		data['订单详情'] = [{'assitant_id':data['接单人'].id}];
+		data['订单详情'][0]['assitant_id'] = data['接单人'].id;
 		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
 		this.setState({data:data});
 		trigger('加载等待');
-	    submit(this,_=>goBack());
+	    submit(this,this.submitDone.bind(this));
+	}
+
+	submitRealSignUp(){
+		let data = this.state.data;
+		data['订单详情'] = [{'assitant_id':data['接单人'].id}];
+		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
+		data.real_sign_up = true;
+		this.setState({data:data});
+		trigger('加载等待');
+	    submit(this,this.submitDone.bind(this));
+	}
+
+	submitDone(r){
+		info(r.message).then(
+			_=>{
+				goBack();
+			}
+		)
 	}
 
 	renderToolbar(){
@@ -102,17 +138,19 @@ class OrderEditPage extends Component{
 		  	</ons-toolbar>
 		);
 	}
+
 	renderFixed(){
-		return (
-			<div style={{position: 'absolute',bottom:'0px',left:'0px',right:'0px'}}>
-	    	    { footer_ctrl('order', this) }
-	    	</div>
+		return(
+			<div className="posi-footer">
+				{footer('orderEdit',this)}
+			</div>
 		)
 	}
 
 	render(){
 		return (
-			<Page renderToolbar={_=>this.renderToolbar()} onShow={_=>loadIfEmpty(this,this.afterLoad)}>
+			<Page renderToolbar={_=>this.renderToolbar()} onShow={_=>loadIfEmpty(this,this.afterLoad)} 
+			renderFixed={_=>this.renderFixed()}>
 				{
 
 					this.state.inited &&
@@ -199,14 +237,16 @@ class OrderEditPage extends Component{
 							<div className="box-title-text">游客名单</div>
 							<div className="box-title-operate">
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jia.png" style={{width:'.64rem', height: '.64rem'}} onClick={() => this.addTourist()}/></div>
+								<Icon icon="md-plus-circle-o" style={{fontSize: '.64rem', color: '#6FC5D8'}}
+								onClick={() => this.addTourist()}/></div>
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jian.png" style={{width:'.64rem', height: '.64rem'}} onClick={() => this.reduceTourist()}/></div>
+								<Icon icon="md-minus-circle-outline" style={{fontSize: '.64rem', color: '#EE8585'}}
+								onClick={() => this.reduceTourist()}/></div>
 							</div>
 						</div>
 						<div className="model-main">
 						{this.state.data['订单参团'].map( (item,i) => 
-							<div className="model-main-item-box" key={i} onClick={_=>this.editTourist(item,i)}>
+							<div className="model-main-item-box" key={i} onClick={_=>this.editTourist(item,i,'订单参团')}>
 								<div className="model-main-item">
 									<span>{i+1}</span> 
 									<span>{item.name}</span> 
@@ -267,7 +307,7 @@ class OrderEditPage extends Component{
 						</div>
 						<div className="model-main">
 							<div className="model-main-item-box">
-								<div className="model-main-item flex-j-sb">
+								<div className="model-main-item flex-j-sb over-x-auto">
 								<span>应收:{this.state.data['订单利润'][0].receivable}</span> 
 								<span>应转:{this.state.data['订单利润'][0].settleable}</span> 
 								<span>利润:{this.state.data['订单利润'][0].profit}</span> 
@@ -284,20 +324,19 @@ class OrderEditPage extends Component{
 						<div className="model-main">
 							<div className="model-main-item-box">
 								<div className="model-main-item">
-									<input type='text' style={{fontSize: '.373333rem', color: '#000'}} value={this.state.data['comment']}>{this.state.data['comment']}</input>
+									<input type='text' style={{fontSize: '.373333rem', color: '#000', width: '100%'}} value={this.state.data['comment']}>{this.state.data['comment']}</input>
 								</div>
 							</div>
 						</div>
 					</div>
-					{/* 底部 footer */}
-					<div className="posi-footer">
-						{footer('orderEdit',this)}
-					</div>
-					</div>
+					
+				</div>
 				}
+				{gys_dialog(this)}
+				{zs_dialog(this)}
 		    </Page>
 		);
 	}
 }
 
-export default connect(s=>({s:s}))(OrderEditPage)
+const OrderEditPageInject = connect(s=>({s:s}))(OrderEditPageRender)

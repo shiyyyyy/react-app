@@ -115,7 +115,7 @@
 }
 .model-box-bald-main-bill-b{
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     color: #F2869F;
     padding-top: .426667rem;
     position: relative;
@@ -212,10 +212,13 @@
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     text-align: center;
-    padding: .213333rem 0;
+    padding: .133333rem 0;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.model-box-bald-main-item-msg:first-child{
+    border-right: 1px solid #ccc;
 }
 .model-box-bald-main-item-msg img{
     width: .64rem;

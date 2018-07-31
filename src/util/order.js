@@ -63,16 +63,16 @@ export  class ProInfo extends React.Component {
     render() {
       return (
         <div className="pro-header-info">
-			<div className="pro-name">南亚风情自由行</div>
-			<div className="pro-price">
-				<div className="pro-price-zk_price">￥68888 <span style={{fontSize: '.373333rem', fontWeight: 'normal'}}>起</span></div>
-				<div className="pro-price-dep_city">北京出发</div>
-			</div>
-			<div className="pro-sale">
-				<div className="pro-sale-price">2018-09-08</div>
-				<div className="pro-sale-supplier">供应商: 亚美运通</div>
-			</div>
-		</div>
+			    <div className="pro-name">南亚风情自由行</div>
+			    <div className="pro-price">
+			    	<div className="pro-price-zk_price">￥68888 <span style={{fontSize: '.373333rem', fontWeight: 'normal'}}>起</span></div>
+			    	<div className="pro-price-dep_city">北京出发</div>
+			    </div>
+			    <div className="pro-sale">
+			    	<div className="pro-sale-price">2018-09-08</div>
+			    	<div className="pro-sale-supplier">供应商: 亚美运通</div>
+			    </div>
+		    </div>
       )
     }
 }
@@ -293,7 +293,7 @@ export  class OrderProfits extends React.Component {
             </div>
             <div className="model-main">
                 <div className="model-main-item-box">
-                    <div className="model-main-item flex-j-sb">
+                    <div className="model-main-item flex-j-sb over-x-auto">
                     {Object.keys(this.props.view['订单应转']).map( (item,i) => 
                         <strong key={i}>
                         {item === 'receivable' ? '应转':''}

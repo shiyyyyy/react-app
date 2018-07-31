@@ -44,6 +44,8 @@ export const Enum = {
     Certificate:{1:['身份证','Id Card'][i],2:['护照','Passport'][i],3:['台证','Taiwan Entry Permit '][i],4:['港证','Hong Kong Certificate'][i]
                 ,5:['军官证','Military Documents'][i]},
     Gender:{0:['男','male'][i],1:['女','female'][i]},
+    OrderState:{1:['未占位','not hold'][i],2:['占位中','holding seat'][i],3:['实报中','waiting'][i],4:['已审核','approved'][i],5:['已确认'
+                       ,'confirmed'][i],8:['变更中','changed'][i]},
 };
 
 export const AppMeta = {};
@@ -135,6 +137,7 @@ export function post(url, body) {
                         return;
                     }
                     error(r.message);
+                    rj && rj();
                     return;
                 }
                 r.enum && Enum.ver && updateEnum(r.enum);
@@ -387,6 +390,9 @@ function _reload(view, done) {
         r => {
             view.setState({ filled: true, loading: false, data: r.data }, done);
             view.lastIndex = 0;
+        },
+        e =>{
+            goBack();
         }
     )
 }
@@ -497,7 +503,7 @@ function get_req_data(cfg, data) {
                         break;
                 }
             } else {
-                if (k * 1 != NaN) { //['订单详情.id']无映射
+                if ( !isNaN( parseInt(k) ) ) { //['订单详情.id']无映射
                     rst[blk] = pk;
                 } else { //['订单详情.id':'id_arr']映射
                     rst[k] = pk;
@@ -505,7 +511,7 @@ function get_req_data(cfg, data) {
             }
         } else {
 
-            if (k * 1 != NaN) { //['id']无映射
+            if ( !isNaN( parseInt(k) ) ) { //['id']无映射
                 rst[item] = data[item];
             } else { //['id':'uid']映射
                 rst[k] = data[item];

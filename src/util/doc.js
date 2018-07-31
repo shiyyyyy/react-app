@@ -45,7 +45,7 @@ function get_doc_id(row){
 
 //  Doc  组件
 // 基础信息组件 1
-export function basis(data){
+export function basis(data,type){
     return (
         <div className="doc-module">
 			<div className="doc-title">基础信息</div>
@@ -61,6 +61,9 @@ export function basis(data){
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">部门编号:</span><span className="cell-right">{data.code}</span>
+				</div>
+				<div className={(type === '业务内转' ? "doc-main-cell":"hide")}>
+					<span className="cell-left-4">转出人:</span><span className="cell-right">{data.nz_pay_employee_name}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">结算金额:</span><span className="cell-right">{data.settle_amount} &nbsp; &nbsp; ({data.cn_settle_amount})</span>
@@ -492,7 +495,7 @@ export function th_detail(data){
 }
 
 // 退款调用收款
-export function tk_call_sk(data){
+export function tk_call_sk(data,type){
     return(
 		<div className="doc-module">
 			<div className="doc-title">调用单据</div>
@@ -518,8 +521,14 @@ export function tk_call_sk(data){
 				<div className="doc-main-cell">
 					<span className="cell-left-4">已开票额:</span><span className="cell-right">{data.invoice_amount}</span>
 				</div>
+				<div className={(type === '资金退款' ? "doc-main-cell":"hide")}>
+					<span className="cell-left-4">未开票额:</span><span className="cell-right">{data.invoice_remain}</span>
+				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">审批状态:</span><span className="cell-right">{Enum.Flow[data.flow]}</span>
+				</div>
+				<div className={(type === '资金退款' ? "doc-main-cell":"hide")}>
+					<span className="cell-left-4">本次退款:</span><span className="cell-right">{data.amount}</span>
 				</div>
 			</div>
 		</div>

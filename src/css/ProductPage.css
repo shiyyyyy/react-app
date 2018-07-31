@@ -1,6 +1,23 @@
 
 
 /* -------------------------- banner下 产品信息  ------------------------------- */
+.pro-body{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 .32rem;
+    position: relative;
+}
+.pro-header-box {
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: .16rem;
+    overflow: hidden;
+    padding: .16rem 0;
+    background-color: #fff;
+    position: relative;
+    top: -0.426667rem;
+}
 .pro-header-info{
     background-color: #fff;
     padding: .48rem 0;
@@ -69,17 +86,31 @@
     background-color: #fff;
     padding: .266667rem 0 .533333rem 0;
     margin-top: .32rem;
+    border-radius: .16rem;
 }
 .tour-highlights-title{
+    font-size: .373333rem;
     line-height: .853333rem;
-    padding: 0 .32rem;
+    padding: 0 1.066667rem;
+    background: url(/img/tuijie.png) no-repeat .426667rem center;
+    background-size: .533333rem;
 }
 .tour-highlights-item{
     font-size: .32rem;
+    color: #000;
     padding: 0 .533333rem;
     margin: .213333rem 0;
 }
 
+.tour-detail-title{
+    font-size: .373333rem;
+    line-height: .853333rem;
+    background: url(/img/xingcheng.png) no-repeat .426667rem center #fff;
+    background-size: .533333rem;
+    border-radius: .16rem;
+    padding: .266667rem 1.066667rem;
+    margin-top: .32rem;
+}
 
 
 
@@ -264,6 +295,7 @@
 .calendar {
     text-align: center;
     background-color: #fff;
+    border-radius: .16rem;
   }
   
   .calendar-panel {
@@ -434,6 +466,27 @@
   
 
   /* --------------------------------- PDF 控制器 菜单------------------------------------------- */
+  .PDF-box-ctrl{
+      font-size: .746667rem;
+      line-height: 1.173333rem;
+      color: #fff;
+      display: flex;
+  }
+  .PDF-ctrl-left{
+      width: 60%;
+      box-sizing: border-box;
+      padding: 0 .426667rem;
+      display: flex;
+      justify-content: space-between;
+  }
+  .PDF-ctrl-right{
+    width: 40%;
+    box-sizing: border-box;
+    padding: 0 .426667rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
   .pdf-ctrl{
     font-size: 1.066667rem;
     line-height: 1.146667rem;
@@ -463,8 +516,8 @@
       font-size: .426667rem;
       line-height: .533333rem;
       color: #fff;
-      border: 1px solid rgba(111,197,216,.7);
-      background-color: rgba(111,197,216,.5);
+      /* border: 1px solid rgba(111,197,216,.7);
+      background-color: rgba(111,197,216,.5); */
       box-sizing: border-box;
       padding: 0 .16rem;
   }
@@ -484,10 +537,18 @@
 
   /* -----------------------PDF-box  canvas盒子 样式--------------------------- */
   .PDF-view{
-    margin-top: .32rem;
-    margin-bottom: 1.493333rem;
+    background-color: #97ceda;
+    border-radius: .16rem;
+    padding: 0 .213333rem .213333rem;
+    margin-bottom: 1.6rem;
   }
 
   .pdf-canvas{
     z-index: 10;
+  }
+
+  .canvas-box{
+      width: 100%;
+      height: 13.333333rem;
+      overflow: auto;
   }

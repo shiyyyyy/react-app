@@ -116,6 +116,7 @@
     color: #6FC5D8;
     border: 1px solid #6FC5D8;
     border-radius: .08rem;
+    background-color: #fff;
     box-sizing: border-box;
 }
 .enter-tour-list-btn-submit{
@@ -218,4 +219,22 @@
 }
 .order-set-detail-modal-cell-item{
     line-height: .533333rem;
+}
+
+/* ----------------------------  占位页面  ------------------------------ */
+.people-num-box{
+    display: flex;
+}
+.people-num{
+    width: 40%;
+    height: 100% !important;
+}
+.plus-minus{
+    font-size: .64rem;
+    flex: 1;
+    box-sizing: border-box;
+    padding: 0 .426667rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }

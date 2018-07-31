@@ -15,30 +15,19 @@
     height: .96rem;
     line-height: .96rem;
     color: #6FC5D8;
+    background: url(/img/gys.png) no-repeat 16px center #fff;
+    background-size: .533333rem .533333rem;
     border: 1px solid #6FC5D8;
     border-radius: .08rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
-.order-check-footer-btn-default>div, .order-check-footer-btn-submit>div{
-    position: relative;
-    top: .186667rem;
-    left: -0.133333rem;
-    display: inline-block;
-}
-.order-check-footer-btn-default>div img, .order-check-footer-btn-submit>div img{
-    width: .586667rem;
-    height: .586667rem;
-}
+
 .order-check-footer-btn-submit{
     width: 4.266667rem;
     height: .96rem;
     line-height: .96rem;
     color: #fff;
+    background: url(/img/zs.png) no-repeat 16px center #fff;
+    background-size: .533333rem .533333rem;
     background-color :#6FC5D8;
     border-radius: .08rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }

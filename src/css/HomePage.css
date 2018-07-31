@@ -145,17 +145,18 @@
     font-weight: normal;
 }
 .content-item-bottom-gys{
-    width: 1.386667rem;
-    height: .533333rem;
-    line-height: .346667rem;
-    font-size: .213333rem;
-    color: #fff;
-    box-sizing: border-box;
-    background-color: #F6AF06;
-    border-radius: .08rem;
-    padding: .106667rem .266667rem;
-    display: inline-block;
-    overflow: hidden;
+        max-width: 1.333333rem;
+        height: .533333rem;
+        line-height: .346667rem;
+        font-size: .213333rem;
+        color: #fff;
+        text-align: center;
+        box-sizing: border-box;
+        background-color: #F6AF06;
+        border-radius: .08rem;
+        padding: .106667rem;
+        display: inline-block;
+        overflow: hidden;
 }
 .over-hide-y{
     overflow-y: hidden; 

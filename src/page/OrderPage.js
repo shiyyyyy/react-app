@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import {Page,AlertDialog} from 'react-onsenui';
 
-import {AppCore,goTo,loadMore,loadIfEmpty,testing,AppMeta,post,trigger,reload} from '../util/core';
+import {AppCore,goTo,loadMore,loadIfEmpty,testing,AppMeta,post,trigger,reload,Enum,goBack} from '../util/core';
 import {pullHook,loginToPlay,search,nonBlockLoading,info} from '../util/com';
 import { connect } from 'react-redux';
 
@@ -10,26 +10,50 @@ import '../css/OrderPage.css'
 class OrderPage extends Component{
 
 	constructor(props) {
-	    super(props);
+		super(props);
+		
 		this.state = {
+			search_value: '',
 			state:'initial',
 			data:[],
 			order_state:['全部','未提交','占位中','已审核','已确认','变更中'],
-			ord_state:['未提交','占位中','已审核','已确认','变更中'],
+			//ord_state:['未提交','占位中','已审核','已确认','变更中'],
 			cur_state: 0,
 			is_delete:false,
 			is_revoke:false,
 			delete_order:{},
 			revoke_order:{},
+			search:{}
 		};
 		this.mod = '订单管理';
+		this.p = {
+			key: this.mod,
+			placeholder: '请输入订单号',
+			cb: value => {
+				this.setState({search_value: value, search:{id: value, limit: 10, mod: this.mod}});
+				reload(this)
+			goBack()
+			}		
+		}
+		
 	}
 
-	EditOrder(order){
-		if(order.order_yb){
-             goTo('修改订单-异部',{data:order,action:'修改订单-异部'});
+	checkOrder(order){
+		if(order.order_kind == 2){
+			goTo('订单查看页',{data:order,action:'查看订单-销售-活动'});
+		}else if(order.order_yb){
+            goTo('订单查看页',{data:order,action:'查看订单-销售-异部'});
         }else{
-             goTo('修改订单-同部',{data:order,action:'修改订单-同部'});
+            goTo('订单查看页',{data:order,action:'查看订单-销售-同部'});
+        }
+	}
+	EditOrder(order){
+		if(order.order_kind == 2){
+			goTo('修改订单-活动',{data:order,action:'修改订单-异部'});
+		}else if(order.order_yb){
+            goTo('修改订单-异部',{data:order,action:'修改订单-异部'});
+        }else{
+            goTo('修改订单-同部',{data:order,action:'修改订单-同部'});
         }
 	}
 
@@ -118,10 +142,15 @@ class OrderPage extends Component{
 	    );
 	}
 
+	orderStateClick(state){
+		this.setState({search:{...this.state.search,state:state},cur_state:state});
+		reload(this);
+	}
+
 
 	render(){
 		return (
-			<Page renderToolbar={_=>search()} onInfiniteScroll={done=>loadMore(this,done)} onShow={_=>loadIfEmpty(this)}>
+			<Page renderToolbar={_=>search(this)} onInfiniteScroll={done=>loadMore(this,done)} onShow={_=>loadIfEmpty(this)}>
 			{
 			  	this.props.s.user.sid && pullHook(this)	
 		    }
@@ -129,9 +158,9 @@ class OrderPage extends Component{
 		    	this.props.s.user.sid && 
 	    		<div>
 					<div className="order-state">
-						{this.state.order_state.map( (item, i) => 
-							<div className={i == this.state.cur_state ? 'cur-order-state' :  'order-state-item'} 
-							onClick={_=>this.setState({cur_state:i})} key={i}>{item}</div>
+						{Object.keys(Enum['OrderState']).map( (item, i) => 
+							<div className={item == this.state.cur_state ? 'cur-order-state' :  'order-state-item'} 
+							onClick={_=>this.orderStateClick(item)} key={item}>{Enum['OrderState'][item]}</div>
 						)}
 					</div>
 
@@ -140,9 +169,9 @@ class OrderPage extends Component{
 					      <div className="order-item" key={order.id}>
 							  <div className="order-number">
 							  	<span style={{fontSize:'.373333rem'}}>订单号:D0{order.order_id}</span>
-							  	<span style={{color:'#9E9E9E'}}>{order.company_name}-{order.department_name}-{order.group_employee_name}</span>
+							  	<span style={{color:'#9E9E9E'}}>{order.company_name}-{order.department_name}-{order.employee_name}</span>
 							  </div>
-							  <div className="order-main" onClick={_=>goTo('订单查看页')}>
+							  <div className="order-main" onClick={_=>this.checkOrder(order)}>
 							  {/* 以下为 group 里面拿过来的,应该可以放在函数里,但是HTML里面的东西不太一样 */}
 								<div className="pro-item"  key={order.id}
 								style={{backgroundColor: '#F8F8F8',borderRadius: '0',width: '100%', height:'100%',margin:'0'}}>
@@ -156,9 +185,9 @@ class OrderPage extends Component{
 											<span>{order.pd_provider}</span>
 										</div>
 										<div className="pro-item-price flex-j-sb">
-											<span>客户: {order.id}</span>
+											<span>客户: {order.short_name}</span>
 											<span>人数: {order.num_of_people}</span>
-											<span className={'active-order-state'+(order.state*1)}>{this.state.ord_state[order.state*1]}</span>
+											<span className={'active-order-state'+(order.state*1)}>{Enum['OrderState'][order.state]}</span>
 										</div>
 									</div>
 								</div>
@@ -176,7 +205,7 @@ class OrderPage extends Component{
 								</div>
 							  </div>
 							  {	
-							  	testing() &&
+							  	// testing() &&
 								<div className="order-btn">
 								{   
 									// (order.state ==1) &&
@@ -194,7 +223,8 @@ class OrderPage extends Component{
 									disabled={ ((order.state ==1 || order.state ==2)&&order.settle_change_flow==0) ?"":"disabled"}
 									onClick={_=>this.EditOrder(order)}>修改</button>
 								}{
-									//<button className={( ? "":"btn-disabled")+" order-btn-item"} onClick={_=>goTo('订单名单')}>名单</button>
+									<button className={(order.tourist_lock_state==0 ? "":"btn-disabled")+" order-btn-item"}
+									disabled={order.tourist_lock_state==0 ?"":"disabled"} onClick={_=>goTo('订单名单',{data:{id:order.id},action:'订单名单'})}>名单</button>
 								}{	
 									// (order.state ==1) &&
 									<button className={(order.state ==1 ? "":"btn-disabled")+" order-btn-item"}
