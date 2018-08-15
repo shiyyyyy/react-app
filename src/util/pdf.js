@@ -56,7 +56,7 @@ function _loadPdf(url,canvas,width,cb) {
             pdfCanvas=canvas;
             pdfCanvasCxt=canvas.getContext('2d');
             pdfCtWidth=width;
-            renderInit();
+            renderInit(cb);
         },
         e=>{
             log(e);
@@ -71,10 +71,10 @@ export function loadPdf(url,canvas,width,cb) {
             pdfDoc = null;
             pageNum = 1;
             pdfRendering = false;
-            _loadPdf(url,canvas,width);
+            _loadPdf(url,canvas,width,cb);
         });
     }else{
-        _loadPdf(url,canvas,width);
+        _loadPdf(url,canvas,width,cb);
     }
 }
 export function renderPage() {
@@ -113,7 +113,7 @@ export function zoomOut() {
 }
 export function prePage() {
 	if(pageNum <= 1){
-		return 'stop';
+		return pageNum;
 	}
     pageNum--;
     renderPage();
@@ -121,7 +121,7 @@ export function prePage() {
 }
 export function nextPage() {
 	if(pageNum >= pdfDoc.numPages){
-		return 'stop';
+		return pageNum;
 	}
     pageNum++;
     renderPage();

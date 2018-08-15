@@ -172,6 +172,7 @@ export default class Calendar extends React.Component {
 
     let date = cell.year+'-'+cell.month+'-'+cell.date
     this.setState({cur_date: date})
+    this.pre_view.setState({selected_group:group_i})
   }
 
   render() {

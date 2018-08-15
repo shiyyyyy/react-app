@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import {Page,Icon} from 'react-onsenui';
 import {log,AppCore,AppMeta,loadIfEmpty,goTo,Enum,goBack} from '../util/core';
-
+import {info} from '../util/com';
 
 export default class InputTourist extends Component{
 
@@ -44,11 +44,20 @@ export default class InputTourist extends Component{
 	}
 
 	submit(){
+			// 判断手机号
+			if(!this.check){
+				var phone = this.state.mobile
+				var regex = /^1[34578][0-9]{9}$/
+				if(!regex.test(phone)){
+					info('手机号错误')
+					return;
+				}
+			}
+
 			let addTourist = this.state
 			let data = this.pre_view.state.data
 
 			data[this.block][this.tourist_index] = addTourist
-	
 			this.pre_view.setState({data:data})
 			goBack();
 	}
@@ -63,7 +72,7 @@ export default class InputTourist extends Component{
 		return (
 		  	<ons-toolbar>
 		  		<div className='left'><ons-back-button></ons-back-button></div>
-		      	<div className="center">录入游客名单</div>
+		      	<div className="center">{this.check?'查看游客名单':'录入游客名单'}</div>
 		  	</ons-toolbar>
 		);
 	}
@@ -92,15 +101,15 @@ export default class InputTourist extends Component{
 								女<Icon className={(this.state.gender === Enum.Gender[0] ? "":"hide")+" off-icon" } icon="md-circle-o" />
 								  <Icon className={(this.state.gender === Enum.Gender[0] ? "hide":"")+" on-icon" } icon="md-dot-circle-alt" />
 								</span> */}
-								<span onClick={e=>this.setState({gender: Enum.Gender[0]})}>
+								<span onClick={e=>{if(this.check){return}; this.setState({gender: 0} )}}>
 									<label htmlFor={Enum.Gender[0]}>男</label>
-									<input type="radio" value={Enum.Gender[0]} name="gender" id={Enum.Gender[0]} disabled={this.check}
-									className="ver-sub" checked={this.state.gender === Enum.Gender[0]} />
+									<input type="radio" value={0} name="gender" id={Enum.Gender[0]} disabled={this.check}
+									className="ver-sub" checked={this.state.gender === 0} />
 								</span>
-								<span onClick={e=>this.setState({gender: Enum.Gender[1]})} style={{marginLeft: '.426667rem'}}>
+								<span onClick={e=>{if(this.check){return}; this.setState({gender:1}) }} style={{marginLeft: '.426667rem'}}>
 									<label htmlFor={Enum.Gender[1]}>女</label>
-									<input type="radio" value={Enum.Gender[1]} name="gender" id={Enum.Gender[1]} disabled={this.check}
-									className="ver-sub" checked={this.state.gender === Enum.Gender[1]} />
+									<input type="radio" value={1} name="gender" id={Enum.Gender[1]} disabled={this.check}
+									className="ver-sub" checked={this.state.gender === 1} />
 								</span>
 							</span>
 					    </div>
@@ -116,7 +125,7 @@ export default class InputTourist extends Component{
                                 <select onChange={e=>this.setState({certificate_type: e.target.value-0})} disabled={this.check}>
 									<option>请选择</option>
 									{Object.keys(Enum.Certificate).map( (item,i) => 
-										<option value={item} key={i} selected={ item-0 === this.state.certificate_type }>{Enum.Certificate[item]}</option>
+										<option value={item} key={item} selected={ item-0 === this.state.certificate_type }>{Enum.Certificate[item]}</option>
 									)}
                                 </select>
                             </span>
@@ -145,7 +154,7 @@ export default class InputTourist extends Component{
                     </div>
 				</div>
 				{/* 游客名单 */}
-				<div className="enter-tour-list-btn">
+				<div className={this.check?"hide":"enter-tour-list-btn"}>
                     <button className="enter-tour-list-btn-default" onClick={this.reset.bind(this)} disabled={this.check} >取消</button>
                     <button className="enter-tour-list-btn-submit" onClick={this.submit.bind(this)} disabled={this.check} >确定</button>
 				</div>

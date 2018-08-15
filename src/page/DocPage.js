@@ -3,7 +3,7 @@ import {log,post,trigger,AppCore,AppMeta,loadIfEmpty,get_req_data,goBack,submit,
 import {error,nonBlockLoading,info,ErrorBoundary} from '../util/com';
 import { connect } from 'react-redux';
 
-import {Page,Button,Input,AlertDialog} from 'react-onsenui';
+import {Page,Button,Input,AlertDialog,AlertDialogButton} from 'react-onsenui';
 import * as doc from '../util/doc'
 
 export default class DocPageWrap extends Component {
@@ -280,16 +280,16 @@ class DocPageRender extends Component{
 						{/* 基础信息 */}
 						{doc.basis(this.state.data['单据信息'][0])}
 
-						{/*退款单结算信息*/}
+						{/* 退款单结算信息 */}
 						{doc.billing_info(this.state.data['退款单结算信息'][0])}
 
-						{/*退款调用收款*/}
-						{doc.tk_call_sk(this.state.data['退款调用收款'][0])}
+						{/* 退款调用收款 */}
+						{doc.tk_call_sk(this.state.data['退款调用收款'])}
 
-						{/*退款订单*/}
+						{/* 退款订单 */}
 						{doc.tk_detail(this.state.data['退款订单'])}
 
-						{/*对方账户*/}
+						{/* 对方账户 */}
 						{doc.to_account_info(this.state.data['对方账户'][0])}
 
 						{/* 单据备注 */}
@@ -311,7 +311,7 @@ class DocPageRender extends Component{
 						{doc.billing_info(this.state.data['资金退款单结算信息'][0])}
 
 						{/*退款调用收款*/}
-						{doc.tk_call_sk(this.state.data['退款调用资金收款'][0],'资金退款')}
+						{doc.tk_call_sk(this.state.data['退款调用资金收款'],'资金退款')}
 
 						{/*对方账户*/}
 						{doc.to_account_info(this.state.data['对方账户'][0])}
@@ -332,10 +332,10 @@ class DocPageRender extends Component{
 						{doc.basis(this.state.data['单据信息'][0])}
 
 						{/*入账详情-查看*/}
-						{/* {
+						{
 							this.state.data['入账详情-查看'] &&
-							doc.fund(this.state.data['入账详情-查看'][0])
-						} */}
+							doc.fund(this.state.data['入账详情-查看'])
+						}
 
 						{/*业务退回结算信息*/}
 						{
@@ -365,10 +365,10 @@ class DocPageRender extends Component{
 						{doc.basis(this.state.data['单据信息'][0])}
 
 						{/*入账详情-查看*/}
-						{/* {
+						{
 							this.state.data['入账详情-查看'] &&
-							doc.fund(this.state.data['入账详情-查看'][0])
-						} */}
+							doc.fund(this.state.data['入账详情-查看'])
+						}
 
 						{/*资金退回结算信息*/}
 						{
@@ -469,23 +469,21 @@ class DocPageRender extends Component{
 						<button onClick={_=>this.setState({dialog:true})}>审批</button>
 					</section>
 				}
-		        <AlertDialog
-		          isOpen={this.state.dialog}
-		          isCancelable={false}>
+		        <AlertDialog isOpen={this.state.dialog} isCancelable={false} modifier="rowfooter">
 		          <div className='alert-dialog-title'>审批意见</div>
 		          <div className='alert-dialog-content'>
 		            <Input value={this.state.comment} onChange={ e=>this.setState({comment:e.target.value}) }  modifier="underbar" float></Input>
 		          </div>
 		          <div className='alert-dialog-footer'>
-		            <button onClick={_=>this.setState({dialog:false})} className='alert-dialog-button'>
+		            <AlertDialogButton onClick={_=>this.setState({dialog:false})} modifier="rowfooter" >
 		              取消
-		            </button>
-		            <button onClick={_=>this.approve(2)} className='alert-dialog-button'>
+		            </AlertDialogButton>
+		            <AlertDialogButton onClick={_=>this.approve(2)} modifier="rowfooter" >
 		              不通过
-		            </button>
-		            <button onClick={_=>this.approve(1)} className='alert-dialog-button'>
+		            </AlertDialogButton>
+		            <AlertDialogButton onClick={_=>this.approve(1)} modifier="rowfooter" >
 		              通过
-		            </button>
+		            </AlertDialogButton>
 		          </div>
 		        </AlertDialog>
 		    </Page>

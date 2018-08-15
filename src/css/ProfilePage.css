@@ -18,6 +18,7 @@
     width: 1.733333rem;
     height: 1.733333rem;
     margin-top: .426667rem;
+    border-radius: 50%;
 }
 .user-info{
     margin: 0 auto;
@@ -49,17 +50,19 @@
     height: 1.173333rem;
     line-height: .426667rem;
     box-sizing: border-box;
-    padding: .373333rem .426667rem .373333rem .106667rem;
+    padding: .266667rem .426667rem;
     display: flex;
     justify-content: space-between;
 }
 .model-box-bald-title-text{
-    border-left: .133333rem solid #6FC5D8;
-    padding-left: 8px;
+    line-height: .64rem;
+    /* border-left: .133333rem solid #6FC5D8;
+    padding-left: 8px; */
 }
 .model-box-bald-title-more{
-    font-size: .373333rem;
+    font-size: .32rem;
     color: #A3A5A4;
+    line-height: .64rem;
     padding-right: .426667rem;
     background: url(/img/next1.png) no-repeat center right;
     background-size: 38%;
@@ -101,6 +104,12 @@
 }
 .model-box-bald-main-item-order:nth-child(4){
     background-color: #F2869F;
+}
+/* model-box-bald-main 下的img */
+.model-box-bald-main img{
+    width: .853333rem;
+    height: .853333rem;
+    margin-right: .16rem;
 }
 
 /* 我的账本 item */
@@ -151,11 +160,34 @@
 .model-box-bald-main-item-myBooks:nth-child(2){
     margin-bottom: .426667rem;
 }
-.model-box-bald-main-item-myBooks > img{
-    width: .853333rem;
-    height: .853333rem;
-    margin-right: .16rem;
+
+
+/* ----------- 监管 ---------- */
+.model-box-bald-main-item-jianguan{
+    font-size: .373333rem;
+    line-height: 1.066667rem;
+    box-sizing: border-box;
+    border-bottom: 1px solid #F4F8F9;
+    padding: .16rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
+.model-box-bald-main-item-jianguan:last-child{
+    border: none;
+}
+.model-box-bald-main-item-jianguan-left{
+    font-size: .32rem;
+    display: flex;
+    align-items: center;
+}
+.model-box-bald-main-item-jianguan-right{
+    font-size: .373333rem;
+    padding-right: .533333rem;
+}
+
+
+
 
 /* --------------- 消息通知(如果在底部) 定制样式------------------ */
 .model-box-bald-main-msg{
@@ -255,4 +287,161 @@
 .set-msg-right{
     width: 1.866667rem;
     text-align: right;
+}
+
+/* ==================================== 我的账本 详情 ============================================ */
+.fixed-top-box{
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 107px;
+    background-color: #F4F8F9;
+}
+.fixed-top{
+    height: 50px;
+    line-height: 50px;
+    font-size: .373333rem;
+    border-bottom: 1px solid #F4F8F9;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    position: absolute;
+    top: 50px;
+    left: .32rem;
+    right: .32rem;
+    text-align: center;
+}
+.money-care{
+
+}
+.money-care-books-box{
+    line-height: 1.333333rem;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: .16rem;
+    /* padding: 0 .32rem; */
+    margin: .32rem;
+    text-align: center;
+
+}
+.money-care-books-title{
+    font-size: .373333rem;
+    border-bottom: 1px solid #F4F8F9;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.money-care-books-title-item-4{
+    width: 25%;
+}
+.money-care-books-title-item-5{
+    width: 20%;
+}
+.money-care-books-main{
+    font-size: .32rem;
+    color: #666;
+}
+.money-care-books-main-item{
+    border-bottom: 1px solid #F4F8F9;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    position: relative;
+}
+.active-money-care-books-main-item{
+    background: #ccedf3;
+    color: #000;
+    position: relative;
+}
+.money-care-books-main-item-col-4{
+    width: 25%;
+    overflow: auto;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+.money-care-books-main-item-col-5{
+    width: 20%;
+    overflow: auto;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+/* ==================================== 账本详情 ============================================ */
+.reg-detail-body{
+
+}
+/* 详情块 */
+.reg-detail-main{
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: .16rem;
+    padding: .32rem .32rem 0 .32rem;
+    margin: .533333rem .32rem;
+}
+/* 详情头部 */
+.reg-detail-main-header{
+    margin-bottom: .32rem;
+}
+.reg-detail-main-header span:first-child{
+    line-height: .64rem;
+}
+.reg-detail-main-header span:last-child{
+    font-size: .373333rem;
+    color: #999;
+}
+
+/* 头部以下 */
+.reg-detail-main-row{
+    line-height: 1.173333rem;
+    text-align: center;
+}
+.reg-detail-main-income{
+    font-size: .373333rem;
+    border-top: 1px solid #F4F8F9;
+    display: flex;
+    justify-content: space-between;
+}
+.reg-detail-main-income div{
+    /* flex: 1;
+    width: 33%; */
+}
+.reg-detail-main-income div:nth-child(3){
+    color: #999;
+}
+.reg-detail-main-income span{
+    font-size: .32rem;
+}
+.reg-detail-main-total{
+    font-size: .4rem;
+    line-height: 1.28rem;
+    text-align: right;
+    border-top: 1px solid #F4F8F9;
+    border-bottom: 1px solid #F4F8F9;
+}
+/* img */
+.xj-income{
+    box-sizing: border-box;
+    padding-left: .8rem;
+    background: url('/img/reg-detail-xj-income.png') no-repeat left center;
+    background-size: .64rem .64rem;
+}
+.nz-income{
+    box-sizing: border-box;
+    padding-left: .8rem;
+    background: url('/img/reg-detail-nz-income.png') no-repeat left center;
+    background-size: .64rem .64rem;
+}
+.xj-exp{
+    box-sizing: border-box;
+    padding-left: .8rem;
+    background: url('/img/reg-detail-xj-exp.png') no-repeat left center;
+    background-size: .64rem .64rem;
+}
+.nz-exp{
+    box-sizing: border-box;
+    padding-left: .8rem;
+    background: url('/img/reg-detail-nz-exp.png') no-repeat left center;
+    background-size: .64rem .64rem;
 }

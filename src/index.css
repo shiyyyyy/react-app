@@ -211,9 +211,9 @@ strong{
 }
 
 button[disabled]{
-  background-color: #eee !important;
-  color: #666 !important;
-  border: #eee !important;
+  background-color: #fff !important;
+  color: #ccc !important;
+  border: #e0e0e0 1px solid !important;
 }
 
 .ver-sub{
@@ -225,4 +225,69 @@ button[disabled]{
 }
 .over-y-auto{
   overflow-y: auto !important;
+}
+
+/* tabbar */ 
+.tabbar-img{
+  width:  100%;
+  height: 100%;
+  display: inline-block;
+}
+.tabbar-home-img{
+  background: url("/img/tabbar_icon/home.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+.active-tabbar-home-img{
+  background: url("/img/tabbar_icon/home-active.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+
+.tabbar-order-img{
+  background: url("/img/tabbar_icon/order.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+.active-tabbar-order-img{
+  background: url("/img/tabbar_icon/order-active.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+
+.tabbar-search-img{
+  background: url("/img/tabbar_icon/search.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+.active-tabbar-search-img{
+  background: url("/img/tabbar_icon/search-active.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+
+.tabbar-approval-img{
+  background: url("/img/tabbar_icon/approval.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+.active-tabbar-approval-img{
+  background: url("/img/tabbar_icon/approval-active.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+
+.tabbar-my-img{
+  background: url("/img/tabbar_icon/my.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+.active-tabbar-my-img{
+  background: url("/img/tabbar_icon/my-active.png") no-repeat center center;
+  background-size: .64rem .64rem;
+}
+
+
+
+
+
+
+
+
+.tabbar-label{
+  color: #666;
+}
+.active-tabbar-label{
+  color: #000;
 }

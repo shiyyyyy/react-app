@@ -29,4 +29,10 @@ export default {
   '强制升级开始': () => {
     return {type:'强制升级开始'};
   },
+  '打开alert': (alert) => {
+    return {type:'打开alert',alert:alert};
+  },
+  '关闭alert': (key) => {
+    return {type:'关闭alert',key:key};
+  },
 };

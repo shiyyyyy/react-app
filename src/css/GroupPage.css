@@ -54,6 +54,24 @@
     /* position: absolute;
     top: 103px; */
 }
+.option-type-text{
+    font-size: .373333rem;
+}
+.cur-option-type-text{
+    font-size: .373333rem;
+    color: #6FC5D8;
+}
+.option-type-item{
+    font-size: .64rem;
+    padding-left: .106667rem;
+    vertical-align: bottom;
+}
+.cur-option-type-item{
+    font-size: .64rem;
+    padding-left: .053333rem;
+    color: #6FC5D8;
+    vertical-align: bottom;
+}
 
 .dialog-box{
     font-size: .373333rem;
@@ -132,18 +150,20 @@
 }
 /* 功能按钮 重置 确定 box */
 .options-btn{
+    width: 100%;
     display: -ms-flexbox;
     display: flex;
     -ms-flex-pack: justify;
     justify-content: space-between;
     padding: .266667rem .32rem;
     border-top: 1px solid #f1f1f1;
+    box-sizing: border-box;
 }
 .options-reset{
     width: 48%;
     line-height: .853333rem;
-    color: #ccc;
-    border: 1px solid #ccc;
+    color: #6FC5D8;
+    border: 1px solid #6FC5D8;
     border-radius: .106667rem;
 }
 .options-submit{
@@ -221,9 +241,22 @@
 .pro-item-price{
     align-items: center;
 }
-.pro-item-gys{
+.pro-item-dep{
     font-size: .266667rem;
     color: #666;
+}
+.pro-item-gys{
+    width: 45%;
+    font-size: .266667rem;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.pro-item-recently{
+    width: 52%;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .img-hot1{
     width: 1.706667rem;

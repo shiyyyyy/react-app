@@ -2,7 +2,7 @@ import React from 'react'
 
 import {goTo,Enum} from './core'
 import { shareWith } from './com';
-import {Page,Button,Input,Dialog,Select} from 'react-onsenui';
+import {Page,Button,Input,Dialog,Select,Icon} from 'react-onsenui';
 
 // 产品详情
 export  class ProDetail extends React.Component {
@@ -18,7 +18,7 @@ export  class ProDetail extends React.Component {
             {/* 订单页面 HTML */}
             <div className="order-item" style={{paddingBottom: '1.013333rem'}}>
                 <div className="order-number">
-                    <span style={{fontSize:'.373333rem'}}>订单号: D012334324</span>
+                    <span style={{fontSize:'.373333rem'}}> D012334324</span>
                     <span style={{color:'#9E9E9E', fontSize:'.32rem'}}>门管中心-潘家园门市-李阿斯蒂芬</span>
                 </div>
                 <div className="order-main">
@@ -93,7 +93,7 @@ export  class CustomerInfo extends React.Component {
     return (
         <div className="model-box">
 			<div className="box-title">
-				<div className="box-title-text">客户信息</div>
+				<div className="kehu">客户信息</div>
 				<div className={(this.props.check ? 'hide': '')+" box-title-operate"}>
 					<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>选择客户</div>
 					<div className="box-title-operate-item">新增客户</div>
@@ -130,7 +130,7 @@ export  class PickSingle extends React.Component {
       return (
         <div className="model-box">
             <div className="box-title">
-                <div className="box-title-text">接单人</div>
+                <div className="jiedanren">接单人</div>
                 <div className={(this.props.check ? 'hide': '')+" box-title-operate"}>
                     <div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>选择客户</div>
                 </div>
@@ -173,7 +173,7 @@ export  class ToursList extends React.Component {
       return (
         <div className="model-box">
 			<div className="box-title">
-				<div className="box-title-text">游客名单</div>
+				<div className="youke">游客名单</div>
 				<div className={(this.props.check ? 'hide': '')+" box-title-operate"}>
 					<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}
 					onClick={this.addYK.bind(this)}>添加游客</div>
@@ -213,7 +213,7 @@ export  class OrderReceivable extends React.Component {
       return (
         <div className="model-box">
 			<div className="box-title">
-				<div className="box-title-text">订单应收</div>
+				<div className="yingshou">订单应收</div>
 				<div className={(this.props.check ? 'hide': '')+" box-title-operate"}>
 					<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>录入明细</div>
 				</div>
@@ -252,7 +252,7 @@ export  class OrderShould extends React.Component {
       return (
         <div className="model-box">
             <div className="box-title">
-                <div className="box-title-text">订单应转</div>
+                <div className="yingzhuan">订单应转</div>
                 <div className={(this.props.check ? 'hide': '')+" box-title-operate"}>
                     <div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>录入明细</div>
                 </div>
@@ -289,7 +289,7 @@ export  class OrderProfits extends React.Component {
       return (
         <div className="model-box">
             <div className="box-title">
-                <div className="box-title-text">订单利润</div>
+                <div className="lirun">订单利润</div>
             </div>
             <div className="model-main">
                 <div className="model-main-item-box">
@@ -323,7 +323,7 @@ export  class OrderNote extends React.Component {
       return (
         <div className="model-box" style={{marginBottom: '1.493333rem'}}>
 			<div className="box-title">
-				<div className="box-title-text">订单备注</div>
+				<div className="beizhu">订单备注</div>
 			</div>
 			<div className="model-main">
 				<div className="model-main-item-box">
@@ -339,113 +339,107 @@ export  class OrderNote extends React.Component {
 }
 
 // add row
-export function addRowDialog(view,block_cfg,is_open,block){
+export function addRowDialog(row,block_cfg,is_open,block,CancelCb,UpdateValueCb,AddRowDone){
     return (
     <Dialog
     isOpen={is_open}
     isCancelable={true}
-    onCancel={_=>view.CancelAddRow(block)}>
-      <div className="zs-popup" style={{paddingTop: '40px'}}>
+    onCancel={_=>CancelCb(block)}>
+      <div className="order-receivable-modal">
           {/* <div className="zs-popup-avatar">
             <img src="img/avatar.png" />
           </div><br /> */}
-          <div className="zs-popup-info">
+          <div className="order-receivable-modal-info">
+              {
+                Object.keys(block_cfg.list).map( key => 
+                (block_cfg.list[key]['type'] && Enum[block_cfg.list[key]['type']]) && (!block_cfg.list[key]['ro']) &&
+                  <div className="order-receivable-modal-info-item" key={key}
+                  style={{borderTop: '1px solid #f1f1f1'}}>
+                    <span className="order-receivable-modal-info-item-left">{block_cfg.list[key]['text']}</span>
+                    <select id={key} className="order-receivable-modal-info-item-right-select" style={{flex:'none'}}
+                    onChange={e => UpdateValueCb(e.target.value,key)} value = {row?row[key]:''}>
+                        <option value = '' >请选择</option>
+                      {
+                        Object.keys(Enum[block_cfg.list[key]['type']]).map( _k =>
+                          <option  key = {_k} value = {_k}>{Enum[block_cfg.list[key]['type']][_k]}</option>
+                        )
+                      }
+                    </select>  
+                    <Icon icon="md-caret-down" style={{fontSize:'20px'}} />     
+                  </div>
+                  )
+              }
+              
               {
                 Object.keys(block_cfg.list).map( key => 
                   (!block_cfg.list[key]['type'] || !Enum[block_cfg.list[key]['type']]) &&(!block_cfg.list[key]['ro']) &&
-                  <div className="model-box" key={key}>
-                    <div className="model-main">
-                      <div className="model-main-box">
-                        <div className="model-main-item" style={{backgroundColor: '#f9f9f9'}}>
-                          <span>{block_cfg.list[key]['text']}</span>
-                          <input value={view.state.data['row']?view.state.data['row'][key]:''} onChange={ e => view.setNewValue(e.target.value,key)}
-                          type={block_cfg.list[key]['type']?block_cfg.list[key]['type']:'text'} /></div>       
-                      </div>
-                    </div>
+                  <div className="order-receivable-modal-info-item" key={key}>
+                    <span className="order-receivable-modal-info-item-left">{block_cfg.list[key]['text']}</span>
+                    <input className="order-receivable-modal-info-item-right" value={row?row[key]:''} 
+                    onChange={ e => UpdateValueCb(e.target.value,key)}
+                    type={block_cfg.list[key]['type']?block_cfg.list[key]['type']:'text'}
+                    placeholder={'请输入'+block_cfg.list[key]['text']} />   
                   </div>
                 )
               }
-              {
-                Object.keys(block_cfg.list).map( key => 
-                    (block_cfg.list[key]['type'] && Enum[block_cfg.list[key]['type']]) && (!block_cfg.list[key]['ro']) &&
-                    <div className="model-box" key={key}>
-                      <div className="model-main">
-                        <div className="model-main-box">
-                          <div className="model-main-item" style={{backgroundColor: '#f9f9f9'}}>
-                            <span>{block_cfg.list[key]['text']}</span>
-                            <Select id={key} style={{width: '3.466667rem'}}
-                            onChange={e => view.setNewValue(e.target.value,key)} value = {view.state.data['row'][key]?view.state.data['row'][key]:''}>
-                              {
-                                Object.keys(Enum[block_cfg.list[key]['type']]).map( _k =>
-                                  <option  key = {_k} value = {_k}>{Enum[block_cfg.list[key]['type']][_k]}</option>
-                                )
-                              }
-                                  </Select>     
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )
-              }
-            </div><br />
-            <div className="zs-popup-btn">
-              <span onClick={_=>view.addRowDone(block)}>确定</span>
+
+            </div>
+            <div className="order-receivable-modal-btn">
+              <span className="order-receivable-modal-btn-cancel" onClick={_=>CancelCb(block)}>取消</span>
+              <span className="order-receivable-modal-btn-submit" onClick={_=>AddRowDone(block)}>确定</span>
             </div>
         </div>
     </Dialog>
     )
 }
 
-export function editRowDialog(view,block_cfg,is_edit,edit_index,block){
+export function editRowDialog(row,block_cfg,is_edit,edit_index,block,CancelCb,UpdateValueCb,EditRowDone){
     return (
     <Dialog
     isOpen={is_edit}
     isCancelable={true}
-    onCancel={_=>view.CancelEditRow(block)}>
-      <div className="zs-popup">
-          <div className="zs-popup-avatar">
+    onCancel={_=>CancelCb(block)}>
+      <div className="order-receivable-modal">
+          {/* <div className="zs-popup-avatar">
             <img src="img/avatar.png" />
-          </div><br />
-          <div className="zs-popup-info">
-              {
-                Object.keys(block_cfg.list).map( key => 
-                 (!block_cfg.list[key]['type'] || !Enum[block_cfg.list[key]['type']]) && (!block_cfg.list[key]['ro']) &&
-                  <div className="model-box" key={key}>
-                    <div className="model-main">
-                      <div className="model-main-box">
-                        <div className="model-main-item">
-                          <span>{block_cfg.list[key]['text']}</span>
-                          <input value={view.state.data['row']?view.state.data['row'][key]:''} onChange={ e => view.setNewValue(e.target.value,key)}
-                          type={block_cfg.list[key]['type']?block_cfg.list[key]['type']:'text'} /></div>      
-                      </div>
-                    </div>
-                  </div>
-                )
-              }
+          </div><br /> */}
+          <div className="order-receivable-modal-info">
+
               {
                 Object.keys(block_cfg.list).map( key => 
                     (block_cfg.list[key]['type'] && Enum[block_cfg.list[key]['type']]) && (!block_cfg.list[key]['ro']) &&
-                    <div className="model-box" key={key}>
-                      <div className="model-main">
-                        <div className="model-main-box">
-                          <div className="model-main-item">
-                            <span>{block_cfg.list[key]['text']}</span>
-                            <Select id={key} onChange={e => view.setNewValue(e.target.value,key)} value = {view.state.data['row'][key]?view.state.data['row'][key]:''}>
-                              {
-                                Object.keys(Enum[block_cfg.list[key]['type']]).map( _k =>
-                                  <option  key = {_k} value = {_k}>{Enum[block_cfg.list[key]['type']][_k]}</option>
-                                )
-                              }
-                                  </Select>     
-                          </div>
-                        </div>
-                      </div>
+                    <div className="order-receivable-modal-info-item" key={key} style={{borderTop: '1px solid #f1f1f1'}}>
+                      <span className="order-receivable-modal-info-item-left">{block_cfg.list[key]['text']}:</span>
+                      <select id={key} className="order-receivable-modal-info-item-right-select" style={{flex:'none'}}
+                       onChange={e => UpdateValueCb(e.target.value,key)} value = {row[key]?row[key]:''}>
+                        <option value = ''>请选择</option>
+                        {
+                          Object.keys(Enum[block_cfg.list[key]['type']]).map( _k =>
+                            <option  key = {_k} value = {_k}>{Enum[block_cfg.list[key]['type']][_k]}</option>
+                          )
+                        }
+                      </select>
+                      <Icon icon="md-caret-down" style={{fontSize:'20px'}} />       
                     </div>
                   )
               }
-            </div><br />
-            <div className="zs-popup-btn">
-              <button onClick={_=>view.EditRowDone(block,edit_index)}>确定</button>
+              {
+                Object.keys(block_cfg.list).map( key => 
+                 (!block_cfg.list[key]['type'] || !Enum[block_cfg.list[key]['type']]) && (!block_cfg.list[key]['ro']) &&
+                  <div className="order-receivable-modal-info-item" key={key}>
+                    <span className="order-receivable-modal-info-item-left">{block_cfg.list[key]['text']}:</span>
+                    <input className="order-receivable-modal-info-item-right" value={row[key]?row[key]:''} onChange={ e => UpdateValueCb(e.target.value,key)}
+                    type={block_cfg.list[key]['type']?block_cfg.list[key]['type']:'text'} />
+                  </div>
+                )
+              }
+
+            </div>
+            <div className="order-receivable-modal-btn">
+              <div className="order-receivable-modal-btn-cancel" 
+              onClick={_=>CancelCb(block)}>取消</div>
+              <div className="order-receivable-modal-btn-submit" 
+              onClick={_=>EditRowDone(block,edit_index)}>确定</div>
             </div>
         </div>
     </Dialog>

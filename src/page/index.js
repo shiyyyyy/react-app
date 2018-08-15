@@ -12,7 +12,7 @@ import ProfilePage from './ProfilePage';
 import TabPage from './TabPage';
 
 import InputTourist from './InputTourist';
-import Search from './Search';
+import SearchPage from './SearchPage';
 
 import DocPage from './DocPage';
 import HoldSeatPage from './HoldSeatPage';
@@ -24,6 +24,9 @@ import OrderSettleableDetail from './OrderSettleableDetail';
 import TouristListPage from './TouristListPage';
 
 import SelectItemPage from './SelectItemPage';
+import MyAccountPage from './MyAccountPage';
+import RegulatoryPage from './RegulatoryPage';
+import RegulatoryDetailPage from './RegulatoryDetailPage';
 
 
 export default {
@@ -40,7 +43,8 @@ export default {
 	'个人页': ProfilePage,
 	'底栏菜单': TabPage,
 	'录入游客名单': InputTourist,
-	'搜索': Search,
+	'查看游客名单': InputTourist,
+	'搜索': SearchPage,
 
 	//团
 	'占位订单':HoldSeatPage,
@@ -59,4 +63,8 @@ export default {
 	
 	'占位新增客户':NewCstmPage,
 	'订单新增客户':NewCstmPage,
+
+	'我的账户':MyAccountPage,
+	'账户监管':RegulatoryPage,
+	'账户详情': RegulatoryDetailPage
 };

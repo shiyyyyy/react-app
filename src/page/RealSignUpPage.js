@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component,Fragment } from 'react';
 
 import {Page,Dialog,Icon} from 'react-onsenui';
 
 import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit} from '../util/core';
-import {pullHook,loginToPlay,ErrorBoundary,info,zs_dialog,gys_dialog} from '../util/com';
+import {pullHook,loginToPlay,ErrorBoundary,info,ProInfo,OpDialog, SupplierDialog,nonBlockLoading,confirm} from '../util/com';
 import { connect } from 'react-redux';
 
 import '../css/OrderEditPage.css'
@@ -26,7 +26,7 @@ class RealSignUpPageRender extends Component{
 	constructor(props) {
 	    super(props);
 		
-		this.state = {'data':{'comment':''},'group_id':props.p.data.id,'inited':false};
+		this.state = {'data':{'comment':''},'group_id':props.p.data.id,'inited':false,'open_op':false,'open_supplier':false};
 		this.action = props.p.action;
 		let cfg = AppMeta.actions[this.action];
 		this.text = cfg.text;
@@ -72,11 +72,11 @@ class RealSignUpPageRender extends Component{
 	}
 
 	addCstm(){
-		goTo('订单新增客户',{action:'订单新增客户',view:this});
+		goTo('订单新增客户',{action:'订单新增客户',view:this,pro_info: this.state.data['订单团队'][0]});
 	}
 
 	selectAssitant(){
-		goTo('选择项目页',{items:this.state.data['可接单人'],cb:this.selectAssitantDone.bind(this),key:'接单人'})
+		goTo('选择项目页',{items:this.state.data['接单人详情'],cb:this.selectAssitantDone.bind(this),key:'接单人',pro_info: this.state.data['订单团队'][0]})
 	}
 
 
@@ -115,6 +115,10 @@ class RealSignUpPageRender extends Component{
 	}
 
 	submitRealSignUp(){
+		confirm('是否确认操作？').then(r=>r && this.sureToRealSignUp())
+	}
+
+	sureToRealSignUp(){
 		let data = this.state.data;
 		data['订单详情'] = [{'assitant_id':data['接单人'].id}];
 		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
@@ -131,49 +135,43 @@ class RealSignUpPageRender extends Component{
 		)
 	}
 
+	SupplierDialog(){
+		let supplier_ctrl = {
+			open_supplier : this.state.open_supplier,
+			cancelCb : () => {
+				this.setState({open_supplier: false})
+			}
+		}
+		return ( <SupplierDialog supplier_ctrl={supplier_ctrl} supplier_info={this.state.data['开团人详情'][0] || ''} /> )
+	}
+	OpDialog(){
+		let op_ctrl = {
+			open_op : this.state.open_op,
+			cancelCb : () => {
+				this.setState({open_op: false})
+			}
+		}
+		return ( <OpDialog op_ctrl={op_ctrl} op_info={this.state.data['接单人详情'][0] || ''} /> )
+	}
+
 	render(){
 		return (
 			<Page renderToolbar={_=>this.renderToolbar()} onShow={_=>loadIfEmpty(this,this.afterLoad)}
 			renderFixed={_=>this.renderFixed()} >
-				{
-
-					this.state.inited &&
-					<div>
+			{ !this.state.data['接单人详情'] && nonBlockLoading() }
+			{
+				this.state.inited &&
+				<Fragment>
 					<div className="ord-edit-ord-detail">
-						{/* 订单 HTML */}
-						<div className="order-item" style={{paddingBottom: '1.013333rem'}}>
-							<div className="order-number">
-								<span style={{fontSize:'.373333rem'}}>订单号:</span>
-								<span style={{color:'#9E9E9E', fontSize:'.32rem'}}></span>
-							</div>
-							<div className="order-main">
-							{/* 团队信息 */}
-							<div className="pro-item"
-							style={{backgroundColor: '#F8F8F8',borderRadius: '0',width: '100%', height:'100%',margin:'0'}}>
-								<div className="pro-item-left" style={{width:'2.56rem',height:'2.186667rem'}}>
-									<img className="img-size"/>
-								</div>
-								<div className="pro-item-right">
-									<div className="pro-item-name"></div>
-									<div className="pro-item-dep_city flex-j-sb">
-										<span>团期: {this.state.data['订单团队'][0]['dep_date']}</span>
-										<span>供应商:{this.state.data['订单团队'][0]['pd_provider']}</span>
-									</div>
-									<div className="pro-item-price flex-j-sb" style={{fontSize: '.32rem'}}>
-										{/*<span>客户: 张全蛋</span>*/}
-										{/*<span>人数: 2</span>*/}
-										{/* <span className={'active-order-state'+(order.state*1)}>{this.state.ord_state[order.state*1]}</span> */}
-										{/*<span>已支付</span>*/}
-									</div>
-								</div>
-							</div>
-							</div>
-						</div>
+					{/* 订单 HTML */}
+					{this.state.data && this.state.data['订单团队'] && 
+						<ProInfo pro_info={this.state.data['订单团队'][0]} />
+					}
 					</div>
 					{/* 客户信息 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">客户信息</div>
+							<div className="kehu">客户信息</div>
 							<div className="box-title-operate">
 								<div onClick={_=>this.selectCstm()} style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} className='box-title-operate-item'>
 					              选择客户
@@ -199,7 +197,7 @@ class RealSignUpPageRender extends Component{
 					{/* 接单人 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">接单人</div>
+							<div className="jiedanren">接单人</div>
 							<div className="box-title-operate">
 								<div onClick={_=>this.selectAssitant()} style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} className='box-title-operate-item'>
 					              选择接单人
@@ -218,7 +216,7 @@ class RealSignUpPageRender extends Component{
 					{/* 游客名单 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">游客名单</div>
+							<div className="youke">游客名单</div>
 							<div className="box-title-operate">
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
 								<Icon icon="md-plus-circle-o" style={{fontSize: '.64rem', color: '#6FC5D8'}}
@@ -234,7 +232,7 @@ class RealSignUpPageRender extends Component{
 								<div className="model-main-item">
 									<span>{i+1}</span> 
 									<span>{item.name}</span> 
-									<span>{item.gender}</span> 
+									<span>{Enum.Gender[item.gender]}</span> 
 									<span>{item.birthday}</span>
 									<span>{Enum.Certificate[item.certificate_type]}</span> 
 									<span>{item.certificate_num}</span>
@@ -251,7 +249,7 @@ class RealSignUpPageRender extends Component{
 					{/* 订单应收 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">订单应收</div>
+							<div className="yingshou">订单应收</div>
 							<div className="box-title-operate">
 								<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} onClick={_=>this.entryReceivable()}>录入明细</div>
 							</div>
@@ -259,9 +257,9 @@ class RealSignUpPageRender extends Component{
 						<div className="model-main">
 							<div className="model-main-item-box">
 								<div className="model-main-item flex-j-sb">
-								<span>应收:{this.state.data['订单应收'][0].receivable}</span> 
-								<span>已收:{this.state.data['订单应收'][0].received}</span> 
-								<span>未收:{this.state.data['订单应收'][0].receive_diff}</span> 
+								<span>应收:<span>{this.state.data['订单应收'][0].receivable}</span></span> 
+								<span>已收:<span>{this.state.data['订单应收'][0].received}</span></span> 
+								<span>未收:<span>{this.state.data['订单应收'][0].receive_diff}</span></span> 
 								</div>
 							</div>
 						</div>
@@ -270,7 +268,7 @@ class RealSignUpPageRender extends Component{
 					{	this.state.data.order_yb &&
 						<div className="model-box">
 							<div className="box-title">
-								<div className="box-title-text">订单应转</div>
+								<div className="yingzhuan">订单应转</div>
 								<div className="box-title-operate">
 									<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} onClick={_=>this.entrySettleable()}>录入明细</div>
 								</div>
@@ -278,9 +276,9 @@ class RealSignUpPageRender extends Component{
 							<div className="model-main">
 								<div className="model-main-item-box">
 									<div className="model-main-item flex-j-sb">
-									<span>应转:{this.state.data['订单应转'][0].settleable}</span> 
-									<span>已转:{this.state.data['订单应转'][0].settled}</span> 
-									<span>未转:{this.state.data['订单应转'][0].settle_diff}</span> 
+									<span>应转:<span>{this.state.data['订单应转'][0].settleable}</span></span> 
+									<span>已转:<span>{this.state.data['订单应转'][0].settled}</span></span> 
+									<span>未转:<span>{this.state.data['订单应转'][0].settle_diff}</span></span> 
 									</div>
 								</div>
 							</div>
@@ -289,15 +287,15 @@ class RealSignUpPageRender extends Component{
 					{/* 订单利润 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">订单利润</div>
+							<div className="lirun">订单利润</div>
 						</div>
 						<div className="model-main">
 							<div className="model-main-item-box">
 								<div className="model-main-item flex-j-sb over-x-auto">
-								<span>应收:{this.state.data['订单利润'][0].receivable}</span> 
-								<span>应转:{this.state.data['订单利润'][0].settleable}</span> 
-								<span>利润:{this.state.data['订单利润'][0].profit}</span> 
-								<span>利润率:{this.state.data['订单利润'][0].profit_rate}</span>
+								<span>应收:<span>{this.state.data['订单利润'][0].receivable}</span></span> 
+								<span>应转:<span>{this.state.data['订单利润'][0].settleable}</span></span> 
+								<span>利润:<span>{this.state.data['订单利润'][0].profit}</span></span> 
+								<span>利润率:<span>{this.state.data['订单利润'][0].profit_rate}</span></span>
 								</div>
 							</div>
 						</div>
@@ -305,20 +303,21 @@ class RealSignUpPageRender extends Component{
 					{/* 订单备注 */}
 					<div className="model-box" style={{marginBottom: '1.653333rem'}}>
 						<div className="box-title">
-							<div className="box-title-text">订单备注</div>
+							<div className="beizhu">订单备注</div>
 						</div>
 						<div className="model-main">
 							<div className="model-main-item-box">
 								<div className="model-main-item">
-									<input type='text' style={{fontSize: '.373333rem', color: '#000', width: '100%'}} value={this.state.data['comment']}>{this.state.data['comment']}</input>
+									<input type='text' style={{fontSize: '.373333rem', color: '#000', width: '100%'}} value={this.state.data['comment']}
+									placeholder="请输入备注内容">{this.state.data['comment']}</input>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				}
-			{zs_dialog(this)}
-			{gys_dialog(this)}
+				</Fragment>
+			}
+				{ this.state.data && this.state.data['开团人详情'] && this.SupplierDialog()}
+				{ this.state.data && this.state.data['接单人详情'] && this.OpDialog()}
 		    </Page>
 		);
 	}

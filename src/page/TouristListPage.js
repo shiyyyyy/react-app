@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {Page} from 'react-onsenui';
 
 
-import {footer,ErrorBoundary,info} from '../util/com';
+import {footer,ErrorBoundary,info,nonBlockLoading} from '../util/com';
 import {AppCore,resetTo, goBack ,loadIfEmpty,AppMeta,Enum,goTo,trigger,post} from '../util/core';
 import { connect } from 'react-redux';
 
@@ -82,13 +82,17 @@ class TouristListPageRender extends Component{
 		this.setState({data:data});
 	}
 
-	checkTourist(item,check){
-		goTo('录入游客名单',{item: item,check:check})
+	editTourist(item,i,block){
+		goTo('录入游客名单',{action:'录入游客名单',view:this,item: item,i:i,block:block})
 	}
 
 	render(){
 		return (
 			<Page renderToolbar={_=>this.renderToolbar()} onShow={_=>loadIfEmpty(this,this.afterLoad)}>
+
+			{
+			  	!this.state.inited && nonBlockLoading()
+			}
 			{
 				this.state.inited &&
 				<div>
@@ -96,7 +100,7 @@ class TouristListPageRender extends Component{
 					{/* 订单页面 HTML */}
 					<div className="order-item" style={{paddingBottom: '1.013333rem'}}>
 							<div className="order-number">
-								<span style={{fontSize:'.373333rem'}}>订单号:D0{this.state.data['订单详情'][0]['id']}</span>
+								<span style={{fontSize:'.373333rem'}}>D0{this.state.data['订单详情'][0]['id']}</span>
 								<span style={{color:'#9E9E9E', fontSize:'.32rem'}}></span>
 							</div>
 							<div className="order-main">
@@ -104,13 +108,18 @@ class TouristListPageRender extends Component{
 							<div className="pro-item"
 							style={{backgroundColor: '#F8F8F8',borderRadius: '0',width: '100%', height:'100%',margin:'0'}}>
 								<div className="pro-item-left" style={{width:'2.56rem',height:'2.186667rem'}}>
-									<img className="img-size"/>
+									<img className="img-size" src={AppCore.HOST+'/'+this.state.data['订单详情'][0]['thumb']}/>
 								</div>
 								<div className="pro-item-right">
-									<div className="pro-item-name"></div>
+									<div className="pro-item-name">产品名称: {this.state.data['订单详情'][0]['pd_name']}</div>
 									<div className="pro-item-dep_city flex-j-sb">
 										<span>团期: {this.state.data['订单详情'][0]['dep_date']}</span>
 										<span>供应商:{this.state.data['订单详情'][0]['pd_provider']}</span>
+									</div>
+									<div className="pro-item-price flex-j-sb" style={{fontSize: '.32rem'}}>
+										<span>客户:{this.state.data['订单详情'][0]['short_name']}</span>
+										<span>人数:{this.state.data['订单详情'][0]['num_of_people']}</span>
+										<span>{Enum.OrderState[this.state.data['订单详情'][0]['state']]}</span>
 									</div>
 									<div className="pro-item-price flex-j-sb" style={{fontSize: '.32rem'}}>
 									</div>
@@ -122,21 +131,15 @@ class TouristListPageRender extends Component{
 				{/* 游客名单 */}
 				<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">游客名单</div>
-							<div className="box-title-operate">
-								{/* <div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jia.png" style={{width:'.64rem', height: '.64rem'}} onClick={() => this.addTourist()}/></div>
-								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
-								<img src="img/jian.png" style={{width:'.64rem', height: '.64rem'}} onClick={() => this.reduceTourist()}/></div> */}
-							</div>
+							<div className="youke">游客名单</div>
 						</div>
 						<div className="model-main">
 						{this.state.data['游客名单'].map( (item,i) => 
-							<div className="model-main-item-box" key={i} onClick={_=>this.checkTourist(item,'check')}>
+							<div className="model-main-item-box" key={i} onClick={_=>this.editTourist(item,i,'游客名单')}>
 								<div className="model-main-item">
 									<span>{i+1}</span> 
 									<span>{item.name}</span> 
-									<span>{item.gender}</span> 
+									<span>{item.gender ? Enum.Gender[item.gender] :''}</span> 
 									<span>{item.birthday}</span>
 									<span>{Enum.Certificate[item.certificate_type]}</span> 
 									<span>{item.certificate_num}</span>

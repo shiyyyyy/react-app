@@ -6,7 +6,7 @@ import {Carousel,CarouselItem,Page} from 'react-onsenui';
 import {AppCore,share,loadIfEmpty,testing,log,goTo,Enum,goBack} from '../util/core';
 
 import '../css/ProductPage.css'
-import {shareWith,nonBlockLoading,info,ErrorBoundary,error} from '../util/com';
+import {shareWith,nonBlockLoading,info,ErrorBoundary,error,OpDialog, SupplierDialog} from '../util/com';
 
 import {loadPdf,prePage,nextPage,zoomIn,zoomOut} from '../util/pdf';
 
@@ -32,7 +32,9 @@ class ProductPageRender extends Component{
 			open_supplier: false,
 			open_op: false,
 			picIdx: 0,
-			selected_group:props.p.group_id
+			selected_group:props.p.group_id,
+			numPages:1,
+			curPage:1,
 		};
 		this.url = '/api/App/product/'+props.p.pd_id;
 	}
@@ -50,7 +52,15 @@ class ProductPageRender extends Component{
 			return;
 		}
 		let url = attach[attach.length-1].save_path;
-		loadPdf(AppCore.HOST+'/'+url,this.refs.canvas,this.refs.pdfCt.offsetWidth);
+		loadPdf(
+			AppCore.HOST+'/'+url,
+			this.refs.canvas,
+			this.refs.pdfCt.offsetWidth,
+			numPages=>{
+				this.setState({numPages:numPages})
+			}
+		);
+
 	}
 
 	handleChange(key,e) {
@@ -95,23 +105,6 @@ class ProductPageRender extends Component{
 	renderFixed(){
 		return (
 	      <div style={{position: 'absolute',bottom:'0px',left:'0px',right:'0px'}}>
-	      	{/* {	this.state.open_menu &&
-	      		<div className="pdf-ctrl">
-					<div className={(this.state.menu_show ? "pdf-ctrl-item-hide":"pdf-ctrl-item-show")} onClick={_=>zoomOut()}> <Icon icon='md-minus-circle' /></div>
-					<div className={(this.state.menu_show ? "pdf-ctrl-item-hide":"pdf-ctrl-item-show")} onClick={_=>zoomIn()}> <Icon icon='md-plus-circle' /></div>
-
-					<div className={(this.state.menu_show ? "hide":"")+" pdf-ctrl-item-page"}>
-						<div className="pdf-ctrl-item-page-box">{1}/{20}页</div>
-					</div>
-					<div className={(this.state.menu_show ? "pdf-ctrl-item-hide":"pdf-ctrl-item-show")} onClick={_=>prePage()}> <Icon icon='md-caret-left-circle' /></div>
-					<div className={(this.state.menu_show ? "pdf-ctrl-item-hide":"pdf-ctrl-item-show")} onClick={_=>nextPage()}> <Icon icon='md-caret-right-circle' /></div>
-					
-					<div className="pdf-ctrl-item1" onClick={_=>this.toggleMenu()}> 
-						<Icon className={ this.state.menu_show ?'':'hide'} icon='md-menu' />
-						<Icon className={ this.state.menu_show ?'hide':''} icon='md-format-clear-all' />
-					</div>
-				</div>
-			} */}
 
 	        <div className="order-edit-footer">
 				<div className="order-edit-footer-box" onClick={_=>this.setState({open_supplier:true})}>
@@ -128,10 +121,7 @@ class ProductPageRender extends Component{
 	      </div>
 		);
 	}
-	// scrollPage(e){
-		// let open_menu = this.refs.pdfCt.offsetTop-this.refs.anchor.parentElement.scrollTop < window.innerHeight - 250;
-		// this.setState({open_menu:open_menu});
-	// }
+
 
 	holdSeat(){
 		let id = this.state.selected_group;
@@ -166,10 +156,28 @@ class ProductPageRender extends Component{
             //$rootScope.trigger('实报订单-异部',meta,store_id,data);
             goTo('实报订单-异部',{data:group,action:'实报订单-异部'});
         }else{
-            goTo('实报订单-同部',{data:group,action:'实报订单-异部'});
+            goTo('实报订单-同部',{data:group,action:'实报订单-同部'});
         }
 	}
 
+	SupplierDialog(){
+		let supplier_ctrl = {
+			open_supplier : this.state.open_supplier,
+			cancelCb : () => {
+				this.setState({open_supplier: false})
+			}
+		}
+		return ( <SupplierDialog supplier_ctrl={supplier_ctrl} supplier_info={this.state.data['发布人详情'][0] || ''} /> )
+	}
+	OpDialog(){
+		let op_ctrl = {
+			open_op : this.state.open_op,
+			cancelCb : () => {
+				this.setState({open_op: false})
+			}
+		}
+		return ( <OpDialog op_ctrl={op_ctrl} op_info={this.state.data['接单人详情'][0] || ''} /> )
+	}
 
 
 	render(){
@@ -178,7 +186,7 @@ class ProductPageRender extends Component{
 				renderToolbar={_=>this.renderToolbar()} 
 				renderModal={_=>shareWith(this)} 
 				renderFixed={_=>this.renderFixed()}
-				// onScroll={e=>this.scrollPage(e)}
+
 				onInit={_=>loadIfEmpty(this,this.afterLoad)} >
 				<div ref="anchor"></div>
 
@@ -226,7 +234,7 @@ class ProductPageRender extends Component{
 										<div className="pro-price-dep_city">{this.state.data['产品详情'].dep_city_name}出发</div>
 									</div>
 									<div className="pro-sale">
-										<div className="pro-sale-price">{ (this.state.data['产品团期'][0] && this.state.data['产品团期'][0].peer_price) }</div>
+										<div className="pro-sale-price">{ this.state.data['产品详情'].pd_nav_name }</div>
 										<div className="pro-sale-supplier">供应商: {this.state.data['产品详情'].pd_provider}</div>
 									</div>
 								</div>
@@ -252,9 +260,9 @@ class ProductPageRender extends Component{
 										<Icon icon='md-zoom-out' onClick={_=>zoomOut()} />
 									</div>
 									<div className="PDF-ctrl-right">
-										<Icon icon='md-arrow-left' onClick={_=>prePage()} />
-										<span className="pdf-ctrl-item-page-box">{1}/{20}页</span>
-										<Icon icon='md-arrow-right' onClick={_=>nextPage()} />
+										<Icon icon='md-arrow-left' onClick={_=>this.setState({curPage:prePage()})} />
+										<span className="pdf-ctrl-item-page-box">{this.state.curPage}/{this.state.numPages}页</span>
+										<Icon icon='md-arrow-right' onClick={_=>this.setState({curPage:nextPage()})} />
 									</div>
 								</div>
 								<div className="canvas-box">
@@ -265,47 +273,8 @@ class ProductPageRender extends Component{
 				    </Fragment>
 				}
 
-		        	<Dialog
-		        	  animation="none"
-		        	  isOpen={this.state.open_supplier}
-		        	  isCancelable={true}
-		        	  onCancel={_=>this.setState({open_supplier:false})}>
-					  	<div className="zs-popup">
-							<div className="zs-popup-avatar">
-								<img src="img/avatar.png" />
-							</div><br />
-							<div className="zs-popup-info">
-								<div className="">公司全称: </div>
-								<div className="">所属部门: </div>
-								<div className="">员工姓名: </div>
-								<div className="">手机号码: </div>
-							</div><br />
-							<div className="zs-popup-btn">
-								<span href="tel:13584882787">拨打电话</span>
-							</div>
-						</div>
-		        	</Dialog>
-
-		        	<Dialog
-		        	  animation="none"
-		        	  isOpen={this.state.open_op}
-		        	  isCancelable={true}
-		        	  onCancel={_=>this.setState({open_op:false})}>
-					  	<div className="zs-popup">
-							<div className="zs-popup-avatar">
-								<img src="img/avatar.png" />
-							</div><br />
-							<div className="zs-popup-info">
-								<div className="">所属中心: </div>
-								<div className="">所属部门: </div>
-								<div className="">员工姓名: </div>
-								<div className="">手机号码: </div>
-							</div><br />
-							<div className="zs-popup-btn">
-								<span href="tel:13584882787">拨打电话</span>
-							</div>
-						</div>
-		        	</Dialog>
+				{ this.state.data && this.state.data['发布人详情'] && this.SupplierDialog()}
+				{ this.state.data && this.state.data['接单人详情'] && this.OpDialog()}
 			</Page>
 		);
 	}

@@ -74,14 +74,17 @@ function proc_msg(p){
 
             let title = r.title && i18n.pick(r.title);
 
-            if(AppCore.pause){
-                plugin('cordova.plugins.notification').local.schedule({
-                    text: title,
-                    // sound: 'file://assets/media/msg.m4a',
-                });
-            }else{
-                toast(title);
-            }
+            // if(AppCore.pause){
+                if(hasPlugin('cordova.plugins.notification')){
+                    plugin('cordova.plugins.notification').local.schedule({
+                        text: title,
+                        // sound: 'file://assets/media/msg.m4a',
+                    });
+                }
+
+            // }else{
+            //     toast(title);
+            // }
 
             retry_delay = 0;
             poll();

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {Page,Icon} from 'react-onsenui';
 
 import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit} from '../util/core';
-import {pullHook,loginToPlay,zs_dialog, gys_dialog,ErrorBoundary,info,footer} from '../util/com';
+import {pullHook,loginToPlay,OpDialog, SupplierDialog,ErrorBoundary,info,footer,nonBlockLoading,confirm} from '../util/com';
 import { connect } from 'react-redux';
 
 
@@ -29,7 +29,7 @@ class OrderEditPageRender extends Component{
 	constructor(props) {
 	    super(props);
 		
-		this.state = {'data':{'comment':''},'group_id':props.p.data.id,'inited':false};
+		this.state = {'data':{'comment':''},'group_id':props.p.data.id,'inited':false,'open_supplier':false,'open_op':false};
 		this.action = props.p.action;
 		let cfg = AppMeta.actions[this.action];
 		this.text = cfg.text;
@@ -44,7 +44,7 @@ class OrderEditPageRender extends Component{
 		let receivable = data['订单应收'][0]['receivable'];
 		let settleable = data['订单应转'][0]['settleable'];
 		let profit = Math.round((receivable - settleable)*100)/100;
-		let profit_rate = (settleable == 0) ?'NaN':(Math.round((profit/settleable)*10000)/100+'%');
+		let profit_rate = (receivable == 0) ?'NaN':(Math.round((profit/receivable)*10000)/100+'%');
 		data['订单利润'] = [{'receivable':receivable,'settleable':settleable,'profit':profit,'profit_rate':profit_rate}];
 		data['客户详情'] = data['客户详情']?data['客户详情']:[{short_name:'',full_name:''}];
 		data['接单人']   = data['订单详情'][0]['assitant_id']?{'id':data['订单详情'][0]['assitant_id'],'name':data['订单详情'][0]['assitant_name']}:{};
@@ -63,11 +63,11 @@ class OrderEditPageRender extends Component{
 	}
 
 	addCstm(){
-		goTo('订单新增客户',{action:'订单新增客户',view:this});
+		goTo('订单新增客户',{action:'订单新增客户',view:this,pro_info: this.state.data['订单团队'][0]});
 	}
 
 	selectAssitant(){
-		goTo('选择项目页',{items:this.state.data['可接单人'],cb:this.selectAssitantDone.bind(this),key:'接单人'})
+		goTo('选择项目页',{items:this.state.data['接单人详情'],cb:this.selectAssitantDone.bind(this),key:'接单人',order_detail: this.state.data['订单详情'][0],pro_info: this.state.data['订单团队'][0]})
 	}
 
 	selectAssitantDone(value){
@@ -104,6 +104,10 @@ class OrderEditPageRender extends Component{
 		goTo('录入订单应转明细',{view:this,data:this.state.data['订单应转'][0].acc_item,action:'录入订单应转明细'});
 	}
 	submit(){
+		confirm('是否确认操作？').then(r=>r && this.sureToSubmit())
+	}
+
+	sureToSubmit(){
 		let data = this.state.data;
 		data['订单详情'][0]['assitant_id'] = data['接单人'].id;
 		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
@@ -113,14 +117,18 @@ class OrderEditPageRender extends Component{
 	}
 
 	submitRealSignUp(){
+		confirm('是否确认操作？').then(r=>r && this.sureToRealSignUp())
+	}
+
+	sureToRealSignUp(){
 		let data = this.state.data;
-		data['订单详情'] = [{'assitant_id':data['接单人'].id}];
+		data['订单详情'][0]['assitant_id'] = data['接单人'].id;
 		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
 		data.real_sign_up = true;
 		this.setState({data:data});
 		trigger('加载等待');
 	    submit(this,this.submitDone.bind(this));
-	}
+	}	
 
 	submitDone(r){
 		info(r.message).then(
@@ -128,6 +136,34 @@ class OrderEditPageRender extends Component{
 				goBack();
 			}
 		)
+	}
+
+	SupplierDialog(){
+		let supplier_ctrl = {
+			open_supplier : this.state.open_supplier,
+			cancelCb : () => {
+				this.setState({open_supplier: false})
+			}
+		}
+		return ( <SupplierDialog supplier_ctrl={supplier_ctrl} supplier_info={this.state.data['开团人详情'][0] || ''} /> )
+	}
+	OpDialog(){
+		if (this.state.data && this.state.data['接单人详情']){
+			// debugger
+			var assitant = this.state.data['接单人详情'].find(curAssitant.bind(this))
+			function curAssitant(item) {
+				return item.id === this.state.data['订单详情'][0].assitant_id
+			}
+			console.log(assitant)
+			let op_ctrl = {
+			open_op : this.state.open_op,
+			cancelCb : () => {
+				this.setState({open_op: false})
+				}
+			}
+			return ( <OpDialog op_ctrl={op_ctrl} op_info={assitant || ''} /> )
+		}
+		
 	}
 
 	renderToolbar(){
@@ -151,15 +187,15 @@ class OrderEditPageRender extends Component{
 		return (
 			<Page renderToolbar={_=>this.renderToolbar()} onShow={_=>loadIfEmpty(this,this.afterLoad)} 
 			renderFixed={_=>this.renderFixed()}>
+				{ !this.state.data['客户详情'] && nonBlockLoading()}
 				{
-
 					this.state.inited &&
 					<div>
-					<div className="ord-edit-ord-detail">
+					<div className="ord-edit-ord-detail" onClick={_=>console.log(this)}>
 						{/* 订单 HTML */}
 						<div className="order-item" style={{paddingBottom: '1.013333rem'}}>
 							<div className="order-number">
-								<span style={{fontSize:'.373333rem'}}>订单号:</span>
+								<span style={{fontSize:'.373333rem'}}> D0{this.state.data['订单详情'][0]['id']}</span>
 								<span style={{color:'#9E9E9E', fontSize:'.32rem'}}></span>
 							</div>
 							<div className="order-main">
@@ -167,19 +203,18 @@ class OrderEditPageRender extends Component{
 							<div className="pro-item"
 							style={{backgroundColor: '#F8F8F8',borderRadius: '0',width: '100%', height:'100%',margin:'0'}}>
 								<div className="pro-item-left" style={{width:'2.56rem',height:'2.186667rem'}}>
-									<img className="img-size"/>
+									<img className="img-size" src={AppCore.HOST+'/'+this.state.data['订单详情'][0]['thumb']} />
 								</div>
 								<div className="pro-item-right">
-									<div className="pro-item-name"></div>
+									<div className="pro-item-name">{this.state.data['订单详情'][0]['pd_name']}</div>
 									<div className="pro-item-dep_city flex-j-sb">
-										<span>团期: {this.state.data['订单团队'][0]['dep_date']}</span>
-										<span>供应商:{this.state.data['订单团队'][0]['pd_provider']}</span>
+										<span>团期: {this.state.data['订单详情'][0]['dep_date']}</span>
+										<span>供应商:{this.state.data['订单详情'][0]['pd_provider']}</span>
 									</div>
 									<div className="pro-item-price flex-j-sb" style={{fontSize: '.32rem'}}>
-										{/*<span>客户: 张全蛋</span>*/}
-										{/*<span>人数: 2</span>*/}
-										{/* <span className={'active-order-state'+(order.state*1)}>{this.state.ord_state[order.state*1]}</span> */}
-										{/*<span>已支付</span>*/}
+										<span>客户:{this.state.data['订单详情'][0]['short_name']}</span>
+										<span>人数:{this.state.data['订单详情'][0]['num_of_people']}</span>
+										<span>{Enum.OrderState[this.state.data['订单详情'][0]['state']]}</span>
 									</div>
 								</div>
 							</div>
@@ -189,7 +224,7 @@ class OrderEditPageRender extends Component{
 					{/* 客户信息 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">客户信息</div>
+							<div className="kehu">客户信息</div>
 							<div className="box-title-operate">
 								<div onClick={_=>this.selectCstm()} style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} className='box-title-operate-item'>
 					              选择客户
@@ -207,7 +242,7 @@ class OrderEditPageRender extends Component{
 									readOnly/></div>
 								<div className="model-main-item">
 									<span>电话: </span>
-									<input type='number' value={this.state.data['客户详情'][0].mobile?this.state.data['客户详情'][0].mobile:''} 
+									<input value={this.state.data['客户详情'][0].mobile?this.state.data['客户详情'][0].mobile:''} 
 									readOnly /></div>						
 							</div>
 						</div>
@@ -215,7 +250,7 @@ class OrderEditPageRender extends Component{
 					{/* 接单人 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">接单人</div>
+							<div className="jiedanren">接单人</div>
 							<div className="box-title-operate">
 								<div onClick={_=>this.selectAssitant()} style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} className='box-title-operate-item'>
 					              选择接单人
@@ -234,7 +269,7 @@ class OrderEditPageRender extends Component{
 					{/* 游客名单 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">游客名单</div>
+							<div className="youke">游客名单</div>
 							<div className="box-title-operate">
 								<div className="box-title-operate-item" style={{width: '.64rem',border:'none'}}>
 								<Icon icon="md-plus-circle-o" style={{fontSize: '.64rem', color: '#6FC5D8'}}
@@ -246,11 +281,11 @@ class OrderEditPageRender extends Component{
 						</div>
 						<div className="model-main">
 						{this.state.data['订单参团'].map( (item,i) => 
-							<div className="model-main-item-box" key={i} onClick={_=>this.editTourist(item,i,'订单参团')}>
+							<div className="model-main-item-box" key={item.id} onClick={_=>this.editTourist(item,i,'订单参团')}>
 								<div className="model-main-item">
 									<span>{i+1}</span> 
 									<span>{item.name}</span> 
-									<span>{item.gender}</span> 
+									<span>{Enum.Gender[item.gender]}</span> 
 									<span>{item.birthday}</span>
 									<span>{Enum.Certificate[item.certificate_type]}</span> 
 									<span>{item.certificate_num}</span>
@@ -265,7 +300,7 @@ class OrderEditPageRender extends Component{
 					{/* 订单应收 */}
 					<div className="model-box">
 						<div className="box-title">
-							<div className="box-title-text">订单应收</div>
+							<div className="yingshou">订单应收</div>
 							<div className="box-title-operate">
 								<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} onClick={_=>this.entryReceivable()}>录入明细</div>
 							</div>
@@ -273,9 +308,9 @@ class OrderEditPageRender extends Component{
 						<div className="model-main">
 							<div className="model-main-item-box">
 								<div className="model-main-item flex-j-sb">
-								<span>应收:{this.state.data['订单应收'][0].receivable}</span> 
-								<span>已收:{this.state.data['订单应收'][0].received}</span> 
-								<span>未收:{this.state.data['订单应收'][0].receive_diff}</span> 
+								<span>应收:<span>{this.state.data['订单应收'][0].receivable}</span></span>
+								<span>已收:<span>{this.state.data['订单应收'][0].received}</span></span>
+								<span>未收:<span>{this.state.data['订单应收'][0].receive_diff}</span></span>
 								</div>
 							</div>
 						</div>
@@ -284,7 +319,7 @@ class OrderEditPageRender extends Component{
 					{	this.state.data.order_yb &&
 						<div className="model-box">
 							<div className="box-title">
-								<div className="box-title-text">订单应转</div>
+								<div className="yingzhuan">订单应转</div>
 								<div className="box-title-operate">
 									<div className="box-title-operate-item" style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}} onClick={_=>this.entrySettleable()}>录入明细</div>
 								</div>
@@ -292,39 +327,43 @@ class OrderEditPageRender extends Component{
 							<div className="model-main">
 								<div className="model-main-item-box">
 									<div className="model-main-item flex-j-sb">
-									<span>应转:{this.state.data['订单应转'][0].settleable}</span> 
-									<span>已转:{this.state.data['订单应转'][0].settled}</span> 
-									<span>未转:{this.state.data['订单应转'][0].settle_diff}</span> 
+									<span>应转:<span>{this.state.data['订单应转'][0].settleable}</span></span> 
+									<span>已转:<span>{this.state.data['订单应转'][0].settled}</span></span> 
+									<span>未转:<span>{this.state.data['订单应转'][0].settle_diff}</span></span> 
 									</div>
 								</div>
 							</div>
 						</div>
 					}
 					{/* 订单利润 */}
-					<div className="model-box">
-						<div className="box-title">
-							<div className="box-title-text">订单利润</div>
-						</div>
-						<div className="model-main">
-							<div className="model-main-item-box">
-								<div className="model-main-item flex-j-sb over-x-auto">
-								<span>应收:{this.state.data['订单利润'][0].receivable}</span> 
-								<span>应转:{this.state.data['订单利润'][0].settleable}</span> 
-								<span>利润:{this.state.data['订单利润'][0].profit}</span> 
-								<span>利润率:{this.state.data['订单利润'][0].profit_rate}</span>
+					{
+						this.state.data.order_yb &&
+						<div className="model-box">
+							<div className="box-title">
+								<div className="lirun">订单利润</div>
+							</div>
+							<div className="model-main">
+								<div className="model-main-item-box">
+									<div className="model-main-item flex-j-sb over-x-auto">
+									<span>应收:<span>{this.state.data['订单利润'][0].receivable}</span></span> 
+									<span>应转:<span>{this.state.data['订单利润'][0].settleable}</span></span> 
+									<span>利润:<span>{this.state.data['订单利润'][0].profit}</span></span> 
+									<span>利润率:<span>{this.state.data['订单利润'][0].profit_rate}</span></span>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					}
 					{/* 订单备注 */}
 					<div className="model-box" style={{marginBottom: '1.653333rem'}}>
 						<div className="box-title">
-							<div className="box-title-text">订单备注</div>
+							<div className="beizhu">订单备注</div>
 						</div>
 						<div className="model-main">
 							<div className="model-main-item-box">
 								<div className="model-main-item">
-									<input type='text' style={{fontSize: '.373333rem', color: '#000', width: '100%'}} value={this.state.data['comment']}>{this.state.data['comment']}</input>
+									<input type='text' style={{fontSize: '.373333rem', color: '#000', width: '100%'}} value={this.state.data['comment']}
+									placeholder="请输入备注内容">{this.state.data['comment']}</input>
 								</div>
 							</div>
 						</div>
@@ -332,8 +371,8 @@ class OrderEditPageRender extends Component{
 					
 				</div>
 				}
-				{gys_dialog(this)}
-				{zs_dialog(this)}
+				{ this.state.data && this.state.data['开团人详情'] && this.SupplierDialog()}
+				{ this.state.data && this.state.data['接单人详情'] && this.OpDialog()}
 		    </Page>
 		);
 	}

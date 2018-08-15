@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
 import {log,AppCore,AppMeta,loadIfEmpty,goTo,goBack,trigger,submit,Enum} from '../util/core';
-import {error,nonBlockLoading,progress,footer ,ErrorBoundary ,info} from '../util/com';
+import {error,nonBlockLoading,progress,footer ,ErrorBoundary ,info,ProInfo,confirm} from '../util/com';
 import { connect } from 'react-redux';
 
 import {Page,Icon,Button,Input,AlertDialog,Dialog} from 'react-onsenui';
@@ -9,7 +9,7 @@ import '../css/OrderPage.css'
 
 export default class HoldSeatWrap extends Component {
     constructor(props) {
-    	super(props);
+		super(props);
     }
 
     render() {
@@ -23,10 +23,10 @@ class HoldSeatPageRender extends Component{
 
 	constructor(props) {
 		super(props);
-		
 		this.state = {add_new_cstm:false,'data':{},'group_id':props.p.data.id};
 		this.action = props.p.action;
 	}
+
 
 	afterLoad(){
 		let data = this.state.data;
@@ -42,11 +42,11 @@ class HoldSeatPageRender extends Component{
 	}
 
 	addCstm(){
-		goTo('占位新增客户',{action:'占位新增客户',view:this});
+		goTo('占位新增客户',{action:'占位新增客户',view:this,pro_info: this.state.data['团队详情'][0]});
 	}
 
 	selectAssitant(){
-		goTo('选择项目页',{items:this.state.data['可接单人'],cb:this.selectAssitantDone.bind(this),key:'接单人'})
+		goTo('选择项目页',{items:this.state.data['接单人详情'],cb:this.selectAssitantDone.bind(this),key:'接单人',pro_info: this.state.data['团队详情'][0]})
 	}
 
 	selectAssitantDone(value){
@@ -71,18 +71,20 @@ class HoldSeatPageRender extends Component{
 			error('请选择接单人');
 			return ;
 		}
-		let assitant_id = data['接单人'].id;
 		if(!data['num_of_people']||data['num_of_people']<=0){
 			error('请填写人数信息');
 			return ;
 		}
-	    this.setState({data:{'group_id':data.group_id,'cstm_id':data['客户详情'][0].id
-	    			,'num_of_people':data['num_of_people'],'assitant_id':assitant_id}},this.submit);
+		confirm('是否确认操作？').then(r=>r && this.sureToSubmit());
 	}
 
-	submit(){
+	sureToSubmit(){
+		let data = this.state.data;
+		let assitant_id = data['接单人'].id;
+		this.setState({data:{'group_id':data.group_id,'cstm_id':data['客户详情'][0].id
+	    			,'num_of_people':data['num_of_people'],'assitant_id':assitant_id}});
 		trigger('加载等待');
-	    submit(this,this.submitDone.bind(this));
+		submit(this,this.submitDone.bind(this));
 	}
 
 	submitDone(r){
@@ -115,12 +117,18 @@ class HoldSeatPageRender extends Component{
 				<Page 
 				renderToolbar={_=>this.renderToolbar()} 
 				onShow={_=>loadIfEmpty(this,this.afterLoad)} >
+				{ !this.state.data['接单人详情'] && nonBlockLoading() }
+				{/* 订单 HTML */}
+				{this.state.data && this.state.data['团队详情'] &&
+					<ProInfo pro_info={this.state.data['团队详情'][0]} />
+				}
 				{
 					this.state.data&&this.state.data['客户详情']&&this.state.data['接单人']&&
+
 					<div>
 						<div className="model-box">
 							<div className="box-title">
-								<div className="box-title-text">客户信息</div>
+								<div className="kehu">客户信息</div>
 								<div className="box-title-operate">
 									<div onClick={_=>this.selectCstm()} className='box-title-operate-item' style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>
 						              选择客户
@@ -145,7 +153,7 @@ class HoldSeatPageRender extends Component{
 						</div>
 						<div className="model-box">
 							<div className="box-title">
-								<div className="box-title-text">接单人</div>
+								<div className="jiedanren">接单人</div>
 								<div className="box-title-operate">
 									<div onClick={_=>this.selectAssitant()} className='box-title-operate-item' style={{color:'#6FC5D8',border:'1px solid #6FC5D8'}}>
 						              选择接单人
@@ -164,7 +172,7 @@ class HoldSeatPageRender extends Component{
 						{/* 人数 */}
 						<div className="model-box">
 							<div className="box-title">
-								<div className="box-title-text">游客</div>
+								<div className="youke">游客</div>
 							</div>
 							<div className="model-main">
 								<div className="model-main-box">
@@ -189,9 +197,9 @@ class HoldSeatPageRender extends Component{
 		            		<button  onClick={_=>this.submitOrder()}>提交</button>
 						</div> */}
 						{/* 底部 footer */}
-						<div className="doc-btn-box" style={{padding: '0 1.333333rem'}}>
-							<div onClick={_=>this.cancel()} className="doc-btn-default">取消</div>
-		            		<div onClick={_=>this.submitOrder()} className="doc-btn-submit">提交</div>
+						<div className="add-cstm-btn" style={{padding: '.64rem .32rem'}}>
+							<div onClick={_=>this.cancel()} className="add-cstm-btn-cancel">取消</div>
+		            		<div onClick={_=>this.submitOrder()} className="add-cstm-btn-submit">提交</div>
 		        		    {/* <div className="doc-btn-submit" onClick={_=>this.submit()}>提交</div> */}
 						</div>
 					</div>

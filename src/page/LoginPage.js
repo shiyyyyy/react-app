@@ -22,16 +22,11 @@ export default class LoginPage extends Component{
 	}
 
 	login(){
-
+		
 		trigger('加载等待');
-		// setTimeout(_=>{
-	        post('/Session/login?'+encUrl({app:1,user:this.state.user}),this.state).then(
-	          r=>{
-	            trigger('更新用户',r.user);
-	            return '保持等待';
-	          }
-	        );
-    	// },2000)
+        post('/Session/login?'+encUrl({app:1,user:this.state.user}),this.state,{wait:1}).then(
+          r => trigger('更新用户',r.user)
+        );
 
 	}
 

@@ -1,7 +1,7 @@
 import * as ons from 'onsenui';
 import React from 'react';
-import {PullHook,Icon,Modal,Button,Dialog,ProgressBar} from 'react-onsenui';
-import {log,reloadSilent,i18n,resetTo,goTo,AppCore,AppMeta,Enum} from './core';
+import {PullHook,Icon,Modal,Button,Dialog,ProgressBar,AlertDialog,AlertDialogButton} from 'react-onsenui';
+import {log,reloadSilent,i18n,resetTo,goTo,goBack,AppCore,AppMeta,Enum,trigger,clickToLog} from './core';
 import { connect } from 'react-redux';
 import { doForceUpdate } from './update';
 
@@ -22,23 +22,41 @@ export function loginToPlay() {
     );
 }
 
-function pageCrash() {
+export function NoPv() {
     return (
-        <ons-page>
-            <ons-toolbar>
-              <div className='left'><ons-back-button></ons-back-button></div>
-              <div className="center">崩溃</div>
-            </ons-toolbar>
-            <div className="prompt-login">
-                <div className="prompt-img-box">
-                    <img src="img/prompt-login.png" className="prompt-img" />
-                    <span>页面崩溃了</span><br />
-                    <span>请联系供应商</span>
-                </div>
+        <div className="prompt-login">
+            <div className="prompt-img-box">
+                <img src="img/prompt-login.png" className="prompt-img" />
+                <span>您没有权限阅读当前内容</span><br />
             </div>
-        </ons-page>
+        </div>
     );
 }
+
+class PageCrash extends React.Component {
+    constructor(props) {
+        super(props);
+        this.click_history = [];
+    }
+    render(){
+        return (
+            <ons-page>
+                <ons-toolbar>
+                  <div className='left'><ons-back-button></ons-back-button></div>
+                  <div className="center" onClick={_=>clickToLog(this)} >崩溃</div>
+                </ons-toolbar>
+                <div className="prompt-login">
+                    <div className="prompt-img-box">
+                        <img src="img/prompt-login.png" className="prompt-img" />
+                        <span>页面崩溃了</span><br />
+                        <span>请联系供应商</span>
+                    </div>
+                </div>
+            </ons-page>
+        );
+    }
+}
+
 
 export class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -59,7 +77,7 @@ export class ErrorBoundary extends React.Component {
     if (this.state.errorInfo) {
       // Error path
       log(this.state.error,this.state.errorInfo.componentStack);
-      return pageCrash();
+      return <PageCrash/>;
     }
     // Normally, just render children
     return this.props.children;
@@ -112,24 +130,55 @@ export function pullHook(view) {
         </PullHook>
     );
 }
+
+function alert({s}) {
+    return (
+        <AlertDialog animation="none" isOpen={!!s.alert.message} isCancelable={false} modifier="rowfooter">
+         <div className="alert-dialog-title">{s.alert.title}</div>
+         <div className="alert-dialog-content">
+           {s.alert.message}
+         </div>
+         <div className="alert-dialog-footer">
+         {
+            s.alert.buttonLabels && s.alert.buttonLabels.map((label,i) =>
+               <AlertDialogButton onClick={_=>trigger('关闭alert',i)} modifier="rowfooter" key={i}>
+                 {label}
+               </AlertDialogButton>
+            )
+         }
+         </div>
+       </AlertDialog>
+    );
+}
+export const Alert = connect(s=>({s:s}))(alert);
+
 export function error(p) {
     log(p);
     let m = {
         message: p.message || p,
         title: p.title || i18n.get('ERROR'),
-        buttonLabels: p.buttonLabels || i18n.get('OK')
+        buttonLabels: p.buttonLabels || [i18n.get('OK')]
 
     };
-    return ons.notification.alert(m);
+    return new Promise(rs=>{
+        m.rs = rs;
+        trigger('打开alert',m);
+    });
+    
+    // return ons.notification.alert(m);
 }
 export function info(p) {
     let m = {
         message: p.message || p,
         title: p.title || i18n.get('PROMPT'),
-        buttonLabels: p.buttonLabels || i18n.get('OK')
+        buttonLabels: p.buttonLabels || [i18n.get('OK')]
 
     };
-    return ons.notification.alert(m);
+    return new Promise(rs=>{
+        m.rs = rs;
+        trigger('打开alert',m);
+    });
+    // return ons.notification.alert(m);
 }
 export function confirm(p) {
     let m = {
@@ -138,7 +187,11 @@ export function confirm(p) {
         buttonLabels: p.buttonLabels || [i18n.get('CANCEL'), i18n.get('OK')]
 
     };
-    return ons.notification.confirm(m);
+    return new Promise(rs=>{
+        m.rs = rs;
+        trigger('打开alert',m);
+    });
+    // return ons.notification.confirm(m);
 }
 export function prompt(p) {
     let m = {
@@ -147,7 +200,11 @@ export function prompt(p) {
         buttonLabels: p.buttonLabels || [i18n.get('CANCEL'), i18n.get('OK')]
 
     };
-    return ons.notification.prompt(m);
+    return new Promise(rs=>{
+        m.rs = rs;
+        trigger('打开alert',m);
+    });
+    // return ons.notification.prompt(m);
 }
 export function toast(p) {
     let m = {
@@ -156,40 +213,6 @@ export function toast(p) {
 
     };
     return ons.notification.toast(m);
-}
-
-export function sumbitCheck(view,cfg){
-    let rq_empty = false;
-    let blocks = cfg.block.filter(function(item,index){
-        return (!cfg.ro||!cfg.ro[index])&&(!view.block_hide||!view.block_hide[item]||view.block_hide[item]!='1');
-    });
-    blocks.forEach(function(key){
-        let block_cfg = AppMeta.blocks[key];
-        let rq_list = [];
-        Object.keys(block_cfg.list).forEach(function(field){
-            let cfg = block_cfg.list[field];
-            let ro = !cfg.ro ? block_cfg.ro:cfg.ro;
-            if(cfg.rq && !ro){
-                let _cfg = {field:field};
-                if(cfg.type&&Enum[cfg.type]){
-                    _cfg['cfg'] = cfg;
-                }
-                rq_list.push(_cfg);
-            }
-        });
-        let data = view.state.data[key];
-        data.forEach(function(item){
-            rq_list.forEach(function(_cfg){
-                if(!_cfg.cfg&&!item[_cfg.field]&&!rq_empty){
-                    rq_empty = block_cfg.list[_cfg.field].text;
-                }
-                if(_cfg.cfg&&(item[_cfg.field]===undefined||!Enum[_cfg.cfg.type][item[_cfg.field]])){
-                    rq_empty = block_cfg.list[_cfg.field].text;
-                }
-            })
-        });
-    });
-    return rq_empty;
 }
 
 
@@ -219,29 +242,69 @@ export function footer(type,view){
 		</div>
     )
 }
-//p.placeholder 空白提示
-//p.key localstorage区分
-//p.cb 搜索回调
-export function search(view){
-    let p = view.p
-    let value = view.state.search_value || '';
-    return(
-        <ons-toolbar>
-			<div className="center search-input-box-box" onClick={_=>goTo('搜索',p)}>
-			  <div className="search-input-box">
-				  <input className='search-input-box-input' value={value} placeholder={p.placeholder}/>
-				<img className={value?"hide":"search-input-box-img"} src="img/search.png" />
-                <Icon className={(value === '' ? 'hide' : '') +' close-search'} icon='md-close-circle'
-				onClick={_=>cancelSearchValue(_,view)} />
-			  </div>
-			</div>
-		</ons-toolbar>
-    )
+//parm.placeholder 空白提示
+//parm.key localstorage区分
+//parm.cb 搜索回调
+export class Search extends React.Component{
+    render(){
+        return(
+            <ons-toolbar>
+                <div className="center search-input-box-box" onClick={_=>goTo('搜索',this.props.param)}>
+                <div className="search-input-box">
+                    <input className='search-input-box-input' value={this.props.value || ''} placeholder={this.props.param.placeholder}/>
+                    <img className={this.props.value?"hide":"search-input-box-img"} src="img/search.png" />
+                    <Icon className={(!this.props.value ? 'hide' : '') +' close-search'} icon='md-close-circle'
+                    onClick={e=>this.props.clear(e)} />
+                </div>
+                </div>
+            </ons-toolbar>
+        )
+    }
 }
-// 应该放在 core 里的
-export function cancelSearchValue(e,view){
-    e.stopPropagation();
-    view.setState({search_value: ''})
+
+export class SearchLv2 extends React.Component{
+    render(){
+        return(
+            <ons-toolbar>
+              <div className="center search-input-box-box">
+                  <div className="search-input-box">
+                      <div className="search-left" onClick={_=>goBack()}>
+                          <img src="img/back.png" />
+                      </div>
+                      <div className="search-center">
+                        <input type="text" className="search-input-value" placeholder={this.props.param.placeholder}
+                        value={this.props.value || ''} onChange={e=>this.setState({search:e.target.value})}
+                        onClick={_=>goTo('搜索',this.props.param)}/>
+                        <Icon className={(this.props.value === '' ? 'hide' : '')+' close-search'} icon='md-close-circle'
+                        onClick={e=>this.props.clear(e)} />
+                      </div>
+                  </div>
+              </div>
+            </ons-toolbar>
+        )
+    }
+}
+
+export class ProInfo extends React.Component{
+    render(){
+        return(
+            <div className="select-item-pro-header-box">
+				<div className="select-item-pro-header-info">
+					<div className="pro-name">{this.props.pro_info.pd_name}</div>
+					<div className="pro-price">
+						<div className="pro-price-zk_price">￥{this.props.pro_info.zk_price} 
+							<span style={{fontSize: '.373333rem', fontWeight: 'normal'}}>起/人</span>
+						</div>
+						<div className="pro-price-dep_city">{Enum.City[this.props.pro_info.dep_city_id]}出发</div>
+					</div>
+					<div className="pro-sale">
+						<div className="pro-sale-price">{this.props.pro_info.id}</div>
+						<div className="pro-sale-supplier">供应商: {this.props.pro_info.pd_provider}</div>
+					</div>
+				</div>
+			</div>
+        )
+    }
 }
 
 export function footer_ctrl(type ,view){
@@ -263,53 +326,60 @@ export function footer_ctrl(type ,view){
     )
 }
 
-export function gys_dialog(view){
-    return (
-        // gys-弹窗
-        <Dialog
-		isOpen={view.state.open_supplier}
-		isCancelable={true}
-		onCancel={_=>view.setState({open_supplier:false})}>
-			<div className="zs-popup">
-			    <div className="zs-popup-avatar">
-			    	<img src="img/avatar.png" />
-			    </div><br />
-			    <div className="zs-popup-info">
-			    	<div className="">公司全称: </div>
-			    	<div className="">所属部门: </div>
-			    	<div className="">员工姓名: </div>
-			    	<div className="">手机号码: </div>
-			    </div><br />
-			    <div className="zs-popup-btn">
-			    	<span href="tel:13584882787">拨打电话</span>
-			    </div>
-			</div>
-		</Dialog>
-    )
+export class SupplierDialog extends React.Component{
+    render(){
+        return (
+            // gys-弹窗
+            <Dialog
+            isOpen={this.props.supplier_ctrl.open_supplier}
+            isCancelable={true}
+            onCancel={this.props.supplier_ctrl.cancelCb}>
+                <div className="zs-popup">
+                    <div className="zs-popup-avatar">
+                        <img src={this.props.supplier_info.pass_photo?AppCore.HOST+'/'+this.props.supplier_info.pass_photo:'img/avatar1.png'} />
+                    </div><br />
+                    <div className="zs-popup-info-f">
+                        <div className="zs-popup-info-item">公司全称: {this.props.supplier_info.full_name}</div>
+                        <div className="zs-popup-info-item">公司简称: {this.props.supplier_info.short_name}</div>
+                        <div className="zs-popup-info-item">员工姓名: {this.props.supplier_info.name}</div>
+                        <div className="zs-popup-info-item">手机号码: {this.props.supplier_info.mobile}</div>
+                    </div><br />
+                    <div className="zs-popup-btn">
+                        {/* <span href={this.props.supplier_info.name} >拨打电话</span> */}
+                        <a href={'tel:'+this.props.supplier_info.mobile}>拨打电话</a>
+                    </div>
+                </div>
+            </Dialog>
+        )
+    }
 }
-export function zs_dialog(view){
-    return (
-        // zs-弹窗
+
+export class OpDialog extends React.Component{
+    render(){
+        return (
+            // zs-弹窗
 		<Dialog
-		isOpen={view.state.open_op}
+		isOpen={this.props.op_ctrl.open_op}
 		isCancelable={true}
-		onCancel={_=>view.setState({open_op:false})}>
+		onCancel={this.props.op_ctrl.cancelCb}>
 			<div className="zs-popup">
 			    <div className="zs-popup-avatar">
-			    	<img src="img/avatar.png" />
+                <img src={this.props.op_info.pass_photo?AppCore.HOST+'/'+this.props.op_info.pass_photo:'img/avatar1.png'} />
 			    </div><br />
-			    <div className="zs-popup-info">
-			    	<div className="">所属中心: </div>
-			    	<div className="">所属部门: </div>
-			    	<div className="">员工姓名: </div>
-			    	<div className="">手机号码: </div>
+			    <div className="zs-popup-info-f">
+			    	<div className="zs-popup-info-item">所属中心: {this.props.op_info.full_name}</div>
+			    	<div className="zs-popup-info-item">所属部门: {Enum.Department[this.props.op_info.department_id]}</div>
+			    	<div className="zs-popup-info-item">员工姓名: {this.props.op_info.name}</div>
+			    	<div className="zs-popup-info-item">手机号码: {this.props.op_info.mobile}</div>
 			    </div><br />
 			    <div className="zs-popup-btn">
-			    	<span href="tel:13584882787">拨打电话</span>
+			    	{/* <span href="tel:13584882787">拨打电话</span> */}
+                    <a href={'tel:'+this.props.op_info.mobile}>拨打电话</a>
 			    </div>
 		    </div>
 		</Dialog>
-    )
+        )
+    }
 }
 
 

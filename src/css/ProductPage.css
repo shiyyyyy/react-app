@@ -201,18 +201,7 @@
     padding: .32rem 0;
     border-bottom: 1px solid #F4F8F9;
 }
-/* 定位 */
-.how-days{
-    font-weight: bold;
-    position: fixed;
-    left: -0.96rem;
-    top: .32rem;
-}
-.how-days-img{
-    width: .533333rem;
-    height: .533333rem;
-    position: absolute;
-}
+
 /* -------------------tab - 费用说明--------------------- */
 .pro-tab-main-explain{
     padding: .32rem 0 .4rem 0;
@@ -263,6 +252,7 @@
 .zs-popup-avatar > img{
     width: 1.493333rem;
     height: 1.493333rem;
+    border-radius: 50%;
 }
 .zs-popup-info{
     font-size: .32rem;
@@ -270,20 +260,42 @@
     text-align: left;
     display: inline-block;
 }
+.zs-popup-info-f{
+    width: 56%;
+    font-size: .32rem;
+    line-height: .56rem;
+    text-align: left;
+    display: inline-block;
+}
+.zs-popup-info-item{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+}
 .zs-popup-btn{
     font-size: .373333rem;
     width: 3.2rem;
     height: .96rem;    
     line-height: .96rem;
     border-radius: .8rem;
-    background-color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    background-color: #fff;
+    color: #6FC5D8;    
     margin: .533333rem 0 .64rem;
     display: inline-block;
 }
 .zs-popup-btn span{
     width: 100%;
     height: 100%;
-    color: #fff;
+    color: #6FC5D8;    
+    text-decoration: none;
+    display: inline-block;
+}
+
+.zs-popup-btn a{
+    width: 100%;
+    height: 100%;
+    color: #6FC5D8;    
     text-decoration: none;
     display: inline-block;
 }

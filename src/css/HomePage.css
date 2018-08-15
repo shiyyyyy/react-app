@@ -45,7 +45,7 @@
     width: 100%;
     margin-bottom: .533333rem;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
 }
 .type-item{
     width: 25%;
@@ -256,3 +256,241 @@
     margin: 0 .133333rem;
     display: inline-block;
 }
+
+
+/*               --------  新闻  ---------                 */
+.xinwen-item{
+    width: 100%;
+    font-size: .32rem;
+    background-color: #fff;
+    border-radius: .16rem;
+    padding: .32rem .426667rem;
+    margin-bottom: .213333rem;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+.xinwen-bg{
+    width: .64rem;
+    height: .64rem;
+    margin-right: .32rem;
+}
+.msg3{
+    background: url('/img/msg3.png') no-repeat left center;
+    background-size: .64rem .64rem;
+}
+.msg4{
+    background: url('/img/msg4.png') no-repeat left center;
+    background-size: .64rem .64rem;
+}
+.xinwen-msg{
+    flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.xinwen-date{
+    width: 2.666667rem;
+    font-size: .373333rem;
+}
+
+
+
+
+/*               --------  公告  ---------                 */
+
+
+/* -------------------------------------- 标题 前 icon ---------------------------------------- */
+
+.kehu{
+    padding-left: .8rem;
+    background: url('/img/kehu.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.jiedanren{
+    padding-left: .8rem;
+    background: url('/img/jiedanren.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.youke{
+    padding-left: .8rem;
+    background: url('/img/youke.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.yingshou{
+    padding-left: .8rem;
+    background: url('/img/yingshou.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.yingzhuan{
+    padding-left: .8rem;
+    background: url('/img/yingzhuan.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+
+.lirun{
+    padding-left: .8rem;
+    background: url('/img/lirun.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.beizhu{
+    padding-left: .8rem;
+    background: url('/img/beizhu.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+
+/* home */
+
+.gonggao{
+    padding-left: .8rem;
+    background: url('/img/gonggao.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.hot{
+    padding-left: .8rem;
+    background: url('/img/hot.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.xinwen{
+    padding-left: .8rem;
+    background: url('/img/xinwen.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.zhuanxian{
+    padding-left: .8rem;
+    background: url('/img/zhuanxian.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+
+/* wode */
+.tongzhi{
+    padding-left: .8rem;
+    background: url('/img/tongzhi.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.dingdan{
+    padding-left: .8rem;
+    background: url('/img/dingdan.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.zhangben{
+    padding-left: .8rem;
+    background: url('/img/zhangben.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.jianguan{
+    padding-left: .8rem;
+    background: url('/img/jianguan.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.gouwuche{
+    padding-left: .8rem;
+    background: url('/img/gouwuche.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+
+/* ---========================== 单据 icon 样式不一样了============================------ */
+.jcxx{
+    background: url(/img/doc_icon/jcxx.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.yzmx{
+    background: url(/img/doc_icon/yzmx.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.ysmx{
+    background: url(/img/doc_icon/ysmx.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.yfmx{
+    background: url(/img/doc_icon/yfmx.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.thmx{
+    background: url(/img/doc_icon/thmx.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.spjl{
+    background: url(/img/doc_icon/spjl.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.jsxx{
+    background: url(/img/doc_icon/jsxx.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.hkzh{
+    background: url(/img/doc_icon/hkzh.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.dydj{
+    background: url(/img/doc_icon/dydj.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+.djbz{
+    background: url(/img/doc_icon/djbz.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+
+
+
+/* // 关联单据 */
+.gldj{
+    background: url(/img/doc_icon/gldj.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+/* // 借款详情 */
+
+.jkxq{
+    background: url(/img/doc_icon/jkxq.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+/* 内转明细 */
+.nzmx{
+    background: url(/img/doc_icon/nzmx.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+/* 应转明细 */
+.yzmx{
+    background: url(/img/doc_icon/yzmx.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+/* 对方账户 */
+.dfzh{
+    background: url(/img/doc_icon/dfzh.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+/* 入账详情 */
+.rzxq{
+    background: url(/img/doc_icon/rzxq.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+/* 调整单据 */
+.tzdj{
+    background: url(/img/doc_icon/tzdj.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+/* 扣款详情 */
+.kkxq{
+    background: url(/img/doc_icon/kkxq.png) no-repeat left center;
+    padding-left: .8rem;
+    background-size: .586667rem;
+}
+
+

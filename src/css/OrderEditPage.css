@@ -55,8 +55,12 @@
     padding-right: .266667rem;
     display: inline-block;
 }
+.model-main-item > span > span{
+    color: #000;
+}
 .model-main-item > input{
     height: 90%;
+    font-size: .373333rem;
     border: none;
     margin-left: .16rem;
 }
@@ -92,7 +96,7 @@
     box-shadow: 4px 5px 19px rgba(0,0,0,.5);
 }
 .order-edit-footer{
-    height: 1.173333rem;
+    height: 1.306667rem;
     text-align: center;
     background-color: #fff;
     box-shadow: 0px 0px 5px rgba(0,0,0,.3);
@@ -119,7 +123,7 @@
     color: #333;
 }
 .order-edit-footer > div:nth-last-child(-n+2){
-    line-height: 1.173333rem;
+    line-height: 1.306667rem;
     color: #fff;
     box-shadow: 0px 0px 5px rgba(0,0,0,.2);
 }
@@ -140,3 +144,4 @@
     padding-right: .64rem;
     display: inline-block;
 }
+

@@ -1,25 +1,34 @@
 /* 类型选择 */
 .order-state{
     width: 100%;
-    height: 1.2rem;
-    line-height: 1.2rem;
     box-sizing: border-box;
     text-align: center;
     background-color: #fff;
+    padding: .426667rem;
     display: flex;
-    position: fixed;
-    z-index: 1;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 .order-state-item{
     font-size: .373333rem;
-    flex: 1;
-    transition: all .3s;
+    width: 24%;
+    /* color: #6FC5D8; */
+    box-sizing: border-box;
+    border: 1px solid #999;
+    border-radius: .08rem;
+    margin: .16rem 2%;
+    padding: .106667rem;
 }
 .cur-order-state{
+
     font-size: .373333rem;
-    flex: 1;
+    width: 24%;
     color: #6FC5D8;
-    border-bottom: 2px solid #6FC5D8;
+    border: 1px solid #6FC5D8;
+    box-sizing: border-box;
+    border-radius: .08rem;
+    margin: .16rem 2%;
+    padding: .106667rem;
 }
 
 /* 订单 状态 的不同状态样式 */
@@ -43,7 +52,6 @@
 
 .order-list{
     font-size: .32rem;
-    padding-top: 1.2rem;
     box-sizing: border-box;
 }
 
@@ -90,9 +98,12 @@
     width: 1.52rem;
     height: .746667rem;
     text-align: center;
-    border: 1px solid #E6E6E6;
+    /* border: 1px solid #ccc; */
     border-radius: .106667rem;
     background-color: #fff;
+
+    color: #6FC5D8;
+    border: 1px solid #6FC5D8;
 }
 .order-btn-item:last-child{
     color: #6FC5D8;
@@ -131,67 +142,6 @@
 }
 
 
-/* --------------------------  添加游客 弹窗  --------------------------------- */
-.tourist-modal{
-    padding: 3.2rem .64rem 0 .64rem;
-    background-color: rgba(0,0,0, .4);
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    top: 0;
-    z-index: 1;
-}
-.tourist-popup{
-    font-size: .32rem;
-    width: 100%;
-    /* height: 100%; */
-    text-align: center;
-    border-radius: .16rem;
-    background-color: #fff;
-    padding-top: .213333rem;
-}
-.tourist-popup-title{
-    height: 1.173333rem;
-    line-height: 1.173333rem;
-}
-.tourist-popup-info-item{
-    height: 1.173333rem;
-    line-height: 1.173333rem;
-    padding: 0 .64rem 0 1.146667rem;
-    display: flex;
-}
-.tourist-popup-info-item-left{
-    color: #666;
-    margin-right: .64rem;
-}
-.tourist-popup-info-item-right{
-    color: #333;
-}
-.tourist-popup-btn{
-    font-size: .373333rem;
-    width: 3.2rem;
-    height: .96rem;    
-    line-height: .96rem;
-    color: #fff;
-    border-radius: .8rem;
-    background-color: #6FC5D8;
-    margin: .533333rem 0 .64rem;
-    display: inline-block;
-}
-
-
-
-/* ---------------------------------  新增客户页面  ------------------------------------- */
-.add-cstm-left{
-    width: 1.706667rem;
-    box-sizing: border-box;
-}
-.add-cstm-right{
-    width: auto;
-    box-sizing: border-box;
-    flex: 1;
-}
 
 /* ---------------------------------  订单选择客户  ------------------------------------- */
 .select-cstm{
@@ -238,3 +188,236 @@
     justify-content: space-around;
     align-items: center;
 }
+
+/* -------------------------------  选择接单人  ------------------------------------ */
+.select-item-pro-header-box{
+    /* padding: .32rem .32rem 0; */
+}
+.select-item-pro-header-info{
+    /* border-radius: .16rem; */
+    background-color: #fff;
+    padding: .32rem 0;
+}
+
+.select-single-box{
+    width: 100%;
+    box-sizing: border-box;
+    padding: .32rem;
+    margin-bottom: 1.333333rem;
+}
+.select-single-item{
+    background-color: #fff;
+    border-radius: .16rem;
+    box-sizing: border-box;
+    padding: .213333rem .64rem .213333rem .533333rem;
+    margin-bottom: .32rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.select-single-item-left{
+    flex: 1;
+    font-size: .373333rem;
+    display: flex;
+    align-items: center;
+}
+.select-single-item-img{
+    width: 1.493333rem;
+    height: 1.493333rem;
+    margin-right: .533333rem;
+}
+.select-single-item-userInfo{
+    line-height: .533333rem;
+}
+.select-single-item-name{
+
+}
+.select-single-item-mobile{
+    color: #666;
+}
+.select-single-item-icon{
+    font-size: .64rem;
+    color: #6FC5D8;
+}
+
+
+/* =================================== 新增客户 页 NerCstmPage    ================================ */
+.add-cstm-box{
+    box-sizing: border-box;
+    margin-top: .32rem;
+}
+.add-cstm-cell{
+    width: 100%;
+    font-size: .373333rem;
+    line-height: 1.173333rem;
+    background-color: #fff;
+    box-sizing: border-box;
+    border-bottom: 1px solid #f1f1f1;
+    padding: 0 .426667rem;
+
+    display: flex;
+}
+.add-cstm-left{
+    width: 1.866667rem;
+    box-sizing: border-box;
+    color: #000;
+}
+.add-cstm-right-input{
+    width: auto;
+    box-sizing: border-box;
+    flex: 1;
+}
+.add-cstm-right-select{
+    width: auto;
+    flex: 1;
+    box-sizing: border-box;
+    background: url(/img/next1.png) right center no-repeat;
+    background-size: .533333rem;
+}
+
+/* 新增客户 btn  正常底部btn */
+.add-cstm-btn{
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: .266667rem .32rem;
+    margin: .64rem 0;
+    border-top: 1px solid #f1f1f1;
+    text-align: center;
+}
+.add-cstm-btn-cancel{
+    width: 48%;
+    line-height: .853333rem;
+    background-color: #fff;
+    color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    border-radius: .106667rem;
+}
+.add-cstm-btn-submit{
+    width: 48%;
+    line-height: .853333rem;
+    color: #fff;
+    background-color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    border-radius: .106667rem;
+}
+
+/* ================================== 订单选择客户 (底部固定btn)===================================== */
+.select-cstm-btn{
+    height: 1.306667rem;
+    line-height: 1.306667rem;
+    text-align: center;
+    box-shadow: 0px 0px 10px #ccc;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+}
+.select-cstm-btn-cancel{
+    width: 50%;
+    height: 100%;
+    color: #6FC5D8;
+    background-color: #fff;
+}
+.select-cstm-btn-submit{
+    width: 50%;
+    height: 100%;
+    color: #fff;
+    background-color: #6FC5D8;
+}
+
+
+/* ===================================== 录入明细(应收) modal ========================================= */
+.order-receivable-modal{
+    width: 8rem;
+    background-color: #fff;
+    box-sizing: border-box;
+    padding: .853333rem 0 0 0;
+    z-index: -1;
+}
+.order-receivable-modal-info{
+    
+}
+.order-receivable-modal-info-item{
+    width: 100%;
+    height: 1.173333rem;
+    line-height: 1.173333rem;
+    box-sizing: border-box;
+    border-bottom: 1px solid #F1f1f1;
+    padding: 0 .853333rem;
+    display: flex;
+}
+.order-receivable-modal-info-item-left{
+    width: 1.733333rem;
+    font-size: .373333rem;
+    text-align: right;
+}
+.order-receivable-modal-info-item-right{
+    flex: 1;
+    height: 100%;
+    box-sizing: border-box;
+    padding-left: .32rem;
+    display: flex;
+    align-items: center;
+}
+.order-receivable-modal-info-item-right-select{
+    /* flex: 1; */
+    font-size: .373333rem;
+    height: 76%;
+    box-sizing: border-box;
+    padding-left: .32rem;
+    margin-top: .133333rem;
+    display: flex;
+    align-items: center;
+    border: none;
+    background-color:transparent; 
+    border-color:transparent;
+    -webkit-appearance: none;
+    padding-right: .533333rem;
+}
+.order-receivable-modal-info-note{
+    font-size: .373333rem;
+    max-height: 5.33333rem;
+    line-height: .533333rem;
+    margin: .32rem 0;
+    overflow: hidden;
+}
+.order-receivable-modal-btn{
+    width: 100%;
+    line-height: 1rem;
+    text-align: center;
+    box-sizing: border-box;
+    padding: .853333rem;
+    display: flex;
+    justify-content: space-between;
+}
+.order-receivable-modal-btn-cancel{
+    width: 45%;
+    color: #6FC5D8;
+    background-color: #fff;
+    border: 1px solid #6FC5D8;
+    border-radius: .08rem;
+}
+.order-receivable-modal-btn-submit{
+    width: 45%;
+    color: #fff;
+    background-color: #6FC5D8;
+    border: 1px solid #6FC5D8;
+    border-radius: .08rem;
+}
+
+/*  覆盖 icon  */
+.last-icon-ctrl{
+    width: 20%;
+    font-size: 0.64rem;
+    color: rgb(238,133,133);
+    background-color: #fff;
+    position: absolute;
+    right:0;
+    top:0;
+    bottom:0;
+}
+
+/*  */

@@ -100,8 +100,10 @@ export function trigger(action, ...args) {
 //2.'then body' usage: [return 100] or [return Promise.reject(100)] (no matter in rs or rj)
 //3.[resolve 100] is ok if there is no 'then body' append
 //4.[reject 100] is not ok if there is no 'then body' handle reject
+//* caution: 'promise body' can call rj event if there is no handler in 'then body', and that rais a uncaught exception
 
-export function post(url, body) {
+export function post(url, body, cfg) {
+    cfg = cfg || {};
     body = body || {};
     if (url.indexOf('http') !== 0) {
         if (!AppCore.HOST) {
@@ -137,18 +139,21 @@ export function post(url, body) {
                         return;
                     }
                     error(r.message);
-                    rj && rj();
+                    cfg.rj && rj();
                     return;
                 }
                 r.enum && Enum.ver && updateEnum(r.enum);
-                return rs(r);
+                rs(r);
+                return cfg.wait;
             },
             e => {
                 log(e);
                 error('网络连接失败');
             }
         ).then(
-            r => r !== '保持等待' && store.getState().progress && trigger('取消等待')
+            wait => {
+                !wait && store.getState().progress && trigger('取消等待');
+            }
         );
     });
 }
@@ -163,7 +168,6 @@ export function setNav(nav) {
 }
 
 export function goTo(key, p) {
-
     navigator.pushPage({
         page: pages[key],
         key: key,
@@ -323,20 +327,31 @@ function _loadMore(view, done) {
 
     view.lastIndex = view.state.data.length;
 
-    let param = encUrl({
+    let param = {
         ...view.state.search,
         start: view.state.data.length + 1,
         limit: pageSize,
-        mod: view.mod,
+        //mod: view.mod,
         front_enum: Enum.ver
-    });
+    };
 
     let url;
     if (view.url) {
-        url = view.url + '?' + param;
+        param['mod'] = view.mod;
+        url = view.url + '?' + encUrl(param);
     } else if (view.mod) {
         let cfg = get_mod_cfg(view.mod);
-        url = cfg.read.url + '?' + param;
+        param['mod'] = view.mod;
+        url = cfg.read.url + '?' + encUrl(param);
+    }else if (view.action) {
+        let cfg = AppMeta.actions[view.action];
+        let read_param = get_read_param(view.action,cfg,view.props.data);
+
+        param = {...param,...read_param};
+
+        url = cfg.read.url + '?' + encUrl(param);
+    } else {
+        return;
     }
     post(url).then(
         r => {
@@ -358,6 +373,9 @@ export function loadIfEmpty(view, done) {
     if (!AppCore.sid || view.state.loading || view.state.filled) {
         return;
     }
+    if(view.mod && !haveModAuth(view.mod)){
+        return;
+    }
     reload(view, done);
 }
 
@@ -376,7 +394,7 @@ function _reload(view, done) {
         url = view.url;
     } else if (view.mod) {
         let cfg = get_mod_cfg(view.mod);
-        url = cfg.read.url + '?' + encUrl({...view.state.search, limit: pageSize, mod: view.mod, front_enum: Enum.ver });
+        url = cfg.read.url + '?' + encUrl({...view.state.search, limit: view.pageSize || pageSize, mod: view.mod, front_enum: Enum.ver });
     } else if (view.action) {
         let cfg = AppMeta.actions[view.action];
         let param = get_read_param(view.action, cfg, view.props.p.data);
@@ -386,13 +404,15 @@ function _reload(view, done) {
         return;
     }
 
-    post(url).then(
+    post(url,undefined,{rj:1}).then(
         r => {
             view.setState({ filled: true, loading: false, data: r.data }, done);
             view.lastIndex = 0;
         },
         e =>{
-            goBack();
+            if(!view.mod){
+                goBack();
+            }
         }
     )
 }
@@ -405,6 +425,84 @@ export function submit(view, done) {
             done && done(r);
         }
     );
+}
+
+export function sumbitCheck(view,cfg){
+    let rq_empty = false;
+    let blocks = cfg.block.filter(function(item,index){
+        return (!cfg.ro||!cfg.ro[index])&&(!view.block_hide||!view.block_hide[item]||view.block_hide[item]!='1');
+    });
+    blocks.forEach(function(key){
+        let block_cfg = AppMeta.blocks[key];
+        let rq_list = [];
+        Object.keys(block_cfg.list).forEach(function(field){
+            let cfg = block_cfg.list[field];
+            let ro = !cfg.ro ? block_cfg.ro:cfg.ro;
+            if(cfg.rq && !ro){
+                let _cfg = {field:field};
+                if(cfg.type&&Enum[cfg.type]){
+                    _cfg['cfg'] = cfg;
+                }
+                rq_list.push(_cfg);
+            }
+        });
+        let data = view.state.data[key];
+        data.forEach(function(item){
+            rq_list.forEach(function(_cfg){
+                if(!_cfg.cfg&&!item[_cfg.field]&&!rq_empty){
+                    rq_empty = block_cfg.list[_cfg.field].text;
+                }
+                if(_cfg.cfg&&(item[_cfg.field]===undefined||!Enum[_cfg.cfg.type][item[_cfg.field]])){
+                    rq_empty = block_cfg.list[_cfg.field].text;
+                }
+            })
+        });
+    });
+    return rq_empty;
+}
+
+export function haveModAuth(mod){  
+    if(!AppMeta.mods){
+        return true;
+    }
+    if (AppMeta.mods[mod].read) {
+        return true;
+    }
+
+    let cfg;
+    for (var lv1 in AppMeta.menu) {
+        for (var lv2 in AppMeta.menu[lv1]) {
+            if (lv2 === mod) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+export function haveActionAuth(action,mod){
+    if(!AppMeta.menu){
+        return true;
+    }
+    let cfg;
+    for (var lv1 in AppMeta.menu) {
+        for (var lv2 in AppMeta.menu[lv1]) {
+            if (lv2 === mod) {
+                cfg = AppMeta.menu[lv1][lv2];
+                break;
+            }
+        }
+        if(cfg){
+            break;
+        }
+    }
+    if(!cfg || !cfg.action){
+        return false;
+    }
+    if(cfg.action[action]){
+        return true;
+    }
+    return false;
 }
 
 function get_mod_cfg(mod) {

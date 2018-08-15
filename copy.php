@@ -29,6 +29,7 @@ foreach ($manifest as $k => $v) {
 	}
 }
 $css = str_replace('url(/img/','url(../../img/',$css);
+$css = str_replace('url("/img/','url("../../img/',$css);
 cp("build/${manifest['main.js']}","$dest/static/js/main.js");
 mkdir("$dest/static/css/");
 file_put_contents("$dest/static/css/main.css",$css);

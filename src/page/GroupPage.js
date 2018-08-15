@@ -1,9 +1,9 @@
 import React, { Component,Fragment } from 'react';
 
-import {AppCore,resetTo,loadMore,loadIfEmpty,Enum,goTo,hasPlugin,reload,goBack} from '../util/core';
-import {pullHook,loginToPlay,search,nonBlockLoading} from '../util/com';
+import {AppCore,resetTo,loadMore,loadIfEmpty,Enum,goTo,hasPlugin,reload,goBack,haveModAuth} from '../util/core';
+import {pullHook,loginToPlay,Search,nonBlockLoading,NoPv} from '../util/com';
 
-import {Page,Modal,Button} from 'react-onsenui';
+import {Page,Modal,Button,Icon} from 'react-onsenui';
 import { connect } from 'react-redux';
 
 import moment from 'moment';
@@ -18,20 +18,11 @@ class GroupPage extends Component{
 			state:'initial',
 			data:[],
 			open_filter: '',
-			search:{dep_date_from:moment().format('YYYY-MM-DD'),pd_nav:'1',},
-			search_value: '',
+			search:{dep_date_from:moment().format('YYYY-MM-DD'),pd_nav:'1',pd_name:''},
+			dep_date_from: moment().format('YYYY-MM-DD')
 		};
 		this.mod = '团队报名';
-
-		this.p = {
-			key: this.mod,
-			placeholder: '请输入团号',
-			cb: value => {
-				this.setState({search_value: value, open_filter:'',search:{...this.state.search,group_num: value}});
-				reload(this)
-				goBack()
-			}		
-		}
+		AppCore.GroupPage = this;
 		
 	}
 
@@ -52,8 +43,13 @@ class GroupPage extends Component{
 		reload(this);
 	}
 	cityClick(i){
-		this.setState({open_filter:'',search:{...this.state.search,dep_city_id: i}});
-		reload(this);
+		if(this.state.search.dep_city_id === i){
+			this.setState({open_filter:'',search:{...this.state.search,dep_city_id: ''}});
+			reload(this);
+		}else if (this.state.search.dep_city_id !== i){
+			this.setState({open_filter:'',search:{...this.state.search,dep_city_id: i}});
+			reload(this);
+		}
 	}
 	depDateClick(){
 		this.setState({open_filter:'',
@@ -66,11 +62,50 @@ class GroupPage extends Component{
 		reload(this);
 	}
 	themeClick(i){
-		this.setState({open_filter:'',search:{...this.state.search,theme_id: i}});
-		reload(this);
+		if(this.state.search.theme_id === i){
+			this.setState({open_filter:'',search:{...this.state.search,theme_id: ''}});
+			reload(this);
+		}else if (this.state.search.theme_id !== i){
+			this.setState({open_filter:'',search:{...this.state.search,theme_id: i}});
+			reload(this);
+		}
+	}
+
+	// ====================
+	tag_cur(){
+		if(this.state.open_filter === 'tag' || this.state.search.pd_subtag_id || this.state.search.pd_tag_id){
+			return true
+		}
+		return false
+	}
+
+	date_cur(){
+		if(this.state.open_filter === 'date' || this.state.dep_date_from || this.state.dep_date_to){
+			return true
+		}
+		return false
 	}
 
 
+
+	dep_city_cur(){
+		if(this.state.open_filter === 'dep_city' || this.state.search.dep_city_id){
+			return true
+		}
+		return false
+	}
+
+
+	theme_cur(){
+		if(this.state.open_filter === 'theme' || this.state.search.theme_id){
+			return true
+		}
+		return false
+	}
+
+
+
+	// ===============
 
 	renderFixed(){
 		if(!this.refs.anchor){
@@ -95,10 +130,26 @@ class GroupPage extends Component{
 				onClick={_=>{this.setState({open_filter: ''})}}
 			>
 				<ons-row  class="option-type" onClick={e=>e.stopPropagation()}>
-				  <ons-col onClick={_=>this.setState({open_filter:'tag'})}>产品标签</ons-col>
-				  <ons-col onClick={_=>this.setState({open_filter:'date'})}>出发日期</ons-col>
-				  <ons-col onClick={_=>this.setState({open_filter:'dep_city'})}>出发城市</ons-col>
-				  <ons-col onClick={_=>this.setState({open_filter:'theme'})}>产品主题</ons-col>
+				  <ons-col onClick={_=>this.setState({open_filter:'tag'})}>
+				  	<span className={ this.tag_cur() ? "cur-option-type-text":"option-type-text"}>产品标签</span>
+					{this.tag_cur() && <Icon className="cur-option-type-item" icon="md-caret-up"  />}
+					{!this.tag_cur() && <Icon className="option-type-item" icon="md-caret-down"  />}
+				  </ons-col>
+				  <ons-col onClick={_=>this.setState({open_filter:'date'})}>
+				  	<span className={ this.date_cur() ? "cur-option-type-text":"option-type-text"}>出发日期</span>
+					{this.date_cur() && <Icon className="cur-option-type-item" icon="md-caret-up" />}
+					{!this.date_cur() && <Icon className="option-type-item" icon="md-caret-down" />}
+				  </ons-col>
+				  <ons-col onClick={_=>this.setState({open_filter:'dep_city'})}>
+				  	<span className={ this.dep_city_cur() ? "cur-option-type-text":"option-type-text"}>出发城市</span>
+					{this.dep_city_cur() && <Icon className="cur-option-type-item" icon="md-caret-up" />}
+					{!this.dep_city_cur() && <Icon className="option-type-item" icon="md-caret-down" />}
+				  </ons-col>
+				  <ons-col onClick={_=>this.setState({open_filter:'theme'})}>
+				  	<span className={ this.theme_cur() ? "cur-option-type-text":"option-type-text"}>产品主题</span>
+					{this.theme_cur() && <Icon className="cur-option-type-item" icon="md-caret-up" />}
+					{!this.theme_cur() && <Icon className="option-type-item" icon="md-caret-down" />}
+				  </ons-col>
 				</ons-row>
 				<div onClick={e=>e.stopPropagation()}>
 				{/* 产品标签-选择框 */
@@ -198,24 +249,37 @@ class GroupPage extends Component{
 			</div>
 		);
 	}
+	renderToolbar(){
+		let search_cfg = {
+			key: this.mod,
+			placeholder: '请输入产品名称',
+			cb: value => {
+				this.setState({open_filter:'',search:{...this.state.search,pd_name: value}});
+				reload(this)
+			}	
+		}
+		return <Search value={this.state.search.pd_name} 
+						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,pd_name: ''}},_=>reload(this))}} 
+						param={search_cfg} />
+	}
 
 	render(){
 		return (
 			<Page 
-				renderToolbar={_=>search(this)} 
+				renderToolbar={_=>this.renderToolbar()} 
 				onInfiniteScroll={done=>loadMore(this,done)} 
 				onShow={_=>loadIfEmpty(this)}
 				renderFixed={_=>this.renderFixed()}>
 
 			    {
-			    	this.props.s.user.sid && 
+			    	this.props.s.user.sid && haveModAuth(this.mod) && 
 
 		    		<Fragment>
 		    			<div style={{height:"50px"}} ref="anchor"></div>
 						{
 						  	!this.state.open_filter && pullHook(this)	
 					    }
-					    {this.state.filled && this.state.loading && nonBlockLoading()}
+					    {!!this.state.data.length && this.state.loading && nonBlockLoading()}
 				        <div className="pro-list">
 							{
 								this.state.data.map(item =>
@@ -227,12 +291,12 @@ class GroupPage extends Component{
 							  		<div className="pro-item-right">
 										<div className="pro-item-name">{item.pd_name}</div>
 										<div className="pro-item-dep_city flex-j-sb">
-										<span className="pro-item-gys">供应商: {item.pd_provider}</span>
-											<span>最近班期: {item.dep_date}</span>
+											<span className="pro-item-gys">供应商: {item.pd_provider}</span>
+											<span className="pro-item-recently">最近班期: {item.dep_date}</span>
 											{/* <span>供应商: {item.pd_provider}</span> */}
 										</div>
 										<div className="pro-item-price flex-j-sb">
-											<span className="pro-item-gys">{Enum.City[item.dep_city_id]}出发</span>
+											<span className="pro-item-dep">{Enum.City[item.dep_city_id]}出发</span>
 											<span style={{fontSize: '.426667rem', color: '#F29A0A',fontWeight:'bold'}}>￥{(item.zk_price * 1) || '0.00'}<span style={{fontSize: '.373333rem',fontWeight: 'normal'}}>起/人</span></span>
 										</div>
 										{/* <div className="pro-item-theme">发团日期: {item.dep_date}</div> */}
@@ -248,7 +312,9 @@ class GroupPage extends Component{
 
 		    		</Fragment>
 			    }
-
+			    {
+			    	this.props.s.user.sid && !haveModAuth(this.mod) && NoPv()
+			    }
 			    {
 			  		!this.props.s.user.sid && loginToPlay()
 			    }

@@ -48,7 +48,9 @@ function get_doc_id(row){
 export function basis(data,type){
     return (
         <div className="doc-module">
-			<div className="doc-title">基础信息</div>
+			<div className="doc-title">
+				<div className="jcxx">基础信息</div>
+			</div>
 			<div className="doc-main">
 				<div className="doc-main-cell">
 					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
@@ -76,9 +78,11 @@ export function basis(data,type){
 export function fund(data){
     return (
         <div className="doc-module">
-			<div className="doc-title">入账详情</div>
-			{data.map( item => 
-			<div className="doc-main">
+			<div className="doc-title">
+				<div className="rzxq">入账详情</div>
+			</div>
+			{data.map( (item,i) => 
+			<div className="doc-main" key = {i}>
 				<div className="doc-main-cell">
 					<span className="cell-left-4">入账编号:</span><span className="cell-right">{item.fund_num}</span>
 				</div>
@@ -122,7 +126,9 @@ export function fund(data){
 export function billing_info(data,type) {
     return(
 		<div className="doc-module">
-			<div className="doc-title">结算信息</div>
+			<div className="doc-title">
+				<div className="jsxx">结算信息</div>
+			</div>
 			<div className="doc-main">
 				<div className={ (type === '业务支出' ? '':'hide') +" doc-main-cell"}>
 					<span className="cell-left-5">业务类型:</span><span className="cell-right">{Enum.InvoiceBusinessType[data.business_type]}</span>
@@ -160,7 +166,9 @@ export function billing_info(data,type) {
 export function receivable_detail(data){
     return(
         <div className="doc-module">
-        <div className="doc-title">应收明细</div>
+        	<div className="doc-title">
+				<div className="ysmx">应收明细</div>
+			</div>
         	{
 				data.map((item,i)=>
 				<div className="doc-main" key={i} style={{borderBottom: '1px solid #F4F8F9'}}>
@@ -199,7 +207,9 @@ export function receivable_detail(data){
 export function payable_detail(data){
     return(
     	<div className="doc-module">
-        <div className="doc-title">应付明细</div>
+            <div className="doc-title">
+				<div className="yfmx">应付明细</div>
+			</div>
         	{
 				data.map((item,i)=>
 				<div className="doc-main" key={i} style={{borderBottom: '1px solid #F4F8F9'}}>
@@ -242,7 +252,9 @@ export function payable_detail(data){
 export function account_info(data){
 	return(
 		<div className="doc-module">
-			<div className="doc-title">汇款账号</div>
+			<div className="doc-title">
+				<div className="rzxq">汇款账号</div>
+			</div>
 			<div className="doc-main">
 				<div className="doc-main-cell">
 					<span className="cell-left-5">开户行:</span><span className="cell-right">{data.to_bank}</span>
@@ -267,7 +279,9 @@ export function account_info(data){
 export function to_account_info(data){
 	return(
 		<div className="doc-module">
-			<div className="doc-title">对方账户</div>
+			<div className="doc-title">
+				<div className="dfzh">对方账户</div>
+			</div>
 			<div className="doc-main">
 				<div className="doc-main-cell">
 					<span className="cell-left-5">开户行:</span><span className="cell-right">{data.to_bank}</span>
@@ -294,7 +308,9 @@ export function to_account_info(data){
 export function call_documents(data){
     return(
 		<div className="doc-module">
-			<div className="doc-title">关联单据</div>
+            <div className="doc-title">
+				<div className="gldj">关联单据</div>
+			</div>
 			{data.map( item => 
 				<div className="doc-main">
 					<div className="doc-main-cell">							{/* 这里用的是doc_id而不是id,但是id==doc_id */}
@@ -338,7 +354,9 @@ export function call_documents(data){
 export function nz_detail(data){
 	return(
         <div className="doc-module">
-        <div className="doc-title">内转明细</div>
+            <div className="doc-title">
+				<div className="nzmx">内转明细</div>
+			</div>
         {
 			data.map((item,i)=>
 			<div className="doc-main" key={i}>
@@ -378,7 +396,9 @@ export function nz_detail(data){
 export function zjnz_detail(data){
 	return(
         <div className="doc-module">
-        <div className="doc-title">转款明细</div>
+            <div className="doc-title">
+				<div className="yzmx">转款明细</div>
+			</div>
         	{
 				data.map((item,i)=>
 				<div className="doc-main" key={i}>
@@ -416,11 +436,13 @@ export function zjnz_detail(data){
     )
 }
 
-//退款订单
+//退款订单  
 export function tk_detail(data){
 	return(
         <div className="doc-module">
-        <div className="doc-title">退款明细</div>
+            <div className="doc-title">
+				<div className="dydj">退款明细</div>
+			</div>
 		{
 			data.map((item,i)=>
 			<div className="doc-main" key={i}>
@@ -445,12 +467,11 @@ export function tk_detail(data){
 				<div className="doc-main-cell">	
 					<span className="cell-left-5">当时收款: </span><span className="cell-right">{item.received}</span> 
 				</div>
-				<div className="doc-main-cell"> 
-					<span className="cell-left-5">本次退款:</span><span className="cell-right">{item.amount}</span>
-				</div>
+				<div className="doc-main-cell-right" style={{ borderBottom: '1px solid #F4F8F9' }}><span>本次退款:{item.amount}</span></div>					
 		    </div>
 			)
 		}
+		<div className="doc-main-cell-right" style={{fontSize: '.426667rem'}}>合计: { Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100 }</div>
     </div>
     )
 }
@@ -459,7 +480,9 @@ export function tk_detail(data){
 export function th_detail(data){
 	return(
         <div className="doc-module">
-        <div className="doc-title">退回明细</div>
+            <div className="doc-title">
+				<div className="thmx">退回明细</div>
+			</div>
 		{
 			data.map((item,i)=>
 			<div className="doc-main" key={i}>
@@ -498,39 +521,44 @@ export function th_detail(data){
 export function tk_call_sk(data,type){
     return(
 		<div className="doc-module">
-			<div className="doc-title">调用单据</div>
-			<div className="doc-main">
+			<div className="doc-title">
+				<div className="dydj">调用单据</div>
+			</div>
+			{data.map( (item,i)=>
+			<div className="doc-main" key={i}>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
+					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[item.doc_type_id]}</span>
 				</div>
 				<div className="doc-main-cell">						{/* 这里用的是doc_id而不是id,但是id==doc_id */}
-					<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(data)}</span>
+					<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(item)}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">制单人:</span><span className="cell-right">{data.company_name}-{data.department_name}-{data.employee_name}</span>
+					<span className="cell-left-4">制单人:</span><span className="cell-right">{item.company_name}-{item.department_name}-{item.employee_name}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">提交日期:</span><span className="cell-right">{data.submit_at}</span>
+					<span className="cell-left-4">提交日期:</span><span className="cell-right">{item.submit_at}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">结算对象:</span><span className="cell-right">{data.settle_obj}</span>
+					<span className="cell-left-4">结算对象:</span><span className="cell-right">{item.settle_obj}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">结算金额:</span><span className="cell-right">{data.settle_amount}</span>
+					<span className="cell-left-4">结算金额:</span><span className="cell-right">{item.settle_amount}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">已开票额:</span><span className="cell-right">{data.invoice_amount}</span>
+					<span className="cell-left-4">已开票额:</span><span className="cell-right">{item.invoice_amount}</span>
 				</div>
 				<div className={(type === '资金退款' ? "doc-main-cell":"hide")}>
-					<span className="cell-left-4">未开票额:</span><span className="cell-right">{data.invoice_remain}</span>
+					<span className="cell-left-4">未开票额:</span><span className="cell-right">{item.invoice_remain}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">审批状态:</span><span className="cell-right">{Enum.Flow[data.flow]}</span>
+					<span className="cell-left-4">审批状态:</span><span className="cell-right">{Enum.Flow[item.flow]}</span>
 				</div>
-				<div className={(type === '资金退款' ? "doc-main-cell":"hide")}>
-					<span className="cell-left-4">本次退款:</span><span className="cell-right">{data.amount}</span>
+				<div className={(type === '资金退款' ? "doc-main-cell":"hide")} style={{ borderBottom: '1px solid #F4F8F9' }}>
+					<span className="cell-left-4">本次退款:</span><span className="cell-right">{item.amount}</span>
 				</div>
 			</div>
+			)}
+			<div className={(type === '资金退款' ? "doc-main-cell-right":"hide")} style={{fontSize: '.426667rem'}}>合计: { Math.round(data.reduce( (acc,cur)=> cur.amount-0+acc, 0 ) * 100)/100 }</div>			
 		</div>
     )
 }
@@ -539,7 +567,9 @@ export function tk_call_sk(data,type){
 export function th_call_doc(data){
     return(
 		<div className="doc-module">
-			<div className="doc-title">调用单据</div>
+			<div className="doc-title">
+				<div className="dydj">调用单据</div>
+			</div>
 			<div className="doc-main">
 				<div className="doc-main-cell">
 					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
@@ -571,7 +601,9 @@ export function th_call_doc(data){
 export function hk_call_doc(data){
     return(
 		<div className="doc-module">
-			<div className="doc-title">借款详情</div>
+            <div className="doc-title">
+				<div className="jkxq">借款详情</div>
+			</div>
 			{data.map( item =>
 			<div className="doc-main">
 				<div className="doc-main-cell">
@@ -618,7 +650,9 @@ export function hk_call_doc(data){
 export function tz_call_doc(data){
     return(
 		<div className="doc-module">
-			<div className="doc-title">调整单据</div>
+            <div className="doc-title">
+				<div className="tzdj">调整单据</div>
+			</div>
 			<div className="doc-main">
 				<div className="doc-main-cell">
 					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
@@ -657,7 +691,9 @@ export function tz_call_doc(data){
 export function kk_info(data){
 	return(
         <div className="doc-module">
-			<div className="doc-title">扣款详情</div>
+            <div className="doc-title">
+				<div className="kkxq">扣款详情</div>
+			</div>
 			{
 				data.map((item,i)=>
 				<div className="doc-main" key={i}>
@@ -687,7 +723,9 @@ export function kk_info(data){
 export function documents_note(data){
     return(
         <div className="doc-module">
-			<div className="doc-title">单据备注</div>
+			<div className="doc-title">
+				<div className="djbz">单据备注</div>
+			</div>
 			{
 				data.map((item,i)=>
 				<div className="doc-main"  key={i}>
@@ -708,7 +746,9 @@ export function documents_note(data){
 export function record(data){
     return(
         <div className="doc-module">
-            <div className="doc-title">审批记录</div>
+            <div className="doc-title">
+				<div className="spjl">调用单据</div>
+			</div>
             <div className="doc-main-cell-num" style={{color: '#000', fontWeight: '700'}}><span>操作人</span><span>审批意见</span><span>审批备注</span><span>操作时间</span></div>
             {data.map((item,i) => !item.editable &&
                 <div className="doc-main-cell-num" key={i}><span>{item.employee_name}</span><span>{Enum.Opinion[item.opinion]}</span><span>{item.comment}</span><span>{(item.create_at)}</span></div>

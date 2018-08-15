@@ -75,3 +75,17 @@ export const forceUpdate = (state = {}, action) => {
       return state
   }
 }
+
+export const alert = (state = {}, action) => {
+  switch (action.type) {
+    case '打开alert':
+      return action.alert;
+    case '关闭alert':
+      let rs = state.rs;
+      let key = action.key;
+      setTimeout(_=>rs(key));
+      return {};
+    default:
+      return state
+  }
+}
