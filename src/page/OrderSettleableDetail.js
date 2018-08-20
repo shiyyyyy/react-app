@@ -40,7 +40,7 @@ class OrderSettleableDetail extends Component{
 		return (
 		  	<ons-toolbar>
 		  	  <div className='left'><ons-back-button></ons-back-button></div>
-		      <div className="center">{AppMeta.actions[this.action].text}</div>
+		      <div className={(AppCore.os === 'ios'?"":"Andriod-title")+" center"}>{AppMeta.actions[this.action].text}</div>
 		  	</ons-toolbar>
 		);
 	}

@@ -351,6 +351,16 @@
     background: url('/img/hot.png') left center no-repeat;
     background-size: .586667rem .586667rem;
 }
+.gn {
+    padding-left: .8rem;
+    background: url('/img/gn-icon.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
+.cj {
+    padding-left: .8rem;
+    background: url('/img/cj-icon.png') left center no-repeat;
+    background-size: .586667rem .586667rem;
+}
 .xinwen{
     padding-left: .8rem;
     background: url('/img/xinwen.png') left center no-repeat;

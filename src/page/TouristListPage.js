@@ -34,7 +34,7 @@ class TouristListPageRender extends Component{
 		return (
 		  	<ons-toolbar>
 		  		<div className='left'><ons-back-button></ons-back-button></div>
-		      	<div className="center">{this.text}</div>
+		      	<div className={(AppCore.os === 'ios'?"":"Andriod-title")+" center"}>{this.text}</div>
 		  	</ons-toolbar>
 		);
 	}
@@ -43,11 +43,24 @@ class TouristListPageRender extends Component{
 		goBack();
 	}
 
+	// 不管多少游客,至少给出一个手机号(现在不需要)
+	// minTouriListMobile(){
+	// 	var regex = /^1[34578][0-9]{9}$/
+	// 	if(JSON.stringify(this.state.data['游客名单']) !== '{}'){
+	// 		return this.state.data['游客名单'].find(item=>{
+	// 			return regex.test(item.mobile)
+	// 		})
+	// 	}
+	// }
+
 	submit(){
 		let data = this.state.data;
 		let order_id = data['订单详情'][0]['id'];
 		let cfg = AppMeta.actions[this.action];
-
+		// if(!this.minTouriListMobile()){
+		// 	info('至少要有一位游客的手机号');
+		// 	return
+		// }
 		trigger('加载等待');
 	    post(cfg.submit.url, {id:order_id,data:{'游客名单':data['游客名单']}}).then(
 	        r => {
@@ -139,7 +152,7 @@ class TouristListPageRender extends Component{
 								<div className="model-main-item">
 									<span>{i+1}</span> 
 									<span>{item.name}</span> 
-									<span>{item.gender ? Enum.Gender[item.gender] :''}</span> 
+									<span>{item.gender >= 0 ? Enum.Gender[item.gender] :''}</span> 
 									<span>{item.birthday}</span>
 									<span>{Enum.Certificate[item.certificate_type]}</span> 
 									<span>{item.certificate_num}</span>
@@ -151,9 +164,9 @@ class TouristListPageRender extends Component{
 						)}
 						</div>
 				</div>
-				<div className="doc-btn-box" style={{padding: '0 1.333333rem'}}>
-					<div onClick={_=>this.cancel()} className="doc-btn-default">取消</div>
-            		<div onClick={_=>this.submit()} className="doc-btn-submit">提交</div>
+				<div className="enter-tour-list-btn" style={{marginBottom: '50px'}}>
+					<div onClick={_=>this.cancel()} className="enter-tour-list-btn-default">取消</div>
+            		<div onClick={_=>this.submit()} className="enter-tour-list-btn-submit">提交</div>
         		    {/* <div className="doc-btn-submit" onClick={_=>this.submit()}>提交</div> */}
 				</div>
 				</div>

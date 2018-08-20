@@ -5,9 +5,11 @@ import {clickToLog,post,AppCore,reload,goBack,goTo,loadIfEmpty} from '../util/co
 import {Carousel,CarouselItem,Page} from 'react-onsenui';
 import { connect } from 'react-redux';
 
-import { Search } from '../util/com'
+import { Search,info,pullHook} from '../util/com'
 
+import { pubInit } from '../util/data'
 
+import moment from 'moment';
 import '../css/HomePage.css'
 
 
@@ -17,6 +19,7 @@ class HomePage extends Component{
 		this.click_history = [];
 
 	    this.state = {
+			state: 'initial',
 			picIdx: 0,
 			navIdx: 0,
 			icon:[{1: "欧洲",
@@ -39,6 +42,7 @@ class HomePage extends Component{
 			data:[],
 		};
 		this.url = '/api/App/app_home_data';
+		AppCore.HomePage = this;
 	}
 
     onShow() {
@@ -52,7 +56,7 @@ class HomePage extends Component{
 	  	 	if(navIdx>1){
 	  			navIdx = 0;
 	  	 	}
-	  		this.setState({picIdx:picIdx/*,navIdx:navIdx*/,group_mod_click: false});
+	  		this.setState({picIdx:picIdx/*,navIdx:navIdx*/});
 	  	 },5000);
 	  	 loadIfEmpty(this);
     }
@@ -74,14 +78,14 @@ class HomePage extends Component{
 		this.setState(state);
 	}
 
-	Serach(){
+	Serach(value){
 		if(!this.props.s.user.sid){
 			return;
 		}
 		if(AppCore.TabPage){
 			AppCore.TabPage.setState({index:2});
 			if(AppCore.GroupPage){
-				let search = this.state.search;
+				let search = {...this.state.search, pd_name:value,limit: 10}
 
 				AppCore.GroupPage.setState({search:search});
 				reload(AppCore.GroupPage);
@@ -103,51 +107,48 @@ class HomePage extends Component{
 				let search = {limit:10};
 				search.pd_nav = '1'
 				search.pd_tag_id = tag_id
-
+				search.dep_date_from = moment().format('YYYY-MM-DD');
 				AppCore.GroupPage.setState({search:search});
 
-				if(this.state['group_mod_click']){
-					reload(AppCore.GroupPage);
-				}
-				this.setState({group_mod_click:true});
+				reload(AppCore.GroupPage);
 			}
 		}
 	}
 
 	goToGroup(item){
-		if(!this.props.s.user.sid){
+		if(!AppCore.sid){
 			if(AppCore.TabPage){
 				AppCore.TabPage.setState({index:2});
 			}
-			return
+			return;
+		}
+		if(!this.props.s.user.department_id || this.props.s.user.department_id==0){
+			info('您没有权限进行本次操作')
+			return;
 		}
 		if(item){
-			goTo('产品详情页',{group_id: item.id, pd_id: item.pd_id})
-			return
+			goTo('产品详情页',{group_id: item.id, pd_id: item.pd_id});
+			return;
 		}
 		if(AppCore.TabPage){
 			AppCore.TabPage.setState({index:2});
 			if(AppCore.GroupPage){
 
 				let search = {limit:10};
-			
+				search.dep_date_from = moment().format('YYYY-MM-DD');
 				AppCore.GroupPage.setState({search:search});
 
-				if(this.state['group_mod_click']){
-					reload(AppCore.GroupPage);
-				}
-				this.setState({group_mod_click:true});
+				reload(AppCore.GroupPage);
 			}
 		}
 	}
 
 	renderToolbar(){
 		let search_cfg = {
-			key: 'home',
-			placeholder: '请输入产品名称',
+			key: 'Group',
+			options:[{text: '产品名称', search: 'pd_name'}],
 			cb: value =>{
-				this.setState({search:{pd_name: value, limit: 10}});
-				this.Serach();
+				this.Serach(value);
 			}
 		}
 		return <Search value={this.state.search.pd_name} 
@@ -159,6 +160,9 @@ class HomePage extends Component{
 		return (
 			<Page onShow={_=>this.onShow()} onHide={_=>this.onHide()} renderToolbar={_=>this.renderToolbar()} >
 
+				{
+					!this.state.loading && pullHook(this)
+				}
 				<div className="home-search-bottom"></div>
 
 				<div className="posi-rela">
@@ -214,7 +218,7 @@ class HomePage extends Component{
 	        	    {
 		        	  	this.props.s.pub.slide.map(
 		        	  		(item, index) => 
-			        	    <CarouselItem key={item.id}>
+			        	    <CarouselItem key={item.pd_id}>
 			        	      <div style={{height: "4.666667rem", width: '100%'}} onClick={_=>this.goToGroup(item)}>
 			        	        <img src={AppCore.HOST+'/'+item.img} className="img-size"></img>
 			        	      </div>
@@ -226,7 +230,7 @@ class HomePage extends Component{
 		        	  {
 		        	  	this.props.s.pub.slide.map(
 		        	  		(item, index) => 
-			        	    <span key={item.id} onClick={this.setIndex.bind(this, 'picIdx',index)}
+			        	    <span key={item.pd_id} onClick={this.setIndex.bind(this, 'picIdx',index)}
 							className={this.state.picIdx === index ? 'active-banner-page' : 'other-banner-page'}>
 			        	    </span>
 			        	  )
@@ -237,17 +241,18 @@ class HomePage extends Component{
 					
 				{/* 热卖推介 */}
 				<div className="model-box-bald-title">
-					<div className="model-box-bald-title-text hot">出境推介</div>
+					<div className="model-box-bald-title-text cj">出境推介</div>
 					<div className="model-box-bald-title-more" onClick={_=>this.goToGroup()}>更多</div>
 				</div>
 					
 				<div className="flex-j-sb flex-wrap" style={{padding: '0 .32rem .32rem .32rem'}}>
 				{
-					this.props.s.pub.recommend.map( (item, index) => 
-						<div className={index>7?"hide":"content-item"} key={item.id} onClick={_=>this.goToGroup(item)}>
+					this.props.s.pub && this.props.s.pub.cj_recommend_arr &&
+					this.props.s.pub.cj_recommend_arr.map( (item, index) => 
+						<div className={index>7?"hide":"content-item"} key={item.pd_id} onClick={_=>this.goToGroup(item)}>
 							<div className="content-item-top">
 								<img src={AppCore.HOST+'/'+item.img} className="img-size"></img>
-								<div className="content-item-top-row">产品编号: P022887</div>
+								<div className="content-item-top-row">产品编号: P0{item.pd_id}</div>
 							</div>
 							<div className="content-item-bottom">
 								<div className="content-item-bottom-title">{item.pd_name}</div>
@@ -265,17 +270,18 @@ class HomePage extends Component{
 
 				{/* 热卖推介 */}
 				<div className="model-box-bald-title">
-					<div className="model-box-bald-title-text hot">国内推介</div>
+					<div className="model-box-bald-title-text gn">国内推介</div>
 					<div className="model-box-bald-title-more" onClick={_=>this.goToGroup()}>更多</div>
 				</div>
 					
 				<div className="flex-j-sb flex-wrap" style={{padding: '0 .32rem .32rem .32rem'}}>
 				{
-					this.props.s.pub.recommend.map( (item, index) => 
-						<div className={index>7?"hide":"content-item"} key={item.id} onClick={_=>this.goToGroup(item)}>
+					this.props.s.pub && this.props.s.pub.gn_recommend_arr &&
+					this.props.s.pub.gn_recommend_arr.map( (item, index) => 
+						<div className={index>7?"hide":"content-item"} key={item.pd_id} onClick={_=>this.goToGroup(item)}>
 							<div className="content-item-top">
 								<img src={AppCore.HOST+'/'+item.img} className="img-size"></img>
-								<div className="content-item-top-row">产品编号: P022887</div>
+								<div className="content-item-top-row">产品编号: P0{item.pd_id}</div>
 							</div>
 							<div className="content-item-bottom">
 								<div className="content-item-bottom-title">{item.pd_name}</div>
@@ -303,8 +309,8 @@ class HomePage extends Component{
 						<div className="flex-j-sb flex-wrap" style={{padding: '0 .32rem .32rem .32rem'}}>
 						{
 							this.state.data.news && this.state.data.news.map((item, index) => (
-								<div className="xinwen-item" key = {index}>
-									<i className="xinwen-bg msg4"></i>
+								<div className="xinwen-item" key = {item.id}>
+									<i className="xinwen-bg msg3"></i>
 									<span className="xinwen-msg">{item.title}</span>
 									<span className="xinwen-daate">{item.create_at}</span>
 								</div>
@@ -327,7 +333,7 @@ class HomePage extends Component{
 						<div className="flex-j-sb flex-wrap" style={{padding: '0 .32rem .32rem .32rem'}}>
 						{
 							this.state.data.announce && this.state.data.announce.map((item, index) => (
-								<div className="xinwen-item" key = {index}>
+								<div className="xinwen-item" key = {item.id}>
 									<i className="xinwen-bg msg4"></i>
 									<span className="xinwen-msg">{item.title}</span>
 									<span className="xinwen-daate">{item.create_at}</span>

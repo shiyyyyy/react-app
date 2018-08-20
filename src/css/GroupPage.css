@@ -6,13 +6,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+.selet-search {
+    position: absolute;
+    top: 0;
+    left: 20px;
 }
 .search-input-box{
     width: 95%;
     height: 65%;
     position: relative;
     border-radius: .8rem;
-    background-color: #fff;
+    background-color: #6FC5D8;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -23,11 +29,11 @@
     font-size: .373333rem;
     width: 100%;
     height: 100%;
-    text-align: center;
+    text-align: left;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border: none;
-    padding: 0 .8rem;
+    padding: 0 .8rem 0 3.6rem;
 }
 .search-input-box-img{
     height: 100%;
@@ -151,6 +157,7 @@
 /* 功能按钮 重置 确定 box */
 .options-btn{
     width: 100%;
+    text-align: center;
     display: -ms-flexbox;
     display: flex;
     -ms-flex-pack: justify;
@@ -181,7 +188,7 @@
     box-sizing: border-box;
 }
 .pro-item{
-    height:2.8rem;
+    min-height:2.8rem;
     background-color: #fff;
     border-radius: .213333rem;
     padding: .213333rem;
@@ -191,8 +198,10 @@
 
 
 .pro-item-left{
-    width: 37.5%;
-    height: 100%;
+    /* width: 37.5%;
+    height: 100%; */
+    width: 3.253333rem;
+    height: 2.8rem;
     border-radius: .213333rem;
     overflow: hidden;
     position: relative;

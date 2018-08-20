@@ -1,6 +1,6 @@
-import React, { Component} from 'react';
+import React, { Component,Fragment} from 'react';
 import {log,AppCore,AppMeta,loadIfEmpty,goTo,Enum,goBack,loadMore,reload} from '../util/core';
-import {error,nonBlockLoading,progress,footer,ProInfo} from '../util/com';
+import {error,nonBlockLoading,progress,footer,ProInfo,SearchLv2,pullHook} from '../util/com';
 import { connect } from 'react-redux';
 
 import {Page,Button,Input,AlertDialog} from 'react-onsenui';
@@ -10,12 +10,20 @@ class OrderSelectCstmPage extends Component{
 
 	constructor(props) {
 		super(props);
-		this.state = {dialog:false,data:[],filter:''};
-		this.action = props.p.action;
-		this.pro_info = this.props.p.pro_info || ''
-		//this.mod = '客户管理';
+		this.state = {
+			state: 'initial',
+			dialog:false,
+			data:[],
+			filter:'',
+			search:{
+				short_name: '',
+				full_name: ''
+			}	
+		};
+		// this.action = props.p.action;
+		this.mod = '客户管理';
+		this.pageSize = 20;
 		this.pre_view = this.props.p.view;
-
 	}
 
 
@@ -33,14 +41,22 @@ class OrderSelectCstmPage extends Component{
 
 
 	renderToolbar(){
-		return (
-		  	<ons-toolbar>
-		  	  <div className='left'><ons-back-button></ons-back-button></div>
-		      <div className="center">{this.action}</div>
-		  	</ons-toolbar>
-		);
+		let search_cfg = {
+		key: 'Cstm',
+		cb: (value, key) => {
+			let search = this.state.search
+			search['full_name'] = ''
+			search['short_name'] = ''
+			search[key] = value
+			this.setState({search:search});
+			reload(this)
+			}	
+		}
+		return <SearchLv2 value={this.state.search.full_name || this.state.search.short_name} 
+						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,full_name: '', short_name: ''}},_=>reload(this))}} 
+						param={search_cfg} />
 	}
-	renderFixed(){
+	renderBottomToolbar() {
 		return(
 			<div className="select-cstm-btn">
 				<div className="select-cstm-btn-cancel"
@@ -48,6 +64,22 @@ class OrderSelectCstmPage extends Component{
 				<div className="select-cstm-btn-submit"
 				onClick={_=>this.selectCstmDone()}>确定</div>
 			</div>
+		)
+	}
+
+	renderFixed() {
+		if(AppCore.os){
+			this.tbHeight = (AppCore.os==='ios'?56:68);
+		}
+		return (
+		<div className="fixed-top-box" >
+			<div className="money-care-books-title fixed-top" style={{ top: this.tbHeight+'px',fontSize: '.32rem' }}>
+                <span className="money-care-books-title-item-4">客户类型</span>
+                <span className="money-care-books-title-item-4">客户简称</span>
+                <span className="money-care-books-title-item-4">手机号</span>
+                <span className="money-care-books-title-item-4">创建人</span>
+            </div>
+		</div>
 		)
 	}
 
@@ -64,20 +96,17 @@ class OrderSelectCstmPage extends Component{
 			<Page 
 			renderToolbar={_=>this.renderToolbar()} 
 			onInfiniteScroll={done=>loadMore(this,done)} 
+			renderBottomToolbar={_=>this.renderBottomToolbar()}
 			renderFixed={_=>this.renderFixed()}
 			onShow={_=>loadIfEmpty(this)} >
-				{/* 订单 HTML */}
-				{this.pro_info && 
-					<ProInfo pro_info={this.pro_info } />
+
+				<div style={{width: '100%', height: '50px'}}></div>
+				{
+					!this.state.loading && pullHook(this)
 				}
 				{/* 客户list */}
 				<div className="money-care-books-box" style={{marginBottom:'1.333333rem'}}>
-					<div className="money-care-books-title">
-						<span className="money-care-books-title-item-4">客户类型</span>
-                        <span className="money-care-books-title-item-4">客户简称</span>
-                        <span className="money-care-books-title-item-4">手机号</span>
-                        <span className="money-care-books-title-item-4">创建人</span>
-					</div>
+
 					<div className="money-care-books-main">
 					    {
 					    	this.state.data.map( item =>
@@ -95,6 +124,7 @@ class OrderSelectCstmPage extends Component{
 				{
 					this.state.loading && nonBlockLoading()
 				}
+
 			</Page>
 		);
 	}

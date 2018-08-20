@@ -108,6 +108,7 @@ class TabPage extends Component{
 		return (
 			<ons-page>
 		        <Tabbar
+		          animation="none"
 		          swipeable={false}
 		          position='bottom'
 		          index={this.state.index}

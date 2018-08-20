@@ -14,13 +14,26 @@ class ProfilePage extends Component{
 
 	constructor(props) {
 	    super(props);
-	    this.state = {state:'initial','order_mod_click':false,data:{'订单数据':{},'账户数据':{},'账户监管':[{}],'消息通知':[],'员工数据':[{}]}};
+	    this.state = {state:'initial','order_mod_click':false
+	    			,data:{'订单数据':{},'账户数据':{},'账户监管':[{}],'消息通知':[]
+	    			,'员工数据':[{}]}
+	    			,'has_account_auth':false
+	    			,'has_regulatory_auth':false};
 	    this.url = '/PublicApi/read_home?mod=HOME';
 	    this.click_history = [];
 	}
 
+	onShow(){
+		loadIfEmpty(this);
+		let has_account_auth = haveModAuth('我的账户');
+		this.setState({has_account_auth:has_account_auth});
+		let has_regulatory_auth = haveModAuth('账户监管');
+		this.setState({has_regulatory_auth:has_regulatory_auth});
+	}
+
 
 	logout(){
+		trigger('加载等待');
 	    post('/Session/logout');
 	}
 
@@ -158,7 +171,7 @@ class ProfilePage extends Component{
 
 	render(){
 		return (
-		<Page onShow={_=>loadIfEmpty(this)}>
+		<Page onShow={_=>this.onShow()}>
 			{
 			  	this.props.s.user.sid && pullHook(this)	
 		    }
@@ -233,7 +246,7 @@ class ProfilePage extends Component{
 				</div>
 			}
 			{/* 我的账本 */
-				this.props.s.user.sid && haveModAuth('我的账户') &&
+				this.props.s.user.sid && this.state.has_account_auth  &&
 				<div className="model-box-bald">
 					<div  className="model-box-bald-title">
 						<div className="model-box-bald-title-text zhangben">我的账本</div>
@@ -278,7 +291,7 @@ class ProfilePage extends Component{
 				</div>
 			}
 			{/*账户监管*/
-				this.props.s.user.sid && haveModAuth('账户监管') &&
+				this.props.s.user.sid && this.state.has_regulatory_auth &&
 				<div className="model-box-bald">
 					<div  className="model-box-bald-title">
 						<div className="model-box-bald-title-text jianguan">账户监管</div>

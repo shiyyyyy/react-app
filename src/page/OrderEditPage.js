@@ -148,29 +148,24 @@ class OrderEditPageRender extends Component{
 		return ( <SupplierDialog supplier_ctrl={supplier_ctrl} supplier_info={this.state.data['开团人详情'][0] || ''} /> )
 	}
 	OpDialog(){
-		if (this.state.data && this.state.data['接单人详情']){
-			// debugger
+		if (this.state.data && this.state.data['接单人详情'] && this.state.data['接单人']) {
 			var assitant = this.state.data['接单人详情'].find(curAssitant.bind(this))
 			function curAssitant(item) {
-				return item.id === this.state.data['订单详情'][0].assitant_id
+				return item.id === this.state.data['接单人'].id
 			}
-			console.log(assitant)
 			let op_ctrl = {
 			open_op : this.state.open_op,
-			cancelCb : () => {
-				this.setState({open_op: false})
-				}
+			cancelCb : () => { this.setState({open_op: false}) }
 			}
 			return ( <OpDialog op_ctrl={op_ctrl} op_info={assitant || ''} /> )
 		}
-		
 	}
 
 	renderToolbar(){
 		return (
 		  	<ons-toolbar>
 		  		<div className='left'><ons-back-button></ons-back-button></div>
-		      	<div className="center">{this.text}</div>
+		      	<div className={(AppCore.os === 'ios'?"":"Andriod-title")+" center"}>{this.text}</div>
 		  	</ons-toolbar>
 		);
 	}
@@ -191,7 +186,7 @@ class OrderEditPageRender extends Component{
 				{
 					this.state.inited &&
 					<div>
-					<div className="ord-edit-ord-detail" onClick={_=>console.log(this)}>
+					<div className="ord-edit-ord-detail">
 						{/* 订单 HTML */}
 						<div className="order-item" style={{paddingBottom: '1.013333rem'}}>
 							<div className="order-number">

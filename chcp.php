@@ -5,7 +5,7 @@ $meta =<<< EOF
     "success": true,
     "store_url_ios": "http://oss.tongyeju.com/oss3-back/api/App/upgrade_ios/TY_ZS/",
     "store_url_android": "http://oss.tongyeju.com/oss3-back/api/App/upgrade_android/TY_ZS/",
-    "store_ver_ios": "0.0.2",
+    "store_ver_ios": "0.0.3",
     "store_ver_android": "0.0.1",
     "update_ios": 0,
     "update_android": 0,

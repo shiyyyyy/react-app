@@ -1,9 +1,9 @@
-import {plugin,hasPlugin,log,post,trigger} from './core';
+import {plugin,hasPlugin,log,post,trigger,store} from './core';
 import {error} from './com';
 import {pollInit} from './poll';
 
 let db;
-
+let cache_task = {};
 
 export function dbInit(){
     if(!hasPlugin('sqlitePlugin')){
@@ -50,10 +50,17 @@ export function dbInit(){
               },
               e => error(e)
             );
-            getCache(
-                'pub_cache',
-                v => v && trigger('更新公开数据',JSON.parse(v))
+            if(!store.getState().pub.slide.length){
+                log('[db] using pub cache');
+                getCache(
+                    'pub_cache',
+                    v => v && trigger('更新公开数据',JSON.parse(v))
+                );
+            }
+            Object.keys(cache_task).forEach(
+                k => setCache( k, cache_task[k] )
             );
+            cache_task = {};
     	},
     	e=>error(e)
 	);
@@ -61,7 +68,12 @@ export function dbInit(){
 }
 
 export function setCache(key,val) {
-    db && db.sqlBatch(
+    if(!db){
+        log('[db] not ready in setCache');
+        cache_task[key] = val;
+        return;
+    }
+    db.sqlBatch(
         [
             ['delete from kv where k=?',[key]],
             ['insert into kv values (?,?)', [key,val]]
@@ -72,7 +84,11 @@ export function setCache(key,val) {
 }
 
 export function getCache(key,cb) {
-    db && db.executeSql('select * from kv where k=?', [key],
+    if(!db){
+        log('[db] not ready in getCache');
+        return;
+    }
+    db.executeSql('select * from kv where k=?', [key],
       rs => {
         if(rs.rows.length){
             let v = rs.rows.item(0).v;

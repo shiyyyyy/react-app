@@ -18,7 +18,7 @@ export default class InputTourist extends Component{
 
 		this.state = {
 			name: '',
-			gender: '',
+			gender: 0,
 			birthday: '',
 			certificate_type: '',
 			certificate_num: '',
@@ -31,13 +31,13 @@ export default class InputTourist extends Component{
 	componentWillMount(){
 		if(this.item.name){
 			this.setState({
-				name: this.item.name,
-				gender: this.item.gender,
-				birthday: this.item.birthday,
-				certificate_type: this.item.certificate_type,
-				certificate_num: this.item.certificate_num,
-				mobile: this.item.mobile,
-				comment: this.item.comment,
+				name: this.item.name || '',
+				gender: this.item.gender >= 0 ? this.item.gender : 0,
+				birthday: this.item.birthday || '',
+				certificate_type: this.item.certificate_type || '',
+				certificate_num: this.item.certificate_num || '',
+				mobile: this.item.mobile || '',
+				comment: this.item.comment || '',
 				id: this.item.id
 			})
 		}
@@ -48,9 +48,11 @@ export default class InputTourist extends Component{
 			if(!this.check){
 				var phone = this.state.mobile
 				var regex = /^1[34578][0-9]{9}$/
-				if(!regex.test(phone)){
-					info('手机号错误')
-					return;
+				if(phone){
+					if(!regex.test(phone)){
+						info('手机号错误')
+						return;
+					}
 				}
 			}
 
@@ -93,23 +95,13 @@ export default class InputTourist extends Component{
                         <div className="doc-main-cell">
 					    	<span className="cell-left-5">游客性别:</span>
 							<span className="cell-right">
-								{/* <span onClick={e=>this.setState({gender: Enum.Gender[0]})}>
-								男<Icon className={(this.state.gender === Enum.Gender[0] ? "hide":"")+" off-icon" } icon="md-circle-o" />
-								  <Icon className={(this.state.gender === Enum.Gender[0] ? "":"hide")+" on-icon" } icon="md-dot-circle-alt" />
-								</span>
-								<span onClick={e=>this.setState({gender: Enum.Gender[1]})}>
-								女<Icon className={(this.state.gender === Enum.Gender[0] ? "":"hide")+" off-icon" } icon="md-circle-o" />
-								  <Icon className={(this.state.gender === Enum.Gender[0] ? "hide":"")+" on-icon" } icon="md-dot-circle-alt" />
-								</span> */}
 								<span onClick={e=>{if(this.check){return}; this.setState({gender: 0} )}}>
-									<label htmlFor={Enum.Gender[0]}>男</label>
-									<input type="radio" value={0} name="gender" id={Enum.Gender[0]} disabled={this.check}
-									className="ver-sub" checked={this.state.gender === 0} />
+								男<Icon className={(this.state.gender === 0 ? "hide":"")+" off-icon" } icon="md-circle-o" />
+								  <Icon className={(this.state.gender === 0 ? "":"hide")+" on-icon" } icon="md-dot-circle-alt" />
 								</span>
-								<span onClick={e=>{if(this.check){return}; this.setState({gender:1}) }} style={{marginLeft: '.426667rem'}}>
-									<label htmlFor={Enum.Gender[1]}>女</label>
-									<input type="radio" value={1} name="gender" id={Enum.Gender[1]} disabled={this.check}
-									className="ver-sub" checked={this.state.gender === 1} />
+								<span onClick={e=>{if(this.check){return}; this.setState({gender:1}) }}>
+								女<Icon className={(this.state.gender === 0 ? "":"hide")+" off-icon" } icon="md-circle-o" />
+								  <Icon className={(this.state.gender === 0 ? "hide":"")+" on-icon" } icon="md-dot-circle-alt" />
 								</span>
 							</span>
 					    </div>

@@ -25,7 +25,7 @@ class RegulatoryDetailPage extends Component{
         return(
             <ons-toolbar>
                 <div className='left'><ons-back-button></ons-back-button></div>
-                <div className="center">{this.text}</div>
+                <div className={(AppCore.os === 'ios'?"":"Andriod-title")+" center"}>{this.text}</div>
             </ons-toolbar>
         )
     }
@@ -47,12 +47,18 @@ class RegulatoryDetailPage extends Component{
                             <div className="reg-detail-main-income">
                                 <div className="xj-income">现金收</div>
                                 <div style={{color: '#FD8621'}}>{this.item.cash_income}</div>
-                                <div><span>占比: </span>{((this.item.cash_income/this.item.income)*100).toFixed(2)+'%'}</div>
+                                <div>
+                                    <span>占比: </span>
+                                    {this.item.income!== '0.00'?((this.item.cash_income/this.item.income*100).toFixed(2)+'%'):'0.00%'}
+                                </div>
                             </div>
                             <div className="reg-detail-main-income">
                                 <div className="nz-income">内转收</div>
                                 <div style={{color: '#28BE00'}}>{this.item.non_cash_income}</div>
-                                <div><span>占比: </span>{((this.item.non_cash_income/this.item.income)*100).toFixed(2)+'%'}</div>
+                                <div>
+                                    <span>占比: </span>
+                                    {this.item.income !== '0.00'?((this.item.non_cash_income/this.item.income*100).toFixed(2)+'%'):'0.00%'}
+                                </div>
                             </div>
                             <div className="reg-detail-main-total">
                                 收入总计: {this.item.income}
@@ -63,12 +69,18 @@ class RegulatoryDetailPage extends Component{
                                 <div className="reg-detail-main-income">
                                     <div className="xj-exp">现金支</div>
                                     <div style={{color: '#FF466D'}}>{this.item.cash_expense}</div>
-                                    <div><span>占比: </span>{((this.item.cash_expense/this.item.expense)*100).toFixed(2)+'%'}</div>
+                                    <div>
+                                        <span>占比: </span>
+                                        {this.item.expense!== '0.00'?((this.item.cash_expense/this.item.expense*100).toFixed(2)+'%'):'0.00%'}
+                                    </div>
                                 </div>
                                 <div className="reg-detail-main-income">
                                     <div className="nz-exp">内转支</div>
                                     <div style={{color: '#1290EB'}}>{this.item.non_cash_expense}</div>
-                                    <div><span>占比: </span>{((this.item.non_cash_expense/this.item.expense)*100).toFixed(2)+'%'}</div>
+                                    <div>
+                                        <span>占比: </span>
+                                        {this.item.expense !== '0.00'?((this.item.non_cash_expense/this.item.expense*100).toFixed(2)+'%'):'0.00%'}
+                                    </div>
                                 </div>
                                 <div className="reg-detail-main-total">
                                     支出总计: {this.item.expense}

@@ -97,7 +97,7 @@ export default class SelectItemPage extends Component{
 				{/* 接单人页面 */}
 		    	{ this.props.p.items &&
 		    		this.getRenderItems().map( k=> 
-		    			(<div key={k}  onClick={_=>this.setState({cur_item:k.id})} 
+		    			(<div key={k.id}  onClick={_=>this.setState({cur_item:k.id})} 
 						className="select-single-item"> 
 							<div className="select-single-item-left">
 								<img className="select-single-item-img" 
@@ -117,8 +117,8 @@ export default class SelectItemPage extends Component{
 		    	{ this.props.p && this.props.p.newcstm &&
 		    		this.getRenderItems().map( k=> 
 		    			(<div key={k}  onClick={_=>this.setState({cur_cstm:k})} 
-						className="select-single-item"> 
-							<div className="select-single-item-left" onClick={_=>console.log(this)}>
+						className="select-single-item" style={{height: '34px'}}> 
+							<div className="select-single-item-left">
 								{/* <img className="select-single-item-img" 
 								src={k.pass_photo?AppCore.HOST+'/'+k.pass_photo:'img/avatar.png'} /> */}
 								<span className="select-single-item-userInfo">

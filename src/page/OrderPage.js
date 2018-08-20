@@ -21,9 +21,16 @@ class OrderPage extends Component{
 			search:{
 				id: ''
 			},
+			has_auth:false,
 		};
 		this.mod = '订单管理';
 		AppCore.OrderPage = this;
+	}
+
+	onShow(){
+		loadIfEmpty(this);
+		let has_auth = haveModAuth(this.mod);
+		this.setState({has_auth:has_auth});
 	}
 
 	checkOrder(order){
@@ -112,14 +119,12 @@ class OrderPage extends Component{
 	}
 
 	orderStateClick(state){
-		if(state !== this.state.cur_state){
-			this.setState({open_filter:'',search:{...this.state.search,state:state},cur_state:state});
-			reload(this);
-		}else if (state === this.state.cur_state){
-			this.setState({open_filter:'',search:{...this.state.search,state:''},cur_state:''});
-			reload(this);
-		}
-
+		this.setState({cur_state: state});
+	}
+	orderStateSubmit(){
+		let cur_state = this.state.cur_state
+		this.setState({open_filter:'',search:{...this.state.search,state: cur_state}});
+		reload(this);
 	}
 
 
@@ -168,12 +173,12 @@ class OrderPage extends Component{
 	// 
 
 	renderFixed(){
-		if(!this.refs.anchor){
-			return;
-		}
+		// if(!this.refs.anchor){
+		// 	return;
+		// }
 		
 		if(hasPlugin('device') && AppCore.os==='ios'){
-			this.tbHeight = this.tbHeight || this.refs.anchor.parentElement.getBoundingClientRect().top;
+			this.tbHeight = 64;//this.tbHeight || this.refs.anchor.parentElement.getBoundingClientRect().top;
 		}else{
 			this.tbHeight = (AppCore.os==='ios'?44:56);
 		}
@@ -187,7 +192,7 @@ class OrderPage extends Component{
 					right:'0px',
 					display:this.props.s.user.sid?'block':'none'
 				}}
-				onClick={_=>{this.setState({open_filter: ''})}}
+				onClick={_=>{this.setState({open_filter: '', cur_state: ''})}}
 			>
 				<ons-row  class="option-type" onClick={e=>e.stopPropagation()}>
 					<ons-col onClick={_=>this.setState({open_filter:'dep_date'})}>
@@ -242,12 +247,18 @@ class OrderPage extends Component{
 						</div>	
 					}
 					{ this.state.open_filter === 'group_state' && 
+					<Fragment>
 						<div className="order-state">
 							{Object.keys(Enum['OrderState']).map( (item, i) => 
-								<div className={item == this.state.cur_state ? 'cur-order-state' :  'order-state-item'} 
+								<div className={item == (this.state.cur_state || this.state.search.state) ? 'cur-order-state' :  'order-state-item'} 
 								onClick={_=>this.orderStateClick(item)} key={item}>{Enum['OrderState'][item]}</div>
 							)}
 						</div>
+						<div className="options-btn" style={{backgroundColor: '#fff'}}>
+						  <div className="options-reset" onClick={_=>this.setState({cur_state:'', search:{state: ''}})}>重置</div>
+						  <div className="options-submit" onClick={_=>this.orderStateSubmit()}>确定</div>
+						</div>
+					</Fragment>
 					}
 				</div>
 			</div>
@@ -256,16 +267,26 @@ class OrderPage extends Component{
 
 	renderToolbar(){
 		let search_cfg = {
-			key: this.mod,
-			placeholder: '请输入订单号',
-			cb: value => {
-				this.setState({search:{id: value, limit: 10, mod: this.mod}});
+			key: 'Order',
+			options:[
+				{text: '订单号', search: 'id'},
+				{text: '团号', search: 'group_id'},
+				{text: '产品名称', search: 'pd_name'},
+				{text: '供应商', search: 'pd_provider'}
+			],
+			cb: (value, key) => {
+				let search = this.state.search
+				search['id'] = ''
+				search['group_id'] = ''
+				search['pd_name'] = ''
+				search['pd_provider'] = ''
+				search[key] = value
+				this.setState({search:search});
 				reload(this)
-				goBack()
-			}
+			}	
 		}
-		return <Search value={this.state.search.id} 
-						clear={e=>{e.stopPropagation();this.setState({search:{id: '', limit: 10, mod: this.mod}},_=>reload(this))}} 
+		return <Search value={this.state.search.id || this.state.search.group_id || this.state.search.pd_name || this.state.search.pd_provider} 
+						clear={e=>{e.stopPropagation();this.setState({search:{id: '', limit: 10, mod: this.mod,id:'',group_id:'',pd_name:'',pd_provider:''}},_=>reload(this))}} 
 						param={search_cfg} />
 	}
 
@@ -274,12 +295,12 @@ class OrderPage extends Component{
 			<Page 
 				renderToolbar={_=>this.renderToolbar()} 
 				onInfiniteScroll={done=>loadMore(this,done)} 
-				onShow={_=>loadIfEmpty(this)}
+				onShow={_=>this.onShow()}
 				renderFixed={_=>this.renderFixed()}>
+			<div style={{height:this.props.s.user.sid?"50px":"0px"}} ref="anchor"></div>
 		    {
-		    	this.props.s.user.sid && haveModAuth(this.mod) && 
+		    	this.props.s.user.sid && this.state.has_auth && 
 	    		<Fragment>
-	    			<div style={{height:"1.2rem"}} ref="anchor"></div>
 					{
 					  	this.props.s.user.sid && pullHook(this)	
 				    }
@@ -369,7 +390,7 @@ class OrderPage extends Component{
 				</Fragment>
 		    }
 		   	{
-		    	this.props.s.user.sid && !haveModAuth(this.mod) && NoPv()
+		    	this.props.s.user.sid && !this.state.has_auth && NoPv()
 		    }
 		    {
 		  		!this.props.s.user.sid && loginToPlay()

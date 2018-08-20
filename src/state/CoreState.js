@@ -46,7 +46,7 @@ export const user = (state = {}, action) => {
   }
 }
 
-export const pub = (state = {slide:[],recommend:[]}, action) => {
+export const pub = (state = {slide:[],cj_recommend_arr:[],gn_recommend_arr:[]}, action) => {
   switch (action.type) {
     case '更新公开数据':
       return action.pub;

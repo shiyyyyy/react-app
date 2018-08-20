@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { doForceUpdate } from './update';
 
 
+import "../css/SearchPage.css";
+
 //--------------------------component----------------------------
 export function loginToPlay() {
     return (
@@ -245,24 +247,152 @@ export function footer(type,view){
 //parm.placeholder 空白提示
 //parm.key localstorage区分
 //parm.cb 搜索回调
+// export class Search extends React.Component{
+//     constructor(props){
+//         super();
+//         this.state = {
+//             select_show: false,
+//             cur_select: ""
+//         }
+//         this.search_criteria = {
+//             pd_name: '产品名称',
+//             order_id: '订单号',
+//             doc_title: '单据编号',
+//         }
+//     }
+//     goToSearch(){
+//         this.props.param.placeholder = '请输入' + this.search_criteria[this.state.cur_select || this.props.param.key]
+//         this.props.param.cur_select = this.state.cur_select
+//         goTo('搜索', this.props.param)
+//     }
+//     render(){
+//         return(
+//             <ons-toolbar>
+//                 <div className="center search-input-box-box" onClick={_=>this.goToSearch()}>
+//                     <div className="search-input-box">
+//                         <input className='search-input-box-input' value={this.props.value || ''} 
+//                         placeholder={'请输入'+this.search_criteria[this.state.cur_select||this.props.param.key]} />
+//                         <img className={this.props.value?"hide":"search-input-box-img"} src="img/search.png" />
+//                         <Icon className={(!this.props.value ? 'hide' : '') +' close-search'} icon='md-close-circle'
+//                         onClick={e=>this.props.clear(e)} />
+//                     </div>
+//                     <div className="select-search" onClick={_=>{this.setState({select_show: !this.state.select_show});_.stopPropagation();console.log(this)}}>
+//                         <div className={AppCore.os==="ios"?"active-select-search-ios":"active-select-search-Android"}>
+//                             {this.search_criteria[this.state.cur_select||this.props.param.key]} &nbsp;
+//                             {!this.state.select_show && <Icon icon='md-caret-down' style={{fontSize:'.533333rem'}} />}
+//                             {this.state.select_show && <Icon icon='md-caret-up' style={{color:'#6FC5D8',fontSize:'.533333rem'}} />}
+//                         </div>
+//                         <div className={this.state.select_show?(AppCore.os==="ios"?'select-search-item-ios':'select-search-item-Android'):'hide'}
+//                         onClick={_=>this.setState({cur_select: 'pd_name'})}>产品名称</div>
+//                         <div className={this.state.select_show?(AppCore.os==="ios"?'select-search-item-ios':'select-search-item-Android'):'hide'}
+//                         onClick={_=>this.setState({cur_select: 'order_id'})}>订单号</div>
+//                         <div className={this.state.select_show?(AppCore.os==="ios"?'select-search-item-ios':'select-search-item-Android'):'hide'}
+//                         onClick={_=>this.setState({cur_select: 'doc_title'})}>单据编号</div>
+//                     </div>
+//                 </div>
+//             </ons-toolbar>
+//         )
+//     }
+// }
+
 export class Search extends React.Component{
+    constructor(props){
+        super();
+        this.state = {
+            select_show: false,
+            cur_select: "",
+            cur_select_text: ""
+        }
+
+    }
+    goToSearch(){
+        this.props.param.placeholder = '请输入' + (this.state.cur_select_text || this.props.param.options[0].text)
+        this.props.param.key_type = this.state.cur_select || this.props.param.options[0].search
+        goTo('搜索', this.props.param)
+    }
+    select_filter(item) {
+        this.setState({cur_select: item['search']},_=>{
+            if (this.state.cur_select){
+                let cur_cell = this.props.param.options.find( cell => cell.search === this.state.cur_select)
+                let text = cur_cell ? cur_cell.text: '';
+                this.setState({cur_select_text: text})
+            }   
+        })        
+    }
     render(){
         return(
             <ons-toolbar>
-                <div className="center search-input-box-box" onClick={_=>goTo('搜索',this.props.param)}>
-                <div className="search-input-box">
-                    <input className='search-input-box-input' value={this.props.value || ''} placeholder={this.props.param.placeholder}/>
-                    <img className={this.props.value?"hide":"search-input-box-img"} src="img/search.png" />
-                    <Icon className={(!this.props.value ? 'hide' : '') +' close-search'} icon='md-close-circle'
-                    onClick={e=>this.props.clear(e)} />
-                </div>
-                </div>
+              <div className="center search-input-box-box">
+                  <div className="search-input-box">
+                      <div className="search-center">
+                        < input type = "text" className = "search-input-box-input"
+                        placeholder={'请输入'+ (this.state.cur_select_text || this.props.param.options[0].text)}
+                        value={this.props.value || ''} onChange={e=>this.setState({search:e.target.value})}
+                        onClick={_=>this.goToSearch()}/>
+                        <Icon className={(!this.props.value? 'hide' : '')+' close-search'} icon='md-close-circle'
+                        onClick={e=>this.props.clear(e)} />
+                      </div>
+                  </div>
+                  {
+                    this.props.param.options.length > 1 &&
+                        <div className="select-search"
+                        onClick={e=>{e.stopPropagation();this.setState({select_show: !this.state.select_show});}}>
+                            <div className={AppCore.os==="ios"?"active-select-search-ios":"active-select-search-Android"}>
+                                {this.state.cur_select_text || this.props.param.options[0].text} &nbsp;
+                                {!this.state.select_show && <Icon icon='md-caret-down' style={{fontSize:'.533333rem'}} />}
+                                {this.state.select_show && <Icon icon='md-caret-up' style={{color:'#6FC5D8',fontSize:'.533333rem'}} />}
+                            </div>
+
+                            { 
+                                this.props.param.options.map( item => 
+                                <div className={this.state.select_show?(AppCore.os==="ios"?'select-search-item-ios':'select-search-item-Android'):'hide'}
+                                onClick={_=>this.select_filter(item)} key={item.text}>{item.text}</div>
+                            )}
+                        </div>
+                  }
+                  
+              </div>
             </ons-toolbar>
         )
     }
 }
 
 export class SearchLv2 extends React.Component{
+    constructor(props){
+        super();
+        this.state = {
+            select_show: false,
+            cur_select: "",
+            cur_select_text: ""
+        }
+        this.MyAccount = [
+            {search: 'id', text: '单据编号'},
+            {search: 'settle_amount', text: '结算金额'}
+        ]
+        this.Regulatory = [
+            {search: 'code', text: '部门编号'},
+            {search: 'income', text: '收入总计'},
+            {search: 'expense', text: '支出总计'},
+        ]
+        this.Cstm = [
+            {search: 'short_name', text: '客户简称'},
+            {search: 'full_name', text: '客户全称'},
+        ]
+    }
+    goToSearch(){
+        this.props.param.placeholder = '请输入' + (this.state.cur_select_text || this[this.props.param.key][0].text)
+        this.props.param.key_type = this.state.cur_select || this[this.props.param.key][0].search
+        goTo('搜索', this.props.param)
+    }
+    select_filter(item) {
+        this.setState({cur_select: item['search']},_=>{
+            if (this.state.cur_select){
+                let cur_cell = this[this.props.param.key].find( cell => cell.search === this.state.cur_select)
+                let text = cur_cell ? cur_cell.text: '';
+                this.setState({cur_select_text: text})
+            }   
+        })        
+    }
     render(){
         return(
             <ons-toolbar>
@@ -272,13 +402,28 @@ export class SearchLv2 extends React.Component{
                           <img src="img/back.png" />
                       </div>
                       <div className="search-center">
-                        <input type="text" className="search-input-value" placeholder={this.props.param.placeholder}
+                        <input type="text" className="search-input-value-searchLv2" 
+                        placeholder={'请输入'+ (this.state.cur_select_text || this[this.props.param.key][0].text)}
                         value={this.props.value || ''} onChange={e=>this.setState({search:e.target.value})}
-                        onClick={_=>goTo('搜索',this.props.param)}/>
-                        <Icon className={(this.props.value === '' ? 'hide' : '')+' close-search'} icon='md-close-circle'
+                        onClick={_=>this.goToSearch()}/>
+                        <Icon className={(!this.props.value? 'hide' : '')+' close-search'} icon='md-close-circle'
                         onClick={e=>this.props.clear(e)} />
                       </div>
                   </div>
+                  <div className="select-search" style={{left: '1.466667rem'}}
+                  onClick={e=>{e.stopPropagation();this.setState({select_show: !this.state.select_show});}}>
+                        <div className={AppCore.os==="ios"?"active-select-search-ios":"active-select-search-Android"}>
+                            {this.state.cur_select_text || this[this.props.param.key][0].text} &nbsp;
+                            {!this.state.select_show && <Icon icon='md-caret-down' style={{fontSize:'.533333rem'}} />}
+                            {this.state.select_show && <Icon icon='md-caret-up' style={{color:'#6FC5D8',fontSize:'.533333rem'}} />}
+                        </div>
+                    
+                        {
+                            this[this.props.param.key].map( item => 
+                            <div className={this.state.select_show?(AppCore.os==="ios"?'select-search-item-ios':'select-search-item-Android'):'hide'}
+                            onClick={_=>this.select_filter(item)} key={item.text}>{item.text}</div>
+                        )}
+                    </div>
               </div>
             </ons-toolbar>
         )
@@ -331,6 +476,7 @@ export class SupplierDialog extends React.Component{
         return (
             // gys-弹窗
             <Dialog
+            animation="none" 
             isOpen={this.props.supplier_ctrl.open_supplier}
             isCancelable={true}
             onCancel={this.props.supplier_ctrl.cancelCb}>
@@ -359,6 +505,7 @@ export class OpDialog extends React.Component{
         return (
             // zs-弹窗
 		<Dialog
+        animation="none" 
 		isOpen={this.props.op_ctrl.open_op}
 		isCancelable={true}
 		onCancel={this.props.op_ctrl.cancelCb}>
@@ -367,7 +514,7 @@ export class OpDialog extends React.Component{
                 <img src={this.props.op_info.pass_photo?AppCore.HOST+'/'+this.props.op_info.pass_photo:'img/avatar1.png'} />
 			    </div><br />
 			    <div className="zs-popup-info-f">
-			    	<div className="zs-popup-info-item">所属中心: {this.props.op_info.full_name}</div>
+			    	<div className="zs-popup-info-item">所属中心: {this.props.op_info.company_name}</div>
 			    	<div className="zs-popup-info-item">所属部门: {Enum.Department[this.props.op_info.department_id]}</div>
 			    	<div className="zs-popup-info-item">员工姓名: {this.props.op_info.name}</div>
 			    	<div className="zs-popup-info-item">手机号码: {this.props.op_info.mobile}</div>

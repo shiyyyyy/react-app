@@ -105,7 +105,7 @@ class HoldSeatPageRender extends Component{
 		return (
 		  	<ons-toolbar>
 		  	  <div className='left'><ons-back-button></ons-back-button></div>
-		      <div className="center">{this.props.p.action}</div>
+		      <div className={(AppCore.os === 'ios'?"":"Andriod-title")+" center"}>{this.props.p.action}</div>
 		  	</ons-toolbar>
 		);
 	}

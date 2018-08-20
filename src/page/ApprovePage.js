@@ -14,6 +14,7 @@ class ApprovePage extends Component{
 	    this.state = {state:'initial',data:[],search:{title:''}};
 		this.mod = '审批任务';
 		//this.docArr = [ '业务借款单','业务内转单','业务退款单','业务支出单','资金借款单','资金内转单','资金退款单','资金支出单',]
+		AppCore.ApprovePage = this;
 	}
 
 
@@ -43,16 +44,25 @@ class ApprovePage extends Component{
 
 
 	renderToolbar(){
-		let search_cfg = {
-			key: this.mod,
-			placeholder: '请输入标题',
-			cb: value => {
-				this.setState({search:{ limit: 10, mod: this.mod, title: value }});
+		let search_cfg = { 
+			key: 'Approve',
+			options:[
+				{text: '单据编号', search: 'title'},
+				{text: '团号', search: 'group_id'},
+				{text: '供应商', search: 'pd_provider'}
+			],
+			cb: (value, key) => {
+				let search = this.state.search
+				search['title'] = ''
+				search['group_id'] = ''
+				search['pd_provider'] = ''
+				search[key] = value
+				this.setState({search:search});
 				reload(this)
 			}	
 		}
-		return <Search  value={this.state.search.title} 
-						clear={e=>{e.stopPropagation();this.setState({search:{ limit: 10, mod: this.mod, title: "" }},_=>reload(this))}} 
+		return <Search  value={this.state.search.title || this.state.search.group_id || this.state.search.pd_provider} 
+						clear={e=>{e.stopPropagation();this.setState({search:{ limit: 10, mod: this.mod, title: "",group_id:'',pd_provider:'' }},_=>reload(this))}} 
 						param={search_cfg} />
 	}
 

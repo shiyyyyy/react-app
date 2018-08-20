@@ -1,11 +1,63 @@
 /*  ------------------------- header input search--------------------------   */
+.toolbar{
+    overflow: visible;
+}
+.toolbar__title{
+    overflow: visible;
+}
 .search-input-box-box{
     background-color: #6FC5D8;
     margin: 0 !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
+.select-search{
+    width: 2.026667rem;
+    font-size: .373333rem;
+    line-height: .853333rem;
+    color: #000;
+    position: absolute;
+    top: 17.5%;
+    left: .8rem;
+    background-color: #fff;
+    
+}
+.active-select-search-ios {
+    height: 28px;
+    padding: 0 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.active-select-search-Android {
+    height: 36px;
+    padding: 0 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.select-search-item-ios{
+    padding: .106667rem .213333rem;
+    width: 100%;
+    text-align: left;
+    border: 1px solid #f4f5f8;
+    border-radius: 3px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 6px;
+}
+.select-search-item-Android {
+    padding: .106667rem .213333rem;
+    width: 100%;
+    text-align: left;
+    border: 1px solid #f4f5f8;
+    border-radius: 3px;
+    box-sizing: border-box;
+    border-radius: 6px;
+}
+
 .search-input-box{
     width: 95%;
     height: 65%;
@@ -47,13 +99,25 @@
 }
 /* 中间 */
 
-.search-center > input{
+.search-input-value {
     width: 100%;
     height: 100%;
     background-color: #fff;
     border: none;
     border-radius: 1.066667rem;
-    padding-left: .533333rem;
+    padding-left: .64rem;
+    padding-right: .8rem;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+.search-input-value-searchLv2{
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border: none;
+    border-radius: 1.066667rem;
+    padding-left: 2.666667rem;
     padding-right: .8rem;
     display: inline-block;
     vertical-align: top;

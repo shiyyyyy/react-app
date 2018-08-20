@@ -5,6 +5,11 @@ body {
 .dialog-mask{
   opacity: 1 !important;
 }
+/* ------------------ || ============= Andriod title center============= || ------------------------- */
+.Andriod-title {
+  padding-right: 56px;
+}
+
 
 /* ------------------------------- progress ------------------------------------- */
 

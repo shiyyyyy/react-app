@@ -18,22 +18,66 @@ class GroupPage extends Component{
 			state:'initial',
 			data:[],
 			open_filter: '',
+			// 选择框里选择的当前样式(不是搜索的)city && theme
+			dialog_city: '',
+			dialog_theme: '',
 			search:{dep_date_from:moment().format('YYYY-MM-DD'),pd_nav:'1',pd_name:''},
-			dep_date_from: moment().format('YYYY-MM-DD')
+			dep_date_from: moment().format('YYYY-MM-DD'),
+			has_auth:false,
+			pd_tag_type:'PdTag',
+			pd_sub_tag_type:'PdSubTag',
+			n_1:'PdSubTagBelong'
 		};
 		this.mod = '团队报名';
 		AppCore.GroupPage = this;
 		
 	}
 
+	onShow(){
+		loadIfEmpty(this);
+		let has_auth = haveModAuth(this.mod);
+		this.setState({has_auth:has_auth});
+	}
+
 	navClick(i){
-		this.setState({search:{...this.state.search,pd_nav:i,pd_tag_id:undefined,pd_subtag_id:undefined}});
+		let nav_type = Enum['NavToType'][i];
+		let pd_tag_type = 'PdTag';
+        switch(nav_type){
+	        case '0':
+	        	pd_tag_type = 'PdTag';
+	            break;
+	        case '1':
+	        	pd_tag_type = 'Country';
+	            break;
+	        case '2':
+	        	pd_tag_type = 'Continent';
+	            break;
+	    }
+		this.setState({search:{...this.state.search,pd_nav:i,pd_tag_id:undefined,pd_subtag_id:undefined},pd_tag_type:pd_tag_type});
 	}
 	tagClick(i){
+
+		let pd_tag_type = this.state.pd_tag_type;
+		let n_1 = 'PdSubTagBelong';
+		let pd_sub_tag_type = 'PdSubTag';
+		switch(pd_tag_type){
+			case 'PdTag':
+				n_1 = 'PdSubTagBelong';
+				pd_sub_tag_type = 'PdSubTag';
+				break;
+			case 'Country':
+				n_1 = 'CityCountry';
+				pd_sub_tag_type = 'City';
+				break;
+			case 'Continent':
+				n_1 = 'CountryBelong';
+				pd_sub_tag_type = 'Country';
+				break;
+		}
 		if(i){
-			this.setState({search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
+			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
 		}else{
-			this.setState({open_filter:'',search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
+			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,open_filter:'',search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
 			reload(this);
 		}
 		
@@ -43,13 +87,12 @@ class GroupPage extends Component{
 		reload(this);
 	}
 	cityClick(i){
-		if(this.state.search.dep_city_id === i){
-			this.setState({open_filter:'',search:{...this.state.search,dep_city_id: ''}});
-			reload(this);
-		}else if (this.state.search.dep_city_id !== i){
-			this.setState({open_filter:'',search:{...this.state.search,dep_city_id: i}});
-			reload(this);
-		}
+		this.setState({dialog_city: i})
+	}
+	citySubmit(){
+		let cur_city = this.state.dialog_city
+		this.setState({open_filter:'',search:{...this.state.search,dep_city_id: cur_city}});
+		reload(this);
 	}
 	depDateClick(){
 		this.setState({open_filter:'',
@@ -62,13 +105,14 @@ class GroupPage extends Component{
 		reload(this);
 	}
 	themeClick(i){
-		if(this.state.search.theme_id === i){
-			this.setState({open_filter:'',search:{...this.state.search,theme_id: ''}});
-			reload(this);
-		}else if (this.state.search.theme_id !== i){
-			this.setState({open_filter:'',search:{...this.state.search,theme_id: i}});
-			reload(this);
-		}
+		this.setState({dialog_theme: i});
+		reload(this);
+	}
+
+	themeSubmit(){
+		let cur_theme = this.state.dialog_theme
+		this.setState({open_filter:'',search:{...this.state.search,theme_id: cur_theme}});
+		reload(this);
 	}
 
 	// ====================
@@ -97,7 +141,7 @@ class GroupPage extends Component{
 
 
 	theme_cur(){
-		if(this.state.open_filter === 'theme' || this.state.search.theme_id){
+		if (this.state.open_filter === 'theme' || this.state.search.theme_id) {
 			return true
 		}
 		return false
@@ -108,12 +152,12 @@ class GroupPage extends Component{
 	// ===============
 
 	renderFixed(){
-		if(!this.refs.anchor){
-			return;
-		}
+		// if(!this.refs.anchor){
+		// 	return;
+		// }
 		
 		if(hasPlugin('device') && AppCore.os==='ios'){
-			this.tbHeight = this.tbHeight || this.refs.anchor.parentElement.getBoundingClientRect().top;
+			this.tbHeight = 64;//this.tbHeight || this.refs.anchor.parentElement.getBoundingClientRect().top;
 		}else{
 			this.tbHeight = (AppCore.os==='ios'?44:56);
 		}
@@ -127,7 +171,7 @@ class GroupPage extends Component{
 					right:'0px',
 					display:this.props.s.user.sid?'block':'none'
 				}}
-				onClick={_=>{this.setState({open_filter: ''})}}
+				onClick={_=>{this.setState({open_filter: '',dialog_city:'',dialog_theme:''})}}
 			>
 				<ons-row  class="option-type" onClick={e=>e.stopPropagation()}>
 				  <ons-col onClick={_=>this.setState({open_filter:'tag'})}>
@@ -173,10 +217,10 @@ class GroupPage extends Component{
 									全部
 								</li>
 							{
-								Object.keys(Enum.PdTag).map(i=>
+								Object.keys(Enum[this.state.pd_tag_type]).map(i=>
 									<li onClick={_=>this.tagClick(i)} key={i} 
 										className={i == this.state.search.pd_tag_id ? 'active-select-item' : 'select-item-main'}>
-										{Enum.PdTag[i]}
+										{Enum[this.state.pd_tag_type][i]}
 									</li>
 								)
 							}
@@ -189,10 +233,10 @@ class GroupPage extends Component{
 										全部
 									</li>
 									{
-										Object.keys(Enum.PdSubTag).filter(i=>Enum.PdSubTagBelong[i]==this.state.search.pd_tag_id).map(i=>
+										Object.keys(Enum[this.state.pd_sub_tag_type]).filter(i=>Enum[this.state.n_1][i]==this.state.search.pd_tag_id).map(i=>
 											<li onClick={_=>this.subTagClick(i)} key={i}
 												className={i == this.state.search.pd_subtag_id ? 'active-select-item' : 'select-item-main'}>
-												{Enum.PdSubTag[i]}
+												{Enum[this.state.pd_sub_tag_type][i]}
 											</li>
 										)
 									}
@@ -221,45 +265,66 @@ class GroupPage extends Component{
 				}
 				{/* 出发城市-选择框 */
 					this.state.open_filter=='dep_city' && 
-					<div className="dialog-box">
-						<div className="options-popup">
-							<div className="selected-dep_city">
-								{Object.keys(this.props.s.pub.dep_city).map( i => 
-									<div className={ (this.state.search.dep_city_id === i ? 'active-select-item' : '') +" dep_city-item"} key={i}
-									onClick={_=>this.cityClick(i)}>{this.props.s.pub.dep_city[i]}</div> 
-								)}
+					<Fragment>
+						<div className="dialog-box">
+							<div className="options-popup">
+								<div className="selected-dep_city">
+									{Object.keys(this.props.s.pub.dep_city).map( i => 
+										<div className={ ((this.state.dialog_city || this.state.search.dep_city_id) === i ? 'active-select-item' : '') +" dep_city-item"} key={i}
+										onClick={_=>this.cityClick(i)}>{this.props.s.pub.dep_city[i]}</div> 
+									)}
+								</div>
 							</div>
+						</div>	
+						<div className="options-btn" style={{backgroundColor: '#fff'}}>
+						  <div className="options-reset" onClick={_=>this.setState({dialog_city:'',search:{dep_city_id:''}})}>重置</div>
+						  <div className="options-submit" onClick={_=>this.citySubmit()}>确定</div>
 						</div>
-					</div>	
+					</Fragment>
 				}
 				{/* 主题-选择框 */
 					this.state.open_filter=='theme' && 
-					<div className="dialog-box">
-						<div className="options-popup">
-							<div className="selected-dep_city">
-								{Object.keys(this.props.s.pub.theme).map( i => 
-									<div className={ (this.state.search.theme_id === i ? 'active-select-item' : '') +" dep_city-item"} key={i}
-									onClick={_=>this.themeClick(i)}>{this.props.s.pub.theme[i]}</div> 
-								)}
+					<Fragment>
+						<div className="dialog-box">
+							<div className="options-popup">
+								<div className="selected-dep_city">
+									{Object.keys(this.props.s.pub.theme).map( i => 
+										<div className={ ((this.state.dialog_theme || this.state.search.theme_id) === i ? 'active-select-item' : '') +" dep_city-item"} key={i}
+										onClick={_=>this.themeClick(i)}>{this.props.s.pub.theme[i]}</div> 
+									)}
+								</div>
 							</div>
+						</div>	
+						<div className="options-btn" style={{backgroundColor: '#fff'}}>
+						  <div className="options-reset" onClick={_=>this.setState({dialog_theme:'', search:{theme_id: ''}})}>重置</div>
+						  <div className="options-submit" onClick={_=>this.themeSubmit()}>确定</div>
 						</div>
-					</div>	
+					</Fragment>
 				}
 				</div>
 			</div>
 		);
 	}
 	renderToolbar(){
-		let search_cfg = {
-			key: this.mod,
-			placeholder: '请输入产品名称',
-			cb: value => {
-				this.setState({open_filter:'',search:{...this.state.search,pd_name: value}});
+		let search_cfg = { 
+			key: 'Group',
+			options:[
+				{text: '产品名称', search: 'pd_name'},
+				{text: '团号', search: 'group_num'},
+				{text: '供应商', search: 'pd_provider'}
+			],
+			cb: (value, key) => {
+				let search = this.state.search
+				search['pd_name'] = ''
+				search['group_num'] = ''
+				search['pd_provider'] = ''
+				search[key] = value
+				this.setState({search:search});
 				reload(this)
 			}	
 		}
-		return <Search value={this.state.search.pd_name} 
-						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,pd_name: ''}},_=>reload(this))}} 
+		return <Search value={this.state.search.pd_name || this.state.search.group_id || this.state.search.pd_provider} 
+						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,pd_name: '',group_id:'',pd_provider:''}},_=>reload(this))}} 
 						param={search_cfg} />
 	}
 
@@ -268,14 +333,13 @@ class GroupPage extends Component{
 			<Page 
 				renderToolbar={_=>this.renderToolbar()} 
 				onInfiniteScroll={done=>loadMore(this,done)} 
-				onShow={_=>loadIfEmpty(this)}
+				onShow={_=>this.onShow()}
 				renderFixed={_=>this.renderFixed()}>
-
+				<div style={{height:this.props.s.user.sid?"50px":"0px"}} ref="anchor"></div>
 			    {
-			    	this.props.s.user.sid && haveModAuth(this.mod) && 
+			    	this.props.s.user.sid && this.state.has_auth && 
 
 		    		<Fragment>
-		    			<div style={{height:"50px"}} ref="anchor"></div>
 						{
 						  	!this.state.open_filter && pullHook(this)	
 					    }
@@ -300,8 +364,8 @@ class GroupPage extends Component{
 											<span style={{fontSize: '.426667rem', color: '#F29A0A',fontWeight:'bold'}}>￥{(item.zk_price * 1) || '0.00'}<span style={{fontSize: '.373333rem',fontWeight: 'normal'}}>起/人</span></span>
 										</div>
 										{/* <div className="pro-item-theme">发团日期: {item.dep_date}</div> */}
-										{['亲子','蜜月','夕阳红'].map( (cell,i) => 
-											<div className="pro-item-theme" key={i}>{cell}</div>
+										{item.theme.map( (cell,i) => 
+											<div className="pro-item-theme" key={i}>{cell || ''}</div>
 										)}
 									</div>
 								</div>
@@ -313,7 +377,7 @@ class GroupPage extends Component{
 		    		</Fragment>
 			    }
 			    {
-			    	this.props.s.user.sid && !haveModAuth(this.mod) && NoPv()
+			    	this.props.s.user.sid && !this.state.has_auth && NoPv()
 			    }
 			    {
 			  		!this.props.s.user.sid && loginToPlay()

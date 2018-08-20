@@ -2,22 +2,22 @@ import React, { Component } from 'react';
 
 import {Page,Icon} from 'react-onsenui';
 
-import {AppCore,resetTo, goBack, goTo} from '../util/core';
+import {AppCore,resetTo, goBack, goTo, reload} from '../util/core';
 
 import '../css/SearchPage.css'
-
 export default class SearchPage extends Component{
 
 	constructor(props) {
-        super(props);
+		super(props);
 		this.placeholder = this.props.p.placeholder
-		this.type = this.props.p.key
-		this.cb = this.props.p.cb
-
+		this.key = this.props.p.cur_select || this.props.p.key
+		
+		this.key_hitory = this.key + (this.props.p.key_type || '')
+		
 		let history = [];
 		let storage = window.localStorage;
-		if(storage && storage.getItem(this.type+'History')){
-			history = JSON.parse(storage.getItem(this.type+'History'))
+		if(storage && storage.getItem(this.key_hitory+'History')){
+			history = JSON.parse(storage.getItem(this.key_hitory+'History'))
 		}
 		this.state = {
 			history: history,
@@ -27,7 +27,7 @@ export default class SearchPage extends Component{
 
 	// 清除 历史记录 && 搜索条件
 	clearHistory(){
-		window.localStorage.setItem(this.type+'History','')
+		window.localStorage.setItem(this.key_hitory+'History','')
 		this.setState({history:[]})
 	}
 	clearSearch(){
@@ -41,8 +41,8 @@ export default class SearchPage extends Component{
 		if(value == '') return;
 		// 添加localstorage 
 		let storage = window.localStorage;
-		if(storage && storage.getItem(this.type+'History')){
-			var history = JSON.parse(storage.getItem(this.type+'History'))
+		if(storage && storage.getItem(this.key_hitory+'History')){
+			var history = JSON.parse(storage.getItem(this.key_hitory+'History'))
 		}else{
 			var history = []
 		}
@@ -50,10 +50,10 @@ export default class SearchPage extends Component{
 			history.push(value)
 		}
 		
-		window.localStorage.setItem(this.type+'History',JSON.stringify(history))
+		window.localStorage.setItem(this.key_hitory+'History',JSON.stringify(history))
 
-		// 调用回调函数搜索
-		this.cb(value)
+		this.props.p.cb(value, this.props.p.key_type)
+		
 		goBack()
 	}
 

@@ -11,7 +11,7 @@ class RegulatoryPage extends Component{
 	constructor(props) {
 		super(props);
 		
-	    this.state = {state:'initial',data:[], search:{code:''},};
+	    this.state = {state:'initial',data:[], search:{code:'', income: '', expense:''},};
 		this.mod = '账户监管';
 		this.pageSize = 20;
 	}
@@ -23,15 +23,19 @@ class RegulatoryPage extends Component{
 
 	renderToolbar(){
 		let search_cfg = {
-			key: this.mod,
-			placeholder: '部门编号',
-			cb: value => {
-				this.setState({search:{...this.state.search,code: value}});
+			key: 'Regulatory',
+			cb: (value, key) => {
+				let search = this.state.search
+				search['code'] = ''
+				search['income'] = ''
+				search['expense'] = ''
+				search[key] = value
+				this.setState({search:search});
 				reload(this)
-			}	
+			}		
 		}
-		return <SearchLv2 value={this.state.search.code} 
-						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,code: ''}},_=>reload(this))}} 
+		return <SearchLv2 value={this.state.search.code || this.state.search.income || this.state.search.expense} 
+						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,code: '', income: '', expense: ''}},_=>reload(this))}} 
 						param={search_cfg} />
 	}
 
@@ -57,8 +61,11 @@ class RegulatoryPage extends Component{
 
 	render(){
 		return (
-			<Page renderToolbar={_=>this.renderToolbar()} renderFixed={_=>this.renderFixed()}
-			onInfiniteScroll={done=>loadMore(this,done)} onShow={_=>loadIfEmpty(this)}>
+			<Page 
+			renderToolbar={_=>this.renderToolbar()} 
+			renderFixed={_=>this.renderFixed()}
+			onInfiniteScroll={done=>loadMore(this,done)} 
+			onShow={_=>loadIfEmpty(this)} >
 		    {
 		    	this.props.s.user.sid && 
 	    		<Fragment>

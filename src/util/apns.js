@@ -24,7 +24,7 @@ export function apnsInit(){
         log("[apns] registed, token : "+data.registrationId);
         AppCore.ios_tkn=data.registrationId;
         //check permission
-        checkNotify();
+        setTimeout(checkNotify,3000);
     });
 
     //trigger event fired correctly

@@ -145,13 +145,22 @@ class RealSignUpPageRender extends Component{
 		return ( <SupplierDialog supplier_ctrl={supplier_ctrl} supplier_info={this.state.data['开团人详情'][0] || ''} /> )
 	}
 	OpDialog(){
-		let op_ctrl = {
-			open_op : this.state.open_op,
-			cancelCb : () => {
-				this.setState({open_op: false})
+		if (this.state.data && this.state.data['接单人详情']) {
+			if (this.state.data['接单人'] && JSON.stringify(this.state.data['接单人']) !== "{}") {
+				var assitant = this.state.data['接单人详情'].find(curAssitant.bind(this))
+			}else{
+				var assitant = this.state.data['接单人详情'][0]
 			}
+			function curAssitant(item) {
+				return item.id === this.state.data['接单人'].id
+			}
+
+			let op_ctrl = {
+			open_op : this.state.open_op,
+			cancelCb : () => { this.setState({open_op: false}) }
+			}
+			return ( <OpDialog op_ctrl={op_ctrl} op_info={assitant || ''} /> )
 		}
-		return ( <OpDialog op_ctrl={op_ctrl} op_info={this.state.data['接单人详情'][0] || ''} /> )
 	}
 
 	render(){

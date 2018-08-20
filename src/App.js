@@ -21,6 +21,7 @@ class App extends Component {
     return (
       <Fragment>
         <Navigator
+          animation="none"
           swipeable
           renderPage={this.renderPage.bind(this)}
           initialRoute={{

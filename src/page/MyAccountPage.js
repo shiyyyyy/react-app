@@ -12,7 +12,7 @@ class MyAccountPage extends Component{
 	constructor(props) {
 		super(props);
 		
-	    this.state = {state:'initial',data:[], search:{id:''},};
+	    this.state = {state:'initial',data:[], search:{id:'',settle_amount: ''},};
 		this.mod = '我的账户';
 		this.pageSize = 20;
 	}
@@ -24,15 +24,19 @@ class MyAccountPage extends Component{
 
 	renderToolbar(){
 		let search_cfg = {
-			key: this.mod,
-			placeholder: '请输入单据编号',
-			cb: value => {
-				this.setState({search:{...this.state.search,id: value}});
+			
+			key: 'MyAccount',
+			cb: (value, key) => {
+				let search = this.state.search
+				search['id'] = ''
+				search['settle_amount'] = ''
+				search[key] = value
+				this.setState({search:search});
 				reload(this)
 			}	
 		}
-		return <SearchLv2 value={this.state.search.id} 
-						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,id: ''}},_=>reload(this))}} 
+		return <SearchLv2 value={this.state.search.id || this.state.search.settle_amount} 
+						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,id: '', settle_amount: ''}},_=>reload(this))}} 
 						param={search_cfg} />
 	}
 
