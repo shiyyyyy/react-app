@@ -1,6 +1,6 @@
 import React, { Component,Fragment } from 'react';
 
-import {Page} from 'react-onsenui';
+import {Page,Popover} from 'react-onsenui';
 
 import {AppCore,loadMore,loadIfEmpty,i18n,goTo,reload,goBack,Enum,hasPlugin} from '../util/core';
 import {pullHook,loginToPlay,SearchLv2,nonBlockLoading} from '../util/com';
@@ -12,9 +12,16 @@ class MyAccountPage extends Component{
 	constructor(props) {
 		super(props);
 		
-	    this.state = {state:'initial',data:[], search:{id:'',settle_amount: ''},};
+	    this.state = {
+			state:'initial',data:[], search:{id:'',settle_amount: ''},
+
+			open_search_key: false,
+			cur_select_search_filter: {search: 'id', text: '单据编号'},
+		};
 		this.mod = '我的账户';
 		this.pageSize = 20;
+
+		
 	}
 
 
@@ -36,8 +43,10 @@ class MyAccountPage extends Component{
 			}	
 		}
 		return <SearchLv2 value={this.state.search.id || this.state.search.settle_amount} 
-						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,id: '', settle_amount: ''}},_=>reload(this))}} 
-						param={search_cfg} />
+					open_search_key={_=>this.setState({open_search_key:true})}
+					cur_select={this.state.cur_select_search_filter || ''}
+					clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,id: '', settle_amount: ''}},_=>reload(this))}} 
+					param={search_cfg} />
 	}
 
 	get_doc_id(row){
@@ -106,7 +115,21 @@ class MyAccountPage extends Component{
 		    {
 		    	this.props.s.user.sid && 
 	    		<Fragment>
-					<div style={{width: '100%', height: '62px'}}></div>
+					<div style={{width: '100px', height: '62px'}}></div>
+					<div className="dialog-select-position" ref="anchor" style={{height:(AppCore.os==='ios'?44:56)}}></div>
+
+					<Popover
+					animation = "none"
+					direction = "down"
+			      	isOpen={this.state.open_search_key}
+			      	onCancel={() => this.setState({open_search_key: false})}
+			      	getTarget={() => this.refs.anchor}
+			    	>
+			        	<div className="dialog-select-box">
+			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '单据编号', search: 'id'}})}>单据编号</div>
+			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '结算金额',search: 'settle_amount',}})}>结算金额</div>
+			        	</div>
+			    	</Popover>
 	    			{
 	    				!this.state.loading && pullHook(this)
 					}

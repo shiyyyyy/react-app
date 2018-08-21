@@ -9,7 +9,6 @@ export  class ProDetail extends React.Component {
     constructor() {
       super()
       this.state = {}
-      console.log(this)
     }
   
     render() {
@@ -86,7 +85,6 @@ export  class CustomerInfo extends React.Component {
   constructor() {
     super()
     this.state = {}
-    console.log(this)
   }
 
   render() {
@@ -161,12 +159,12 @@ export  class ToursList extends React.Component {
 
     componentWillMount(){
         let data = Object.assign({},this.props.view) 
-        this.setState(data,_=>console.log(this.state))
+        this.setState(data)
     }
     addYK(){
 		if(!this.props.view['游客名单'][this.props.view['游客名单'].length - 1].name) return
 		this.props.view['游客名单'].push({})
-		this.setState({ '游客名单': this.props.view['游客名单'] },_=>console.log(this.props.view))
+		this.setState({ '游客名单': this.props.view['游客名单'] })
 	}
   
     render() {

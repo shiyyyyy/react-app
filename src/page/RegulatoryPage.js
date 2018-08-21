@@ -1,6 +1,6 @@
 import React, { Component,Fragment } from 'react';
 
-import {Page} from 'react-onsenui';
+import {Page,Popover} from 'react-onsenui';
 
 import {AppCore,loadMore,loadIfEmpty,i18n,goTo,reload,goBack,Enum} from '../util/core';
 import {pullHook,loginToPlay,SearchLv2,nonBlockLoading} from '../util/com';
@@ -11,7 +11,12 @@ class RegulatoryPage extends Component{
 	constructor(props) {
 		super(props);
 		
-	    this.state = {state:'initial',data:[], search:{code:'', income: '', expense:''},};
+	    this.state = {
+			state:'initial',data:[], search:{code:'', income: '', expense:''},
+		
+			open_search_key: false,
+			cur_select_search_filter: {search: 'code', text: '部门编号'},
+		};
 		this.mod = '账户监管';
 		this.pageSize = 20;
 	}
@@ -35,8 +40,10 @@ class RegulatoryPage extends Component{
 			}		
 		}
 		return <SearchLv2 value={this.state.search.code || this.state.search.income || this.state.search.expense} 
-						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,code: '', income: '', expense: ''}},_=>reload(this))}} 
-						param={search_cfg} />
+					open_search_key={_=>this.setState({open_search_key:true})}
+					cur_select={this.state.cur_select_search_filter || ''}
+					clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,code: '', income: '', expense: ''}},_=>reload(this))}} 
+					param={search_cfg} />
 	}
 
 	renderFixed(){
@@ -69,7 +76,22 @@ class RegulatoryPage extends Component{
 		    {
 		    	this.props.s.user.sid && 
 	    		<Fragment>
-					<div style={{width: '100%', height: '62px'}}></div>
+					<div style={{width: '100px', height: '62px'}}></div>
+					<div className="dialog-select-position" ref="anchor" style={{height:(AppCore.os==='ios'?44:56)}}></div>
+
+					<Popover
+					animation = "none"
+					direction = "down"
+			      	isOpen={this.state.open_search_key}
+			      	onCancel={() => this.setState({open_search_key: false})}
+			      	getTarget={() => this.refs.anchor}
+			    	>
+			        	<div className="dialog-select-box">
+			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'code', text: '部门编号'}})}>部门编号</div>
+			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'income', text: '收入总计'}})}>收入总计</div>
+			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'expense', text: '支出总计'}})}>支出总计</div>
+			        	</div>
+			    	</Popover>
 	    			{
 	    				!this.state.loading && pullHook(this)
 	    			}

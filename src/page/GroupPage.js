@@ -3,7 +3,7 @@ import React, { Component,Fragment } from 'react';
 import {AppCore,resetTo,loadMore,loadIfEmpty,Enum,goTo,hasPlugin,reload,goBack,haveModAuth} from '../util/core';
 import {pullHook,loginToPlay,Search,nonBlockLoading,NoPv} from '../util/com';
 
-import {Page,Modal,Button,Icon} from 'react-onsenui';
+import {Page,Modal,Button,Icon,Popover} from 'react-onsenui';
 import { connect } from 'react-redux';
 
 import moment from 'moment';
@@ -21,16 +21,23 @@ class GroupPage extends Component{
 			// 选择框里选择的当前样式(不是搜索的)city && theme
 			dialog_city: '',
 			dialog_theme: '',
-			search:{dep_date_from:moment().format('YYYY-MM-DD'),pd_nav:'1',pd_name:''},
+			search:{dep_date_from:moment().format('YYYY-MM-DD'),dep_date_to:'',pd_nav:'1',pd_name:''},
 			dep_date_from: moment().format('YYYY-MM-DD'),
+			dep_date_to: '',
+			pd_nav:'',
+			pd_tag_id: '',
+			pd_subtag_id: '',
+			
 			has_auth:false,
 			pd_tag_type:'PdTag',
 			pd_sub_tag_type:'PdSubTag',
-			n_1:'PdSubTagBelong'
+			n_1:'PdSubTagBelong',
+			open_search_key:false,
+			cur_select_search_filter:{text: '产品名称', search: 'pd_name'}
 		};
 		this.mod = '团队报名';
 		AppCore.GroupPage = this;
-		
+
 	}
 
 	onShow(){
@@ -53,7 +60,8 @@ class GroupPage extends Component{
 	        	pd_tag_type = 'Continent';
 	            break;
 	    }
-		this.setState({search:{...this.state.search,pd_nav:i,pd_tag_id:undefined,pd_subtag_id:undefined},pd_tag_type:pd_tag_type});
+		// this.setState({search:{...this.state.search,pd_nav:i,pd_tag_id:undefined,pd_subtag_id:undefined},pd_tag_type:pd_tag_type});
+		this.setState({pd_nav:i,pd_tag_id:'',pd_subtag_id:'',pd_tag_type:pd_tag_type});
 	}
 	tagClick(i){
 
@@ -75,17 +83,45 @@ class GroupPage extends Component{
 				break;
 		}
 		if(i){
-			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
+			// this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
+			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,pd_tag_id:i,pd_subtag_id:undefined});
 		}else{
-			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,open_filter:'',search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
-			reload(this);
+			// this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,open_filter:'',search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
+			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,pd_tag_id:i,pd_subtag_id:undefined});
+			// reload(this);
 		}
 		
 	}
 	subTagClick(i){
-		this.setState({open_filter:'',search:{...this.state.search,pd_subtag_id:i}});
-		reload(this);
+		// this.setState({open_filter:'',search:{...this.state.search,pd_subtag_id:i}});
+		// reload(this);
+		this.setState({pd_subtag_id:i});
 	}
+
+	tagSubmit(){
+		this.setState({
+			open_filter:'',
+			search:{
+			...this.state.search,
+			pd_nav: this.state.pd_nav,
+			pd_tag_id: this.state.pd_tag_id,
+			pd_subtag_id: this.state.pd_subtag_id,
+		}})
+		reload(this)
+	}
+	clearTag(){
+		this.setState({
+			pd_nav: '',
+			pd_tag_id: '',
+			pd_subtag_id: '',
+			search:{
+			...this.state.search,
+			pd_nav: '',
+			pd_tag_id: '',
+			pd_subtag_id: '',}
+		})
+	}
+
 	cityClick(i){
 		this.setState({dialog_city: i})
 	}
@@ -115,16 +151,29 @@ class GroupPage extends Component{
 		reload(this);
 	}
 
+
+	clear_param(){
+		this.setState({
+			open_filter: '',
+			pd_nav:'',
+			pd_tag_id:'',
+			pd_subtag_id:'',
+			dialog_city: '',
+			dialog_theme: '',
+			dep_date_from:'',
+			dep_date_to:''
+		})
+	}
 	// ====================
 	tag_cur(){
-		if(this.state.open_filter === 'tag' || this.state.search.pd_subtag_id || this.state.search.pd_tag_id){
+		if (this.state.open_filter === 'tag' || this.state.search.pd_nav || this.state.search.pd_subtag_id || this.state.search.pd_tag_id) {
 			return true
 		}
 		return false
 	}
 
 	date_cur(){
-		if(this.state.open_filter === 'date' || this.state.dep_date_from || this.state.dep_date_to){
+		if (this.state.open_filter === 'date' || this.state.dep_date_from || this.state.dep_date_to || this.state.search.dep_date_from || this.state.search.dep_date_to) {
 			return true
 		}
 		return false
@@ -171,7 +220,7 @@ class GroupPage extends Component{
 					right:'0px',
 					display:this.props.s.user.sid?'block':'none'
 				}}
-				onClick={_=>{this.setState({open_filter: '',dialog_city:'',dialog_theme:''})}}
+				onClick={_=>{this.clear_param()}}
 			>
 				<ons-row  class="option-type" onClick={e=>e.stopPropagation()}>
 				  <ons-col onClick={_=>this.setState({open_filter:'tag'})}>
@@ -198,14 +247,14 @@ class GroupPage extends Component{
 				<div onClick={e=>e.stopPropagation()}>
 				{/* 产品标签-选择框 */
 					this.state.open_filter=='tag' && 
-
+					<Fragment>
 					<div className="dialog-box">
 						<div className="selected">
 							<ul className="select-nav select-item">
 							{
 								Object.keys(Enum.PdNav).map(i=>
 									<li onClick={_=>this.navClick(i)} key={i} 
-										className={i == this.state.search.pd_nav ? 'active-select-item' : 'select-item-main'} >
+										className={i == (this.state.pd_nav || this.state.search.pd_nav) ? 'active-select-item' : 'select-item-main'} >
 										{Enum.PdNav[i]}
 									</li>
 								)
@@ -213,29 +262,29 @@ class GroupPage extends Component{
 							</ul>
 							<ul className="select-big select-item">
 								<li onClick={_=>this.tagClick(undefined)}
-									className={this.state.search.pd_tag_id ? 'select-item-main' : 'active-select-item'} >
+									className={(this.state.pd_tag_id || this.state.search.pd_tag_id) ? 'select-item-main' : 'active-select-item'} >
 									全部
 								</li>
 							{
 								Object.keys(Enum[this.state.pd_tag_type]).map(i=>
 									<li onClick={_=>this.tagClick(i)} key={i} 
-										className={i == this.state.search.pd_tag_id ? 'active-select-item' : 'select-item-main'}>
+										className={i == (this.state.pd_tag_id || this.state.search.pd_tag_id) ? 'active-select-item' : 'select-item-main'}>
 										{Enum[this.state.pd_tag_type][i]}
 									</li>
 								)
 							}
 							</ul>
 							{
-								this.state.search.pd_tag_id && 
+								this.state.pd_tag_id && 
 									<ul className="select-sma select-item">
 									<li onClick={_=>this.subTagClick(undefined)}
-										className={this.state.search.pd_subtag_id ? 'select-item-main' : 'active-select-item'} >
+										className={(this.state.pd_subtag_id || this.state.search.pd_subtag_id) ? 'select-item-main' : 'active-select-item'} >
 										全部
 									</li>
 									{
-										Object.keys(Enum[this.state.pd_sub_tag_type]).filter(i=>Enum[this.state.n_1][i]==this.state.search.pd_tag_id).map(i=>
+										Object.keys(Enum[this.state.pd_sub_tag_type]).filter(i=>Enum[this.state.n_1][i]==this.state.pd_tag_id).map(i=>
 											<li onClick={_=>this.subTagClick(i)} key={i}
-												className={i == this.state.search.pd_subtag_id ? 'active-select-item' : 'select-item-main'}>
+												className={i == (this.state.pd_subtag_id || this.state.search.pd_subtag_id) ? 'active-select-item' : 'select-item-main'}>
 												{Enum[this.state.pd_sub_tag_type][i]}
 											</li>
 										)
@@ -243,7 +292,12 @@ class GroupPage extends Component{
 									</ul>
 							}
 						</div>
-					</div>	
+					</div>
+					<div className="options-btn" style={{backgroundColor: '#fff'}}>
+						<div className="options-reset" onClick={_=>this.clearTag()}>重置</div>
+						<div className="options-submit" onClick={_=>this.tagSubmit()}>确定</div>
+					</div>
+					</Fragment>	
 				}
 				{/* 日期-选择框 */
 					this.state.open_filter=='date' && 
@@ -251,13 +305,13 @@ class GroupPage extends Component{
 						<div className="options-popup">
 							<div className="selected-date">
 								<input type="date" className="selected-date-input" placeholder="最早出发" 
-								value={this.state.dep_date_from} onChange={e=>this.setState({dep_date_from: e.target.value})} />
+								value={this.state.search.dep_date_from || this.state.dep_date_from} onChange={e=>this.setState({dep_date_from: e.target.value})} />
 								至
 								<input type="date" className="selected-date-input" placeholder="最晚出发" 
-								value={this.state.dep_date_to} onChange={e=>this.setState({dep_date_to: e.target.value})} />
+								value={this.state.search.dep_date_to || this.state.dep_date_to} onChange={e=>this.setState({dep_date_to: e.target.value})} />
 							</div>
 							<div className="options-btn">
-							  <div className="options-reset" onClick={_=>this.setState({dep_date_from:'',dep_date_to:''})}>重置</div>
+							  <div className="options-reset" onClick={_=>this.setState({dep_date_from:'',dep_date_to:'',search:{dep_date_from:'',dep_date_to:''}})}>重置</div>
 							  <div className="options-submit" onClick={_=>this.depDateClick()}>确定</div>
 							</div>
 						</div>
@@ -308,11 +362,6 @@ class GroupPage extends Component{
 	renderToolbar(){
 		let search_cfg = { 
 			key: 'Group',
-			options:[
-				{text: '产品名称', search: 'pd_name'},
-				{text: '团号', search: 'group_num'},
-				{text: '供应商', search: 'pd_provider'}
-			],
 			cb: (value, key) => {
 				let search = this.state.search
 				search['pd_name'] = ''
@@ -321,10 +370,12 @@ class GroupPage extends Component{
 				search[key] = value
 				this.setState({search:search});
 				reload(this)
-			}	
+			},	
 		}
-		return <Search value={this.state.search.pd_name || this.state.search.group_id || this.state.search.pd_provider} 
-						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,pd_name: '',group_id:'',pd_provider:''}},_=>reload(this))}} 
+		return <Search value={this.state.search.pd_name || this.state.search.group_num || this.state.search.pd_provider} 
+						open_search_key={_=>this.setState({open_search_key:true})}
+						cur_select={this.state.cur_select_search_filter || ''}
+						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,pd_name: '',group_num:'',pd_provider:''}},_=>reload(this))}} 
 						param={search_cfg} />
 	}
 
@@ -335,7 +386,20 @@ class GroupPage extends Component{
 				onInfiniteScroll={done=>loadMore(this,done)} 
 				onShow={_=>this.onShow()}
 				renderFixed={_=>this.renderFixed()}>
-				<div style={{height:this.props.s.user.sid?"50px":"0px"}} ref="anchor"></div>
+				<div style={{width:'100px',height:this.props.s.user.sid?"50px":"0px"}} ref="anchor"></div>
+			    <Popover
+				  animation = "none"
+				  direction = "down"
+			      isOpen={this.state.open_search_key}
+			      onCancel={() => this.setState({open_search_key: false})}
+			      getTarget={() => this.refs.anchor}
+			    >
+			        <div className="dialog-select-box">
+			          <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '产品名称', search: 'pd_name'}})}>产品名称</div>
+			          <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '团号', search: 'group_num'}})}>团号</div>
+			          <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '供应商', search: 'pd_provider'}})}>供应商</div>
+			        </div>
+			    </Popover>
 			    {
 			    	this.props.s.user.sid && this.state.has_auth && 
 

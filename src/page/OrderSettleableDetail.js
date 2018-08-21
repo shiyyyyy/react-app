@@ -14,7 +14,7 @@ class OrderSettleableDetail extends Component{
 		
 		this.action = props.p.action;
 		this.pre_view = this.props.p.view;
-		let state  = {isAddRow:false,isEditRow:false,isAddOther:false,data:{},block_cfg:{}};
+		let state  = {isAddRow:false,isEditRow:false,isAddOther:false,data:{row:{}},block_cfg:{}};
 		let cfg = AppMeta.actions[this.action];
 		cfg.block.forEach(function(block){
 			state.data[block] = props.p.data[block]?props.p.data[block]:[];

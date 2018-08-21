@@ -300,25 +300,19 @@ export class Search extends React.Component{
         super();
         this.state = {
             select_show: false,
-            cur_select: "",
-            cur_select_text: ""
         }
-
     }
     goToSearch(){
-        this.props.param.placeholder = '请输入' + (this.state.cur_select_text || this.props.param.options[0].text)
-        this.props.param.key_type = this.state.cur_select || this.props.param.options[0].search
+        this.props.param.placeholder = '请输入' + this.props.cur_select.text
+        this.props.param.key_type = this.props.cur_select.search
         goTo('搜索', this.props.param)
     }
-    select_filter(item) {
-        this.setState({cur_select: item['search']},_=>{
-            if (this.state.cur_select){
-                let cur_cell = this.props.param.options.find( cell => cell.search === this.state.cur_select)
-                let text = cur_cell ? cur_cell.text: '';
-                this.setState({cur_select_text: text})
-            }   
-        })        
-    }
+    // select_filter(item) {
+    //     this.setState({cur_select: item['search']},_=>{
+    //         let text = this.props.cur_select.text
+    //         this.setState({cur_select_text: text})
+    //     })        
+    // }
     render(){
         return(
             <ons-toolbar>
@@ -326,31 +320,23 @@ export class Search extends React.Component{
                   <div className="search-input-box">
                       <div className="search-center">
                         < input type = "text" className = "search-input-box-input"
-                        placeholder={'请输入'+ (this.state.cur_select_text || this.props.param.options[0].text)}
+                        placeholder={'请输入'+ (this.props.cur_select.text)}
                         value={this.props.value || ''} onChange={e=>this.setState({search:e.target.value})}
                         onClick={_=>this.goToSearch()}/>
                         <Icon className={(!this.props.value? 'hide' : '')+' close-search'} icon='md-close-circle'
                         onClick={e=>this.props.clear(e)} />
                       </div>
                   </div>
-                  {
-                    this.props.param.options.length > 1 &&
-                        <div className="select-search"
-                        onClick={e=>{e.stopPropagation();this.setState({select_show: !this.state.select_show});}}>
-                            <div className={AppCore.os==="ios"?"active-select-search-ios":"active-select-search-Android"}>
-                                {this.state.cur_select_text || this.props.param.options[0].text} &nbsp;
-                                {!this.state.select_show && <Icon icon='md-caret-down' style={{fontSize:'.533333rem'}} />}
-                                {this.state.select_show && <Icon icon='md-caret-up' style={{color:'#6FC5D8',fontSize:'.533333rem'}} />}
-                            </div>
-
-                            { 
-                                this.props.param.options.map( item => 
-                                <div className={this.state.select_show?(AppCore.os==="ios"?'select-search-item-ios':'select-search-item-Android'):'hide'}
-                                onClick={_=>this.select_filter(item)} key={item.text}>{item.text}</div>
-                            )}
-                        </div>
-                  }
-                  
+                { this.props.param.key !== 'Home' && this.props.param.key !== 'Approve' &&
+                <div className="select-search"
+                onClick={e=>{e.stopPropagation();this.props.open_search_key();}}>
+                    <div className={AppCore.os==="ios"?"active-select-search-ios":"active-select-search-Android"}>
+                        {this.props.cur_select.text} &nbsp;
+                        {!this.state.select_show && <Icon icon='md-caret-down' style={{fontSize:'.533333rem'}} />}
+                        {this.state.select_show && <Icon icon='md-caret-up' style={{color:'#6FC5D8',fontSize:'.533333rem'}} />}
+                    </div>
+                </div>
+                }
               </div>
             </ons-toolbar>
         )
@@ -362,36 +348,12 @@ export class SearchLv2 extends React.Component{
         super();
         this.state = {
             select_show: false,
-            cur_select: "",
-            cur_select_text: ""
         }
-        this.MyAccount = [
-            {search: 'id', text: '单据编号'},
-            {search: 'settle_amount', text: '结算金额'}
-        ]
-        this.Regulatory = [
-            {search: 'code', text: '部门编号'},
-            {search: 'income', text: '收入总计'},
-            {search: 'expense', text: '支出总计'},
-        ]
-        this.Cstm = [
-            {search: 'short_name', text: '客户简称'},
-            {search: 'full_name', text: '客户全称'},
-        ]
     }
     goToSearch(){
-        this.props.param.placeholder = '请输入' + (this.state.cur_select_text || this[this.props.param.key][0].text)
-        this.props.param.key_type = this.state.cur_select || this[this.props.param.key][0].search
+        this.props.param.placeholder = '请输入' + this.props.cur_select.text
+        this.props.param.key_type = this.props.cur_select.search
         goTo('搜索', this.props.param)
-    }
-    select_filter(item) {
-        this.setState({cur_select: item['search']},_=>{
-            if (this.state.cur_select){
-                let cur_cell = this[this.props.param.key].find( cell => cell.search === this.state.cur_select)
-                let text = cur_cell ? cur_cell.text: '';
-                this.setState({cur_select_text: text})
-            }   
-        })        
     }
     render(){
         return(
@@ -403,26 +365,20 @@ export class SearchLv2 extends React.Component{
                       </div>
                       <div className="search-center">
                         <input type="text" className="search-input-value-searchLv2" 
-                        placeholder={'请输入'+ (this.state.cur_select_text || this[this.props.param.key][0].text)}
+                        placeholder={'请输入'+ this.props.cur_select.text}
                         value={this.props.value || ''} onChange={e=>this.setState({search:e.target.value})}
                         onClick={_=>this.goToSearch()}/>
                         <Icon className={(!this.props.value? 'hide' : '')+' close-search'} icon='md-close-circle'
                         onClick={e=>this.props.clear(e)} />
                       </div>
                   </div>
-                  <div className="select-search" style={{left: '1.466667rem'}}
-                  onClick={e=>{e.stopPropagation();this.setState({select_show: !this.state.select_show});}}>
+                  <div className="select-search" style={{left: '1.466667rem'}} 
+                  onClick={e=>{e.stopPropagation();this.props.open_search_key()}}>
                         <div className={AppCore.os==="ios"?"active-select-search-ios":"active-select-search-Android"}>
-                            {this.state.cur_select_text || this[this.props.param.key][0].text} &nbsp;
+                            {this.props.cur_select.text} &nbsp;
                             {!this.state.select_show && <Icon icon='md-caret-down' style={{fontSize:'.533333rem'}} />}
                             {this.state.select_show && <Icon icon='md-caret-up' style={{color:'#6FC5D8',fontSize:'.533333rem'}} />}
                         </div>
-                    
-                        {
-                            this[this.props.param.key].map( item => 
-                            <div className={this.state.select_show?(AppCore.os==="ios"?'select-search-item-ios':'select-search-item-Android'):'hide'}
-                            onClick={_=>this.select_filter(item)} key={item.text}>{item.text}</div>
-                        )}
                     </div>
               </div>
             </ons-toolbar>
@@ -443,7 +399,7 @@ export class ProInfo extends React.Component{
 						<div className="pro-price-dep_city">{Enum.City[this.props.pro_info.dep_city_id]}出发</div>
 					</div>
 					<div className="pro-sale">
-						<div className="pro-sale-price">{this.props.pro_info.id}</div>
+						<div className="pro-sale-price">选择班期:{this.props.pro_info.dep_date}</div>
 						<div className="pro-sale-supplier">供应商: {this.props.pro_info.pd_provider}</div>
 					</div>
 				</div>

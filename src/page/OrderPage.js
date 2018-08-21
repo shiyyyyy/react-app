@@ -1,6 +1,6 @@
 import React, { Component,Fragment } from 'react';
 
-import {Page,AlertDialog,Icon} from 'react-onsenui';
+import {Page,AlertDialog,Icon,Popover} from 'react-onsenui';
 
 import {AppCore,goTo,loadMore,loadIfEmpty,testing,AppMeta,post,trigger,reload,Enum,goBack,haveModAuth,haveActionAuth,hasPlugin} from '../util/core';
 import {pullHook,loginToPlay,Search,nonBlockLoading,info,NoPv,confirm} from '../util/com';
@@ -22,6 +22,14 @@ class OrderPage extends Component{
 				id: ''
 			},
 			has_auth:false,
+
+			dep_date_from:'',
+			dep_date_to:'',
+			back_date_from:'',
+			back_date_to:'',
+
+			open_search_key: false,
+			cur_select_search_filter: {text: '订单号', search: 'id'},
 		};
 		this.mod = '订单管理';
 		AppCore.OrderPage = this;
@@ -132,8 +140,8 @@ class OrderPage extends Component{
 		this.setState({open_filter:'',
 			search:{
 				...this.state.search,
-				dep_date_from: this.state.dep_date_from || undefined,
-				dep_date_to:this.state.dep_date_to || undefined
+				dep_date_from: this.state.dep_date_from || '',
+				dep_date_to:this.state.dep_date_to || ''
 			}
 		});
 		reload(this);
@@ -143,22 +151,33 @@ class OrderPage extends Component{
 		this.setState({open_filter:'',
 			search:{
 				...this.state.search,
-				back_date_from: this.state.back_date_from || undefined,
-				back_date_to:this.state.back_date_to || undefined
+				back_date_from: this.state.back_date_from || '',
+				back_date_to:this.state.back_date_to || ''
 			}
 		});
 		reload(this);
 	}
 
+	clear_param(){
+		this.setState({
+			open_filter: '',
+			cur_state: '',
+			dep_date_from: '',
+			dep_date_to: '',
+			back_date_from: '',
+			back_date_to: ''
+		})
+	}
+
 	// 
 	dep_date_cur(){
-		if(this.state.open_filter === 'dep_date' || this.state.dep_date_from || this.state.dep_date_to){
+		if(this.state.open_filter === 'dep_date' || this.state.search.dep_date_from || this.state.dep_date_to){
 			return true;
 		}
 		return false
 	}
 	back_date_cur(){
-		if(this.state.open_filter === 'back_date' || this.state.back_date_from || this.state.back_date_to){
+		if(this.state.open_filter === 'back_date' || this.state.search.back_date_from || this.state.back_date_to){
 			return true;
 		}
 		return false
@@ -192,7 +211,7 @@ class OrderPage extends Component{
 					right:'0px',
 					display:this.props.s.user.sid?'block':'none'
 				}}
-				onClick={_=>{this.setState({open_filter: '', cur_state: ''})}}
+				onClick={_=>{this.clear_param()}}
 			>
 				<ons-row  class="option-type" onClick={e=>e.stopPropagation()}>
 					<ons-col onClick={_=>this.setState({open_filter:'dep_date'})}>
@@ -217,13 +236,13 @@ class OrderPage extends Component{
 							<div className="options-popup">
 								<div className="selected-date">
 									<input type="date" className="selected-date-input" placeholder="最早出发" 
-									value={this.state.dep_date_from} onChange={e=>this.setState({dep_date_from: e.target.value})} />
+									value={this.state.search.dep_date_from || this.state.dep_date_from} onChange={e=>this.setState({dep_date_from: e.target.value})} />
 									至
 									<input type="date" className="selected-date-input" placeholder="最晚出发" 
-									value={this.state.dep_date_to} onChange={e=>this.setState({dep_date_to: e.target.value})} />
+									value={this.state.search.dep_date_to || this.state.dep_date_to} onChange={e=>this.setState({dep_date_to: e.target.value})} />
 								</div>
 								<div className="options-btn">
-								  <div className="options-reset" onClick={_=>this.setState({dep_date_from:'',dep_date_to:''})}>重置</div>
+								  <div className="options-reset" onClick={_=>this.setState({dep_date_from:'',dep_date_to:'',search:{dep_date_from:'',dep_date_to:''}})}>重置</div>
 								  <div className="options-submit" onClick={_=>this.depDateClick()}>确定</div>
 								</div>
 							</div>
@@ -234,13 +253,13 @@ class OrderPage extends Component{
 							<div className="options-popup">
 								<div className="selected-date">
 									<input type="date" className="selected-date-input" placeholder="最早回团" 
-									value={this.state.back_date_from} onChange={e=>this.setState({back_date_from: e.target.value})} />
+									value={this.state.search.back_date_from || this.state.back_date_from} onChange={e=>this.setState({back_date_from: e.target.value})} />
 									至
 									<input type="date" className="selected-date-input" placeholder="最晚回团" 
-									value={this.state.back_date_to} onChange={e=>this.setState({back_date_to: e.target.value})} />
+									value={this.state.search.back_date_to || this.state.back_date_to} onChange={e=>this.setState({back_date_to: e.target.value})} />
 								</div>
 								<div className="options-btn">
-								  <div className="options-reset" onClick={_=>this.setState({back_date_from:'',back_date_to:''})}>重置</div>
+								  <div className="options-reset" onClick={_=>this.setState({back_date_from:'',back_date_to:'',search:{back_date_from:'',back_date_to:''}})}>重置</div>
 								  <div className="options-submit" onClick={_=>this.backDateClick()}>确定</div>
 								</div>
 							</div>
@@ -268,16 +287,16 @@ class OrderPage extends Component{
 	renderToolbar(){
 		let search_cfg = {
 			key: 'Order',
-			options:[
-				{text: '订单号', search: 'id'},
-				{text: '团号', search: 'group_id'},
-				{text: '产品名称', search: 'pd_name'},
-				{text: '供应商', search: 'pd_provider'}
-			],
+			// options:[
+			// 	{text: '订单号', search: 'id'},
+			// 	{text: '团号', search: 'group_num'},
+			// 	{text: '产品名称', search: 'pd_name'},
+			// 	{text: '供应商', search: 'pd_provider'}
+			// ],
 			cb: (value, key) => {
 				let search = this.state.search
 				search['id'] = ''
-				search['group_id'] = ''
+				search['group_num'] = ''
 				search['pd_name'] = ''
 				search['pd_provider'] = ''
 				search[key] = value
@@ -285,8 +304,10 @@ class OrderPage extends Component{
 				reload(this)
 			}	
 		}
-		return <Search value={this.state.search.id || this.state.search.group_id || this.state.search.pd_name || this.state.search.pd_provider} 
-						clear={e=>{e.stopPropagation();this.setState({search:{id: '', limit: 10, mod: this.mod,id:'',group_id:'',pd_name:'',pd_provider:''}},_=>reload(this))}} 
+		return <Search value={this.state.search.id || this.state.search.group_num || this.state.search.pd_name || this.state.search.pd_provider} 
+						open_search_key={_=>this.setState({open_search_key:true})}
+						cur_select={this.state.cur_select_search_filter || ''}
+						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,id: '', limit: 10, mod: this.mod,id:'',group_id:'',pd_name:'',pd_provider:''}},_=>reload(this))}} 
 						param={search_cfg} />
 	}
 
@@ -297,7 +318,21 @@ class OrderPage extends Component{
 				onInfiniteScroll={done=>loadMore(this,done)} 
 				onShow={_=>this.onShow()}
 				renderFixed={_=>this.renderFixed()}>
-			<div style={{height:this.props.s.user.sid?"50px":"0px"}} ref="anchor"></div>
+			<div style={{width:'100px',height:this.props.s.user.sid?"50px":"0px"}} ref="anchor"></div>
+			<Popover
+			  animation = "none"
+			  direction = "down"
+			  isOpen={this.state.open_search_key}
+			  onCancel={() => this.setState({open_search_key: false})}
+			  getTarget={() => this.refs.anchor}
+			>
+			    <div className="dialog-select-box">
+			      <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '订单号', search: 'id'}})}>订单号</div>
+			      <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '团号', search: 'group_num'}})}>团号</div>
+			      <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '产品名称', search: 'pd_name'}})}>产品名称</div>
+			      <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '供应商', search: 'pd_provider'}})}>供应商</div>
+			    </div>
+			</Popover>
 		    {
 		    	this.props.s.user.sid && this.state.has_auth && 
 	    		<Fragment>

@@ -40,6 +40,9 @@ class HomePage extends Component{
 				pd_name: ''
 			},
 			data:[],
+
+			open_search_key: false,
+			cur_select_search_filter: {text:'产品名称', search:'pd_name'}
 		};
 		this.url = '/api/App/app_home_data';
 		AppCore.HomePage = this;
@@ -85,7 +88,9 @@ class HomePage extends Component{
 		if(AppCore.TabPage){
 			AppCore.TabPage.setState({index:2});
 			if(AppCore.GroupPage){
-				let search = {...this.state.search, pd_name:value,limit: 10}
+				let search = { ...AppCore.GroupPage.state.search,
+					pd_name: value,
+				}
 
 				AppCore.GroupPage.setState({search:search});
 				reload(AppCore.GroupPage);
@@ -145,13 +150,14 @@ class HomePage extends Component{
 
 	renderToolbar(){
 		let search_cfg = {
-			key: 'Group',
-			options:[{text: '产品名称', search: 'pd_name'}],
+			key: 'Home',
 			cb: value =>{
 				this.Serach(value);
 			}
 		}
 		return <Search value={this.state.search.pd_name} 
+					   open_search_key={_=>this.setState({open_search_key:true})}
+					   cur_select={this.state.cur_select_search_filter || ''}
 					   clear={e=>{e.stopPropagation();this.setState({search:{pd_name: '', limit: 10}},_=>reload(this))}} 
 					   param={search_cfg} />
 	}

@@ -237,7 +237,7 @@ export function encUrl(p) {
     if (!p) {
         return '';
     }
-    return Object.keys(p).filter(k=>p[k]!==undefined)
+    return Object.keys(p).filter(k=>p[k]!==undefined&&p[k]!=='')
         .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(p[k]))
         .join('&');
 }

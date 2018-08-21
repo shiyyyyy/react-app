@@ -51,7 +51,6 @@ export default class SearchPage extends Component{
 		}
 		
 		window.localStorage.setItem(this.key_hitory+'History',JSON.stringify(history))
-
 		this.props.p.cb(value, this.props.p.key_type)
 		
 		goBack()

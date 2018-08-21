@@ -294,7 +294,24 @@
     font-size: .373333rem;
 }
 
+/* ================== 搜索框 弹出框 ================== */
+.dialog-select-box{
+    padding: 0 .746667rem;
+    text-align: center;
+}
+.dialog-select-item{
+    line-height: .96rem;
+    border-bottom: 1px solid #eee;
+    color: #666;
+}
 
+/* 搜索框 弹出框 位置定位 */
+.dialog-select-position{
+    position: fixed;
+    left: .8rem;
+    top: 0;
+    width: 2.666667rem;
+}
 
 
 /*               --------  公告  ---------                 */

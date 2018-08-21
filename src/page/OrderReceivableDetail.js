@@ -13,7 +13,10 @@ class OrderReceivableDetail extends Component{
 		
 		this.action = props.p.action;
 		this.pre_view = this.props.p.view;
-		let state  = {isAddRow:false,isEditRow:false,data:{},block_cfg:{}};
+		let state  = {
+			isAddRow:false,isEditRow:false,data:{row:{}},block_cfg:{},
+			isAdd: false, isEdit: false,
+		};
 		let cfg = AppMeta.actions[this.action];
 		cfg.block.forEach(function(block){
 			state.data[block] = props.p.data[block]?props.p.data[block]:[];

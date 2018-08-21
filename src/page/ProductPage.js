@@ -32,7 +32,8 @@ class ProductPageRender extends Component{
 			open_supplier: false,
 			open_op: false,
 			picIdx: 0,
-			selected_group:props.p.group_id,
+			// selected_group:props.p.group_id,
+			selected_group:'',
 			numPages:1,
 			curPage:1,
 		};

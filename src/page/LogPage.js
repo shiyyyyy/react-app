@@ -38,7 +38,8 @@ export default class LogPage extends Component{
 		      	  </div>
 			  	</ons-toolbar>
 		        <Popover
-		        	direction="down"
+								animation = "none"
+		        	  direction="down"
 		            isOpen={this.state.open_menu}
 		            onCancel={_=>this.setState({open_menu:false})}
 		            isCancelable={true}
