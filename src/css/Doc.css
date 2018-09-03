@@ -49,6 +49,11 @@
     width: 100%;
     display: inline-block;
 }
+.cell-right select{
+    background-color:transparent; 
+    border-color:transparent;
+    -webkit-appearance: none;
+}
 
 /* 结算信息 */
 .cell-left-5{

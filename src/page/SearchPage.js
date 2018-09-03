@@ -34,10 +34,13 @@ export default class SearchPage extends Component{
 		this.setState({search:''})
 	}
 
-	clickSearch(val){
-		// 有val的是点击历史记录,用val,没有val是点击搜索,用this.state.search
-		let value = val || this.state.search
-		// 搜索
+	clickHistory(val){
+		this.setState({search: val})
+	}
+
+	clickSearch(){
+		let value = this.state.search
+
 		if(value == '') return;
 		// 添加localstorage 
 		let storage = window.localStorage;
@@ -95,7 +98,7 @@ export default class SearchPage extends Component{
 				<div className="model-box-bald-history">
 					{this.state.history.map( item =>
 					<div className="model-box-bald-history-item" key={item}
-					onClick={_=>this.clickSearch(item)}>{item}</div>					
+					onClick={_=>this.clickHistory(item)}>{item}</div>					
 					)}
 				</div>
 			</div>

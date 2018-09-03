@@ -3,7 +3,7 @@ import React, { Component,Fragment } from 'react';
 import { Input, Icon,Dialog } from 'react-onsenui';
 import {Carousel,CarouselItem,Page} from 'react-onsenui';
 
-import {AppCore,share,loadIfEmpty,testing,log,goTo,Enum,goBack} from '../util/core';
+import {plugin,hasPlugin,AppCore,share,loadIfEmpty,testing,log,goTo,Enum,goBack} from '../util/core';
 
 import '../css/ProductPage.css'
 import {shareWith,nonBlockLoading,info,ErrorBoundary,error,OpDialog, SupplierDialog} from '../util/com';
@@ -40,6 +40,12 @@ class ProductPageRender extends Component{
 		this.url = '/api/App/product/'+props.p.pd_id;
 	}
 
+	downloadPdf(){
+	    if(this.pdf_url && hasPlugin('cordova.InAppBrowser')){
+	        plugin('cordova.InAppBrowser').open(AppCore.HOST+'/'+this.pdf_url,'_system');
+	    }
+	}
+
 	afterLoad() {
 		let attach = this.state.data['产品详情'].attach;
 		try{
@@ -53,6 +59,7 @@ class ProductPageRender extends Component{
 			return;
 		}
 		let url = attach[attach.length-1].save_path;
+		this.pdf_url = url;
 		loadPdf(
 			AppCore.HOST+'/'+url,
 			this.refs.canvas,
@@ -199,7 +206,8 @@ class ProductPageRender extends Component{
 					this.state.data &&
 				
 				    <Fragment>
-					  	<Carousel onPostChange={e=>this.handleChange('picIdx',e)} index={this.state.picIdx} swipeable autoScroll overscrollable>
+						  <Carousel onPostChange={e=>this.handleChange('picIdx',e)} index={this.state.picIdx} 
+						  swipeable autoScroll overscrollable autoScrollRatio={0.25}>
 				      	    {
 				      	    	this.state.data['产品详情'].product_modular['产品图片'].map(
 				      	    		(item, index) => 
@@ -256,7 +264,7 @@ class ProductPageRender extends Component{
 							<div className="PDF-view" ref="pdfCt">
 								<div className="PDF-box-ctrl">
 									<div className="PDF-ctrl-left">
-										<Icon icon='md-download' />
+										<Icon icon='md-download' onClick={_=>this.downloadPdf()} />
 										<Icon icon='md-zoom-in' onClick={_=>zoomIn()} />
 										<Icon icon='md-zoom-out' onClick={_=>zoomOut()} />
 									</div>

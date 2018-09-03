@@ -339,6 +339,7 @@
     box-sizing: border-box;
     padding: .853333rem 0 0 0;
     z-index: -1;
+    position: relative;
 }
 .order-receivable-modal-info{
     
@@ -424,3 +425,39 @@
 }
 
 /*  */
+/*===================--------------------- 弹窗提示(错误提示) ---------------------====================== */
+.dialog-err-msg{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .1);
+    color: #666;
+    text-align: center;
+    z-index: 100;
+}
+.dialog-err-msg-title{
+    margin: 80px auto 0;
+    line-height: 1.173333rem;
+    width: 70%;
+    background-color: #fff;
+    border-radius: 10px 10px 0 0;
+}
+.dialog-err-msg-text{
+    margin: 0 auto;
+    line-height: 1.173333rem;
+    width: 70%;
+    font-size: .373333rem;
+    border-top: 1px solid #f4f5f8;
+    background-color: #fff;
+}
+.dialog-err-msg-btn{
+    margin: 0 auto;
+    line-height: 1.173333rem;
+    width: 70%;
+    border-top: 1px solid #f4f5f8;
+    background-color: #fff;
+    border-radius: 0 0 10px 10px;
+    color: #6FC5D8;
+}

@@ -48,6 +48,10 @@ class HomePage extends Component{
 		AppCore.HomePage = this;
 	}
 
+	afterLoad(){
+		pubInit();
+	}
+
     onShow() {
     	 this.timer && clearInterval(this.timer);
 	  	 this.timer = setInterval(_=>{
@@ -139,7 +143,7 @@ class HomePage extends Component{
 			AppCore.TabPage.setState({index:2});
 			if(AppCore.GroupPage){
 
-				let search = {limit:10};
+				let search = {limit:10,pd_nav:'1'};
 				search.dep_date_from = moment().format('YYYY-MM-DD');
 				AppCore.GroupPage.setState({search:search});
 

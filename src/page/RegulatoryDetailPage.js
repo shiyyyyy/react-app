@@ -18,6 +18,7 @@ class RegulatoryDetailPage extends Component{
 
 
 	componentDidMount() {
+        
 	}
 
 

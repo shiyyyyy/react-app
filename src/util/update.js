@@ -5,7 +5,7 @@ let update_cfg_ok;
 let update_meta;
 let fileTransfer;
 
-export function updateOnInit() {
+export function updateOnInit(sw) {
     if(!hasPlugin('chcp')){
         return;
     }
@@ -19,7 +19,11 @@ export function updateOnInit() {
           log('[chcp] configure err : '+e.code+' '+ e.description);
         } else {
             update_cfg_ok = true;
-            updateAfterInit();
+            if(sw){
+                chcpUpdate(1);
+            }else{
+                updateAfterInit();
+            }
         }
     });
 }

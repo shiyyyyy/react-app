@@ -26,6 +26,7 @@
 }
 .active-select-search-ios {
     height: 28px;
+    font-weight: 100;
     padding: 0 8px;
     display: flex;
     justify-content: space-between;
@@ -33,6 +34,7 @@
 }
 .active-select-search-Android {
     height: 36px;
+    font-weight: 100;
     padding: 0 8px;
     display: flex;
     justify-content: space-between;
@@ -81,7 +83,8 @@
     font-size: .426667rem;
     color: #666;
     position: absolute;
-    right: .266667rem;
+    right: 0;
+    width: 1.066667rem;
 }
 .search-right{
     width: 1.066667rem;

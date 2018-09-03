@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import {Page,Icon} from 'react-onsenui';
 
-import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit} from '../util/core';
+import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit,post,get_req_data,reload} from '../util/core';
 import {pullHook,loginToPlay,OpDialog, SupplierDialog,ErrorBoundary,info,footer,nonBlockLoading,confirm} from '../util/com';
 import { connect } from 'react-redux';
 
@@ -124,16 +124,24 @@ class OrderEditPageRender extends Component{
 		let data = this.state.data;
 		data['订单详情'][0]['assitant_id'] = data['接单人'].id;
 		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
-		data.real_sign_up = true;
 		this.setState({data:data});
 		trigger('加载等待');
-	    submit(this,this.submitDone.bind(this));
+
+		let cfg = AppMeta.actions[this.action];
+		let param = get_req_data(cfg.submit.data,data);
+		param.real_sign_up = true;
+		post(cfg.submit.url, param).then(
+	        r => {
+	            this.submitDone && this.submitDone(r);
+	        }
+	    );
 	}	
 
 	submitDone(r){
 		info(r.message).then(
 			_=>{
 				goBack();
+				reload(AppCore.OrderPage);
 			}
 		)
 	}

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 
 import { Popover } from 'react-onsenui';
 
-import {updateAfterInit} from '../util/update';
+import {updateOnInit,updateAfterInit} from '../util/update';
+
+import {AppCore} from '../util/core';
 
 export default class LogPage extends Component{
 	constructor(props) {
@@ -15,6 +17,20 @@ export default class LogPage extends Component{
 
 	updateApp(){
 		updateAfterInit(true);
+		this.setState({open_menu:false});
+	}
+
+	switchApp(app){
+		switch(app){
+			case 'cj':
+				AppCore.UPDATE_META_URL = 'http://oss.tongyeju.com/app/cj-app/chcp.json';
+				break;
+			case 'zs':
+				AppCore.UPDATE_META_URL = 'http://oss.tongyeju.com/app/zs-app/chcp.json';
+				break;
+		}
+		
+		updateOnInit('switch');
 		this.setState({open_menu:false});
 	}
 
@@ -49,8 +65,8 @@ export default class LogPage extends Component{
 			        <ons-list-item tappable onClick={_=>this.updateApp()}>
 			          <div className="center">强制升级</div>
 			        </ons-list-item>
-			        <ons-list-item tappable onClick={_=>{}}>
-			          <div className="center">自定义分享</div>
+			        <ons-list-item tappable onClick={_=>this.switchApp('cj')}>
+			          <div className="center">切至批发</div>
 			        </ons-list-item>
 			        <ons-list-item tappable onClick={_=>this.clearLog()}>
 			          <div className="center">清空日志</div>

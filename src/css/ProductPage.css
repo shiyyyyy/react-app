@@ -101,6 +101,7 @@
     padding: 0 .533333rem;
     margin: .213333rem 0;
     overflow-x: hidden;
+    user-select: text;
 }
 
 .tour-detail-title{

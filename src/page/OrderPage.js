@@ -192,12 +192,9 @@ class OrderPage extends Component{
 	// 
 
 	renderFixed(){
-		// if(!this.refs.anchor){
-		// 	return;
-		// }
 		
 		if(hasPlugin('device') && AppCore.os==='ios'){
-			this.tbHeight = 64;//this.tbHeight || this.refs.anchor.parentElement.getBoundingClientRect().top;
+			this.tbHeight = 64;
 		}else{
 			this.tbHeight = (AppCore.os==='ios'?44:56);
 		}
@@ -242,7 +239,7 @@ class OrderPage extends Component{
 									value={this.state.search.dep_date_to || this.state.dep_date_to} onChange={e=>this.setState({dep_date_to: e.target.value})} />
 								</div>
 								<div className="options-btn">
-								  <div className="options-reset" onClick={_=>this.setState({dep_date_from:'',dep_date_to:'',search:{dep_date_from:'',dep_date_to:''}})}>重置</div>
+								  <div className="options-reset" onClick={_=>this.setState({dep_date_from:'',dep_date_to:'',search:{...this.state.search,dep_date_from:'',dep_date_to:''}})}>重置</div>
 								  <div className="options-submit" onClick={_=>this.depDateClick()}>确定</div>
 								</div>
 							</div>
@@ -259,7 +256,7 @@ class OrderPage extends Component{
 									value={this.state.search.back_date_to || this.state.back_date_to} onChange={e=>this.setState({back_date_to: e.target.value})} />
 								</div>
 								<div className="options-btn">
-								  <div className="options-reset" onClick={_=>this.setState({back_date_from:'',back_date_to:'',search:{back_date_from:'',back_date_to:''}})}>重置</div>
+								  <div className="options-reset" onClick={_=>this.setState({back_date_from:'',back_date_to:'',search:{...this.state.search,back_date_from:'',back_date_to:''}})}>重置</div>
 								  <div className="options-submit" onClick={_=>this.backDateClick()}>确定</div>
 								</div>
 							</div>
@@ -274,7 +271,7 @@ class OrderPage extends Component{
 							)}
 						</div>
 						<div className="options-btn" style={{backgroundColor: '#fff'}}>
-						  <div className="options-reset" onClick={_=>this.setState({cur_state:'', search:{state: ''}})}>重置</div>
+						  <div className="options-reset" onClick={_=>this.setState({cur_state:'', search:{...this.state.search,state: ''}})}>重置</div>
 						  <div className="options-submit" onClick={_=>this.orderStateSubmit()}>确定</div>
 						</div>
 					</Fragment>
@@ -308,7 +305,7 @@ class OrderPage extends Component{
 						open_search_key={_=>this.setState({open_search_key:true})}
 						cur_select={this.state.cur_select_search_filter || ''}
 						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,id: '', limit: 10, mod: this.mod,id:'',group_id:'',pd_name:'',pd_provider:''}},_=>reload(this))}} 
-						param={search_cfg} />
+						param={search_cfg} set_anchor={anchor=>this.search_anchor=anchor} />
 	}
 
 	render(){
@@ -318,13 +315,13 @@ class OrderPage extends Component{
 				onInfiniteScroll={done=>loadMore(this,done)} 
 				onShow={_=>this.onShow()}
 				renderFixed={_=>this.renderFixed()}>
-			<div style={{width:'100px',height:this.props.s.user.sid?"50px":"0px"}} ref="anchor"></div>
+			<div style={{height:this.props.s.user.sid?"50px":"0px"}} ></div>
 			<Popover
 			  animation = "none"
 			  direction = "down"
 			  isOpen={this.state.open_search_key}
 			  onCancel={() => this.setState({open_search_key: false})}
-			  getTarget={() => this.refs.anchor}
+			  getTarget={() => this.search_anchor}
 			>
 			    <div className="dialog-select-box">
 			      <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '订单号', search: 'id'}})}>订单号</div>

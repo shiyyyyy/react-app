@@ -32,6 +32,8 @@ class OrderSettleableDetail extends Component{
 		});
 		state['group_price_config'] = price_config;
 		state['price_type'] = -1;
+
+		state['err_msg'] = false
 		this.state = state;
 	}
 
@@ -99,15 +101,13 @@ class OrderSettleableDetail extends Component{
 	addGroupFeeDone(){
 		let price_type = this.state.price_type;
 		if(price_type<0){
-			error('团费类型');
+			this.setState({err_msg: true, err_text: '请选择价格类型'})
      		return ;
 		}
 		let data = this.state.data;
 		let row = data['row'];
 		if(!row['num_of_people']&&row['num_of_people']<=0){
-			this.setState({isAdd:false});
-			this.setState({AddBlock:''});
-			error('请填写人数');
+			this.setState({ err_msg: true, err_text: '请填写人数' })
 			return;
 		}
 		
@@ -124,6 +124,10 @@ class OrderSettleableDetail extends Component{
 	addRowDone(block){
 		let data = this.state.data;
 		let row = data['row'];
+		if(!row.settle_item_id){
+			this.setState({err_msg: true, err_text: '请选择结算项目'})
+			return
+		}
 		row['total'] = row.unit_price * row.num_of_people
 
 		data[block].push(row);
@@ -146,7 +150,7 @@ class OrderSettleableDetail extends Component{
 		}else if(block === '其他费用'){
 			this.setState({isAddOther:false});
 		}
-		this.setState({AddBlock:''});
+		this.setState({AddBlock:'',err_msg: false});
 		this.setState({data:data});
 	}
 	editRow(item,i,block){
@@ -185,11 +189,17 @@ class OrderSettleableDetail extends Component{
 		let data = this.state.data;
 		if(field === 'price_type'){
 			this.setState({price_type: value});
-			let price_type_config = this.state.group_price_config[value];
-			data['row']['price_type'] = value;
-			data['row']['price_type_comment'] = price_type_config['comment'];
-			data['row']['unit_price'] = price_type_config['peer_price'];
-			data['row']['total'] = data['row']['unit_price'] * (data['row']['num_of_people']||0);
+			if (value >= 0){
+				let price_type_config = this.state.group_price_config[value];
+				console.log(price_type_config)
+				data['row']['price_type'] = value;
+				data['row']['price_type_comment'] = price_type_config['comment'] || '';
+				data['row']['unit_price'] = price_type_config['peer_price'];
+				data['row']['total'] = data['row']['unit_price'] * (data['row']['num_of_people'] || 0);
+			}else{
+				data['row']['total'] =  0;
+				data['row']['price_type_comment'] = ''
+			}
 		}else{
 			data['row'][field] = value;
 		}
@@ -199,14 +209,14 @@ class OrderSettleableDetail extends Component{
 
 	EditGroupFeeDone(index){
 		let price_type = this.state.price_type;
-		if(price_type<0){
-			error('团费类型');
+		if (price_type < 0){
+			this.setState({err_msg: true,err_text: '请填写价格类型'})
      		return ;
 		}
 		let data = this.state.data;
 		let row = data['row'];
 		if(!row['num_of_people']&&row['num_of_people']<=0){
-			error('请填写人数');
+			this.setState({ err_msg: true, err_text: '请填写人数' })
 			return;
 		}
 		let price_type_config = this.state['group_price_config'][price_type];
@@ -228,6 +238,10 @@ class OrderSettleableDetail extends Component{
 
 	EditRowDone(index){
 		let data = this.state.data;
+		if(!data['row'].settle_item_id){
+			this.setState({ err_msg: true, err_text: '请选择结算项目' })
+			return
+		}
 
 		data['其他费用'][index].num_of_people = data['row'].num_of_people || '';
 		data['其他费用'][index].settle_item_id = data['row'].settle_item_id || '';
@@ -243,7 +257,7 @@ class OrderSettleableDetail extends Component{
 	CancelEditRow(block){
 		let data = this.state.data;
 		data['row'] = {};
-		this.setState({isEdit:false});
+		this.setState({isEdit:false,err_msg: false});
 		this.setState({EditBlock:''});
 		this.setState({data:data});
 	}
@@ -261,7 +275,7 @@ class OrderSettleableDetail extends Component{
 		if(rq_field){
             error('缺少'+rq_field);
             return;
-        }
+		}
 		let acc_item = {'参团费用':this.state.data['参团费用'],'其他费用':this.state.data['其他费用']};
 
         let data = this.pre_view.state.data;
@@ -274,10 +288,11 @@ class OrderSettleableDetail extends Component{
         	settleable += +(item.unit_price * item.num_of_people);
 		});
 
-		data['订单应转'][0] = {acc_item:acc_item,settleable:settleable,settled:data['订单应转'][0]['settled'],settle_diff:(settleable - data['订单应转'][0]['settled'])
-								,'settle_obj_id':data['订单应转'][0]['settle_obj_id']};
-
-
+		data['订单应转'][0] = data['订单应转'][0] || {};
+		data['订单应转'][0]['acc_item'] = acc_item;
+		data['订单应转'][0]['settled'] = data['订单应转'][0]['settled'] || 0;
+		data['订单应转'][0]['settle_diff'] = settleable - data['订单应转'][0]['settled'];
+		data['订单应转'][0]['settle_obj_id'] = data['订单应转'][0]['settle_obj_id'];
 
 		let receivable =(data['订单应收']&&data['订单应收'].length>0)?data['订单应收'][0]['receivable']:0;
 		let profit = Math.round((receivable - settleable)*100)/100;
@@ -458,6 +473,13 @@ class OrderSettleableDetail extends Component{
     				          <span className="order-receivable-modal-btn-cancel" onClick={_=>this.CancelAddRow('其他费用')}>取消</span>
     				          <span className="order-receivable-modal-btn-submit" onClick={_=>this.addRowDone('其他费用')}>确定</span>
     				        </div>
+							{this.state.err_msg &&
+							<div className="dialog-err-msg">
+								<div className="dialog-err-msg-title">错误提示</div>
+								<div className="dialog-err-msg-text">{this.state.err_text}</div>
+								<div className="dialog-err-msg-btn" onClick={_ => this.setState({ err_msg: false })}>确定</div>
+							</div>
+							}
     				    </div>
     				</Dialog>
 				}
@@ -474,7 +496,7 @@ class OrderSettleableDetail extends Component{
                 			    <span className="order-receivable-modal-info-item-left">价格类型:</span>
                 			    <select className="order-receivable-modal-info-item-right-select"
                 			     onChange={e => this.editField('price_type',e.target.value)} >
-                			      <option value = ''>请选择</option>
+                			      <option value = {-1}>请选择</option>
                 			      {
                 			        this.state.group_price_config.map( (item,i) => 
                 			          <option  key = {i} value = {i}>{(item.price_type) + "  ￥" + (item.peer_price)}</option>
@@ -509,6 +531,13 @@ class OrderSettleableDetail extends Component{
               				<div className="order-receivable-modal-btn-submit" 
               				onClick={_=>this.addGroupFeeDone()}>确定</div>
             			</div>
+						{this.state.err_msg &&
+						<div className="dialog-err-msg">
+							<div className="dialog-err-msg-title">错误提示</div>
+							<div className="dialog-err-msg-text">{this.state.err_text}</div>
+							<div className="dialog-err-msg-btn" onClick={_ => this.setState({ err_msg: false })}>确定</div>
+						</div>
+						}
         			</div>
    				 	</Dialog>
 				}
@@ -560,6 +589,13 @@ class OrderSettleableDetail extends Component{
     			          <div className="order-receivable-modal-btn-submit" 
     			          onClick={_=>this.EditRowDone(this.state.EditIndex)}>确定</div>
     			        </div>
+						{this.state.err_msg &&
+						<div className="dialog-err-msg">
+							<div className="dialog-err-msg-title">错误提示</div>
+							<div className="dialog-err-msg-text">{this.state.err_text}</div>
+							<div className="dialog-err-msg-btn" onClick={_ => this.setState({ err_msg: false })}>确定</div>
+						</div>
+						}
     			    </div>
     			</Dialog>
 				}
@@ -577,7 +613,7 @@ class OrderSettleableDetail extends Component{
                 			    <span className="order-receivable-modal-info-item-left">价格类型:</span>
                 			    <select className="order-receivable-modal-info-item-right-select"
                 			     onChange={e => this.editField('price_type', e.target.value)} value = {this.state.price_type}>
-                			      <option value = ''>请选择</option>
+                			      <option value = {-1}>请选择</option>
                 			      {
                 			        this.state.group_price_config.map( (item,i) => 
                 			          <option  key = {i} value = {i} selected={this.state.data.row.cur_type-0 === i}
@@ -612,6 +648,13 @@ class OrderSettleableDetail extends Component{
               				<div className="order-receivable-modal-btn-submit" 
               				onClick={_=>this.EditGroupFeeDone(this.state.EditIndex)}>确定</div>
             			</div>
+						{this.state.err_msg  &&
+						<div className="dialog-err-msg">
+							<div className="dialog-err-msg-title">错误提示</div>
+							<div className="dialog-err-msg-text">{this.state.err_text}</div>
+							<div className="dialog-err-msg-btn" onClick={_=>this.setState({err_msg: false})}>确定</div>
+						</div>
+						}
         			</div>
    				 	</Dialog>
 					</div>

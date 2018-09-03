@@ -27,6 +27,8 @@ class GroupPage extends Component{
 			pd_nav:'',
 			pd_tag_id: '',
 			pd_subtag_id: '',
+			flag_tag: false,
+			flag_subtag: false,
 			
 			has_auth:false,
 			pd_tag_type:'PdTag',
@@ -61,10 +63,9 @@ class GroupPage extends Component{
 	            break;
 	    }
 		// this.setState({search:{...this.state.search,pd_nav:i,pd_tag_id:undefined,pd_subtag_id:undefined},pd_tag_type:pd_tag_type});
-		this.setState({pd_nav:i,pd_tag_id:'',pd_subtag_id:'',pd_tag_type:pd_tag_type});
+		this.setState({ pd_nav: i, pd_tag_id: '', pd_subtag_id: '', pd_tag_type: pd_tag_type, flag_tag: true, flag_subtag: false});
 	}
 	tagClick(i){
-
 		let pd_tag_type = this.state.pd_tag_type;
 		let n_1 = 'PdSubTagBelong';
 		let pd_sub_tag_type = 'PdSubTag';
@@ -84,10 +85,10 @@ class GroupPage extends Component{
 		}
 		if(i){
 			// this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
-			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,pd_tag_id:i,pd_subtag_id:undefined});
+			this.setState({ n_1: n_1, pd_sub_tag_type: pd_sub_tag_type, pd_tag_id: i, pd_subtag_id: '', flag_tag: false});
 		}else{
 			// this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,open_filter:'',search:{...this.state.search,pd_tag_id:i,pd_subtag_id:undefined}});
-			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,pd_tag_id:i,pd_subtag_id:undefined});
+			this.setState({n_1:n_1,pd_sub_tag_type:pd_sub_tag_type,pd_tag_id:'',pd_subtag_id:'',flag_tag:true});
 			// reload(this);
 		}
 		
@@ -95,7 +96,11 @@ class GroupPage extends Component{
 	subTagClick(i){
 		// this.setState({open_filter:'',search:{...this.state.search,pd_subtag_id:i}});
 		// reload(this);
-		this.setState({pd_subtag_id:i});
+		if(i){
+			this.setState({ pd_subtag_id: i, flag_subtag: false});
+		}else{
+			this.setState({pd_subtag_id:'',flag_subtag:true});
+		}
 	}
 
 	tagSubmit(){
@@ -103,10 +108,11 @@ class GroupPage extends Component{
 			open_filter:'',
 			search:{
 			...this.state.search,
-			pd_nav: this.state.pd_nav,
-			pd_tag_id: this.state.pd_tag_id,
-			pd_subtag_id: this.state.pd_subtag_id,
-		}})
+			pd_nav: this.state.pd_nav || this.state.search.pd_nav,
+			pd_tag_id: this.state.pd_tag_id || (this.state.flag_tag?'':this.state.search.pd_tag_id),
+			pd_subtag_id: this.state.flag_tag ?'':(this.state.pd_subtag_id || (this.state.flag_subtag?'':this.state.search.pd_subtag_id)),
+		}
+		}, _ => this.setState({ pd_nav: '', pd_tag_id: '', pd_subtag_id: '', flag_tag: this.state.flag_tag, flag_subtag: this.state.flag_subtag}))
 		reload(this)
 	}
 	clearTag(){
@@ -114,6 +120,8 @@ class GroupPage extends Component{
 			pd_nav: '',
 			pd_tag_id: '',
 			pd_subtag_id: '',
+			flag_tag: false,
+			flag_subtag: false,
 			search:{
 			...this.state.search,
 			pd_nav: '',
@@ -142,7 +150,6 @@ class GroupPage extends Component{
 	}
 	themeClick(i){
 		this.setState({dialog_theme: i});
-		reload(this);
 	}
 
 	themeSubmit(){
@@ -158,6 +165,8 @@ class GroupPage extends Component{
 			pd_nav:'',
 			pd_tag_id:'',
 			pd_subtag_id:'',
+			flag_tag: false,
+			flag_subtag: false,
 			dialog_city: '',
 			dialog_theme: '',
 			dep_date_from:'',
@@ -201,12 +210,9 @@ class GroupPage extends Component{
 	// ===============
 
 	renderFixed(){
-		// if(!this.refs.anchor){
-		// 	return;
-		// }
 		
 		if(hasPlugin('device') && AppCore.os==='ios'){
-			this.tbHeight = 64;//this.tbHeight || this.refs.anchor.parentElement.getBoundingClientRect().top;
+			this.tbHeight = 64;
 		}else{
 			this.tbHeight = (AppCore.os==='ios'?44:56);
 		}
@@ -262,29 +268,29 @@ class GroupPage extends Component{
 							</ul>
 							<ul className="select-big select-item">
 								<li onClick={_=>this.tagClick(undefined)}
-									className={(this.state.pd_tag_id || this.state.search.pd_tag_id) ? 'select-item-main' : 'active-select-item'} >
+									className={!(this.state.pd_tag_id || (this.state.flag_tag?false:this.state.search.pd_tag_id)) ? 'active-select-item':'select-item-main'} >
 									全部
 								</li>
 							{
 								Object.keys(Enum[this.state.pd_tag_type]).map(i=>
 									<li onClick={_=>this.tagClick(i)} key={i} 
-										className={i == (this.state.pd_tag_id || this.state.search.pd_tag_id) ? 'active-select-item' : 'select-item-main'}>
+										className={i == (this.state.pd_tag_id || (this.state.flag_tag?false:this.state.search.pd_tag_id)) ? 'active-select-item' : 'select-item-main'}>
 										{Enum[this.state.pd_tag_type][i]}
 									</li>
 								)
 							}
 							</ul>
 							{
-								this.state.pd_tag_id && 
+								(this.state.pd_tag_id || (this.state.flag_tag ? false : this.state.search.pd_tag_id)) &&
 									<ul className="select-sma select-item">
 									<li onClick={_=>this.subTagClick(undefined)}
-										className={(this.state.pd_subtag_id || this.state.search.pd_subtag_id) ? 'select-item-main' : 'active-select-item'} >
+										className={!(this.state.pd_subtag_id || (this.state.flag_subtag?false:this.state.search.pd_subtag_id)) ? 'active-select-item':'select-item-main'} >
 										全部
 									</li>
 									{
-										Object.keys(Enum[this.state.pd_sub_tag_type]).filter(i=>Enum[this.state.n_1][i]==this.state.pd_tag_id).map(i=>
+										Object.keys(Enum[this.state.pd_sub_tag_type]).filter(i=>Enum[this.state.n_1][i]==(this.state.pd_tag_id || this.state.search.pd_tag_id)).map(i=>
 											<li onClick={_=>this.subTagClick(i)} key={i}
-												className={i == (this.state.pd_subtag_id || this.state.search.pd_subtag_id) ? 'active-select-item' : 'select-item-main'}>
+												className={i == (this.state.pd_subtag_id || (this.state.flag_subtag?false:this.state.search.pd_subtag_id))? 'active-select-item' : 'select-item-main'}>
 												{Enum[this.state.pd_sub_tag_type][i]}
 											</li>
 										)
@@ -311,7 +317,7 @@ class GroupPage extends Component{
 								value={this.state.search.dep_date_to || this.state.dep_date_to} onChange={e=>this.setState({dep_date_to: e.target.value})} />
 							</div>
 							<div className="options-btn">
-							  <div className="options-reset" onClick={_=>this.setState({dep_date_from:'',dep_date_to:'',search:{dep_date_from:'',dep_date_to:''}})}>重置</div>
+							  <div className="options-reset" onClick={_=>this.setState({dep_date_from:'',dep_date_to:'',search:{...this.state.search,dep_date_from:'',dep_date_to:''}})}>重置</div>
 							  <div className="options-submit" onClick={_=>this.depDateClick()}>确定</div>
 							</div>
 						</div>
@@ -331,7 +337,7 @@ class GroupPage extends Component{
 							</div>
 						</div>	
 						<div className="options-btn" style={{backgroundColor: '#fff'}}>
-						  <div className="options-reset" onClick={_=>this.setState({dialog_city:'',search:{dep_city_id:''}})}>重置</div>
+						  <div className="options-reset" onClick={_=>this.setState({dialog_city:'',search:{...this.state.search,dep_city_id:''}})}>重置</div>
 						  <div className="options-submit" onClick={_=>this.citySubmit()}>确定</div>
 						</div>
 					</Fragment>
@@ -350,7 +356,7 @@ class GroupPage extends Component{
 							</div>
 						</div>	
 						<div className="options-btn" style={{backgroundColor: '#fff'}}>
-						  <div className="options-reset" onClick={_=>this.setState({dialog_theme:'', search:{theme_id: ''}})}>重置</div>
+						  <div className="options-reset" onClick={_=>this.setState({dialog_theme:'', search:{...this.state.search, theme_id: ''}})}>重置</div>
 						  <div className="options-submit" onClick={_=>this.themeSubmit()}>确定</div>
 						</div>
 					</Fragment>
@@ -376,7 +382,7 @@ class GroupPage extends Component{
 						open_search_key={_=>this.setState({open_search_key:true})}
 						cur_select={this.state.cur_select_search_filter || ''}
 						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,pd_name: '',group_num:'',pd_provider:''}},_=>reload(this))}} 
-						param={search_cfg} />
+						param={search_cfg} set_anchor={anchor=>this.search_anchor=anchor} />
 	}
 
 	render(){
@@ -386,13 +392,13 @@ class GroupPage extends Component{
 				onInfiniteScroll={done=>loadMore(this,done)} 
 				onShow={_=>this.onShow()}
 				renderFixed={_=>this.renderFixed()}>
-				<div style={{width:'100px',height:this.props.s.user.sid?"50px":"0px"}} ref="anchor"></div>
+				<div style={{height:this.props.s.user.sid?"50px":"0px"}} ></div>
 			    <Popover
 				  animation = "none"
 				  direction = "down"
 			      isOpen={this.state.open_search_key}
 			      onCancel={() => this.setState({open_search_key: false})}
-			      getTarget={() => this.refs.anchor}
+			      getTarget={() => this.search_anchor}
 			    >
 			        <div className="dialog-select-box">
 			          <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '产品名称', search: 'pd_name'}})}>产品名称</div>

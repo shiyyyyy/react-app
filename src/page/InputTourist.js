@@ -4,7 +4,7 @@ import {Page,Icon} from 'react-onsenui';
 import {log,AppCore,AppMeta,loadIfEmpty,goTo,Enum,goBack} from '../util/core';
 import {info} from '../util/com';
 
-export default class InputTourist extends Component{
+export default class InputTourist extends Component {
 
 	constructor(props) {
 		super(props);
@@ -32,7 +32,7 @@ export default class InputTourist extends Component{
 		if(this.item.name){
 			this.setState({
 				name: this.item.name || '',
-				gender: this.item.gender >= 0 ? this.item.gender : 0,
+				gender: this.item.gender >= 0 ? this.item.gender : '0',
 				birthday: this.item.birthday || '',
 				certificate_type: this.item.certificate_type || '',
 				certificate_num: this.item.certificate_num || '',
@@ -95,13 +95,13 @@ export default class InputTourist extends Component{
                         <div className="doc-main-cell">
 					    	<span className="cell-left-5">游客性别:</span>
 							<span className="cell-right">
-								<span onClick={e=>{if(this.check){return}; this.setState({gender: 0} )}}>
-								男<Icon className={(this.state.gender === 0 ? "hide":"")+" off-icon" } icon="md-circle-o" />
-								  <Icon className={(this.state.gender === 0 ? "":"hide")+" on-icon" } icon="md-dot-circle-alt" />
+								<span onClick={e=>{if(this.check){return}; this.setState({gender: '0'} )}}>
+								男<Icon className={(this.state.gender == '0' ? "hide":"")+" off-icon" } icon="md-circle-o" />
+								  <Icon className={(this.state.gender == '0' ? "":"hide")+" on-icon" } icon="md-dot-circle-alt" />
 								</span>
-								<span onClick={e=>{if(this.check){return}; this.setState({gender:1}) }}>
-								女<Icon className={(this.state.gender === 0 ? "":"hide")+" off-icon" } icon="md-circle-o" />
-								  <Icon className={(this.state.gender === 0 ? "hide":"")+" on-icon" } icon="md-dot-circle-alt" />
+								<span onClick={e=>{if(this.check){return}; this.setState({gender:'1'}) }}>
+								女<Icon className={(this.state.gender == '0' ? "":"hide")+" off-icon" } icon="md-circle-o" />
+								  <Icon className={(this.state.gender == '0' ? "hide":"")+" on-icon" } icon="md-dot-circle-alt" />
 								</span>
 							</span>
 					    </div>
@@ -117,7 +117,7 @@ export default class InputTourist extends Component{
                                 <select onChange={e=>this.setState({certificate_type: e.target.value-0})} disabled={this.check}>
 									<option>请选择</option>
 									{Object.keys(Enum.Certificate).map( (item,i) => 
-										<option value={item} key={item} selected={ item-0 === this.state.certificate_type }>{Enum.Certificate[item]}</option>
+										<option value={item} key={item} selected={ item == this.state.certificate_type }>{Enum.Certificate[item]}</option>
 									)}
                                 </select>
                             </span>

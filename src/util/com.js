@@ -122,7 +122,14 @@ export function pullHook(view) {
         <PullHook
           thresholdHeight={800}
           onChange={ e=>view.setState({state:e.state}) }
-          onLoad={ done=>reloadSilent(view,done) } >
+          onLoad={ 
+            done=>reloadSilent(view, _=>{
+                view.afterLoad && view.afterLoad();
+                done();
+              }
+            ) 
+          } 
+        >
 
           <Icon class="pull-hook-content" 
             spin={ refreshState[view.state.state][2] } 
@@ -328,7 +335,7 @@ export class Search extends React.Component{
                       </div>
                   </div>
                 { this.props.param.key !== 'Home' && this.props.param.key !== 'Approve' &&
-                <div className="select-search"
+                <div className="select-search" ref={anchor=>this.props.set_anchor(anchor)}
                 onClick={e=>{e.stopPropagation();this.props.open_search_key();}}>
                     <div className={AppCore.os==="ios"?"active-select-search-ios":"active-select-search-Android"}>
                         {this.props.cur_select.text} &nbsp;
@@ -372,7 +379,7 @@ export class SearchLv2 extends React.Component{
                         onClick={e=>this.props.clear(e)} />
                       </div>
                   </div>
-                  <div className="select-search" style={{left: '1.466667rem'}} 
+                  <div className="select-search" style={{left: '1.466667rem'}} ref={anchor=>this.props.set_anchor(anchor)}
                   onClick={e=>{e.stopPropagation();this.props.open_search_key()}}>
                         <div className={AppCore.os==="ios"?"active-select-search-ios":"active-select-search-Android"}>
                             {this.props.cur_select.text} &nbsp;

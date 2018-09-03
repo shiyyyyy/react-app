@@ -59,7 +59,7 @@ class OrderSelectCstmPage extends Component{
 						open_search_key={_=>this.setState({open_search_key:true})}
 						cur_select={this.state.cur_select_search_filter || ''}
 						clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,full_name: '', short_name: ''}},_=>reload(this))}} 
-						param={search_cfg} />
+						param={search_cfg} set_anchor={anchor=>this.search_anchor=anchor} />
 	}
 	renderBottomToolbar() {
 		return(
@@ -106,13 +106,13 @@ class OrderSelectCstmPage extends Component{
 			onShow={_=>loadIfEmpty(this)} >
 
 				<div style={{width: '100px', height: '50px'}}></div>
-				<div className="dialog-select-position" ref="anchor" style={{height:(AppCore.os==='ios'?44:56)}}></div>
+				
 				<Popover
 				animation = "none"
 				direction = "down"
 			    isOpen={this.state.open_search_key}
 			    onCancel={() => this.setState({open_search_key: false})}
-			    getTarget={() => this.refs.anchor} >
+			    getTarget={() => this.search_anchor} >
 			    	<div className="dialog-select-box">
 			    	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'short_name', text: '客户简称'}})}>客户简称</div>
 			    	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'full_name', text: '客户全称'}})}>客户全称</div>

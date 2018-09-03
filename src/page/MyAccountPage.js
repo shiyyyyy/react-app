@@ -46,7 +46,7 @@ class MyAccountPage extends Component{
 					open_search_key={_=>this.setState({open_search_key:true})}
 					cur_select={this.state.cur_select_search_filter || ''}
 					clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,id: '', settle_amount: ''}},_=>reload(this))}} 
-					param={search_cfg} />
+					param={search_cfg} set_anchor={anchor=>this.search_anchor=anchor} />
 	}
 
 	get_doc_id(row){
@@ -116,14 +116,13 @@ class MyAccountPage extends Component{
 		    	this.props.s.user.sid && 
 	    		<Fragment>
 					<div style={{width: '100px', height: '62px'}}></div>
-					<div className="dialog-select-position" ref="anchor" style={{height:(AppCore.os==='ios'?44:56)}}></div>
 
 					<Popover
 					animation = "none"
 					direction = "down"
 			      	isOpen={this.state.open_search_key}
 			      	onCancel={() => this.setState({open_search_key: false})}
-			      	getTarget={() => this.refs.anchor}
+			      	getTarget={() => this.search_anchor}
 			    	>
 			        	<div className="dialog-select-box">
 			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{text: '单据编号', search: 'id'}})}>单据编号</div>

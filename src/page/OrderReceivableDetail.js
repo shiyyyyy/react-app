@@ -15,7 +15,7 @@ class OrderReceivableDetail extends Component{
 		this.pre_view = this.props.p.view;
 		let state  = {
 			isAddRow:false,isEditRow:false,data:{row:{}},block_cfg:{},
-			isAdd: false, isEdit: false,
+			isAdd: false, isEdit: false,err_msg:false
 		};
 		let cfg = AppMeta.actions[this.action];
 		cfg.block.forEach(function(block){
@@ -53,6 +53,10 @@ class OrderReceivableDetail extends Component{
 	addRowDone(block){
 		let data = this.state.data;
 		let row = data['row'];
+		if (!row['settle_item_id']) {
+			this.setState({ err_msg: true })
+			return;
+		}
 		row['total'] = (row.unit_price * row.num_of_people) || '';
 		data[block].push(row);
 
@@ -68,7 +72,7 @@ class OrderReceivableDetail extends Component{
 		for(var field in this.state.block_cfg[block].list){
 			data['row'][field] = '';
 		}
-		this.setState({isAdd:false});
+		this.setState({isAdd:false,err_msg: false});
 		this.setState({AddBlock:''});
 		this.setState({data:data});
 	}
@@ -97,6 +101,10 @@ class OrderReceivableDetail extends Component{
 
 	EditRowDone(index){
 		let data = this.state.data;
+		if (!data['row'].settle_item_id) {
+			this.setState({ err_msg: true })
+			return;
+		}
 
 		// for(var field in this.state.block_cfg[block].list){
 		// 	data[block][index][field] = data['row'][field]?data['row'][field]:'';
@@ -115,7 +123,7 @@ class OrderReceivableDetail extends Component{
 	CancelEditRow(block){
 		let data = this.state.data;
 		data['row'] = {};
-		this.setState({isEdit:false});
+		this.setState({isEdit:false,err_msg: false});
 		this.setState({EditBlock:''});
 		this.setState({data:data});
 	}
@@ -141,7 +149,12 @@ class OrderReceivableDetail extends Component{
 		receive_item.forEach(function(item){
 			receivable += + (item.num_of_people * item.unit_price );
 		});
-		data['订单应收'][0] = {receive_item:receive_item,receivable:receivable,received:data['订单应收'][0]['received'],receive_diff:(receivable - data['订单应收'][0]['received'])};
+		data['订单应收'][0] = data['订单应收'][0] || {};
+		data['订单应收'][0]['receive_item'] = receive_item;
+		data['订单应收'][0]['receivable'] = receivable;
+		data['订单应收'][0]['received'] = data['订单应收'][0]['received'] || 0;
+		data['订单应收'][0]['receive_diff'] = data['订单应收'][0]['receivable'] - data['订单应收'][0]['received'] ;
+
 		let settleable = (data['订单应转']&&data['订单应转'].length>0)?data['订单应转'][0]['settleable']:0;
 		let profit = Math.round((receivable - settleable)*100)/100;
 		let profit_rate = (receivable == 0) ?'NaN':(Math.round((profit/receivable)*10000)/100+'%');
@@ -283,15 +296,22 @@ class OrderReceivableDetail extends Component{
     				          <span className="order-receivable-modal-btn-cancel" onClick={_=>this.CancelAddRow('应收明细')}>取消</span>
     				          <span className="order-receivable-modal-btn-submit" onClick={_=>this.addRowDone('应收明细')}>确定</span>
     				        </div>
+							{this.state.err_msg &&
+							<div className="dialog-err-msg">
+								<div className="dialog-err-msg-title">错误提示</div>
+								<div className="dialog-err-msg-text">请选择结算项目</div>
+								<div className="dialog-err-msg-btn" onClick={_ => this.setState({ err_msg: false })}>确定</div>
+							</div>
+							}
     				    </div>
     				</Dialog>
 				}
-				{
+				{/* {
 					this.state.isEdit && this.state.EditBlock &&
 					<div>
 					 {editRowDialog(this.state.data['row'],this.state.block_cfg[this.state.EditBlock],this.state.isEdit,this.state.EditIndex,this.state.EditBlock,this.CancelEditRow.bind(this),this.setNewValue.bind(this),this.EditRowDone.bind(this))}
 					</div>
-				}
+				} */}
 				{/* ======================================应收明细 更改 dialog==================================== */}
 
 			{this.state.isEdit && this.state.EditBlock && this.state.EditBlock == '应收明细' &&
@@ -340,6 +360,13 @@ class OrderReceivableDetail extends Component{
     			          <div className="order-receivable-modal-btn-submit" 
     			          onClick={_=>this.EditRowDone(this.state.EditIndex)}>确定</div>
     			        </div>
+						{this.state.err_msg &&
+						<div className="dialog-err-msg">
+							<div className="dialog-err-msg-title">错误提示</div>
+							<div className="dialog-err-msg-text">请选择结算项目</div>
+							<div className="dialog-err-msg-btn" onClick={_ => this.setState({ err_msg: false })}>确定</div>
+						</div>
+						}
     			    </div>
     			</Dialog>
 			}

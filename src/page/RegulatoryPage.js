@@ -15,7 +15,7 @@ class RegulatoryPage extends Component{
 			state:'initial',data:[], search:{code:'', income: '', expense:''},
 		
 			open_search_key: false,
-			cur_select_search_filter: {search: 'code', text: '部门编号'},
+			cur_select_search_filter: {search: 'name', text: '部门名称'},
 		};
 		this.mod = '账户监管';
 		this.pageSize = 20;
@@ -32,18 +32,17 @@ class RegulatoryPage extends Component{
 			cb: (value, key) => {
 				let search = this.state.search
 				search['code'] = ''
-				search['income'] = ''
-				search['expense'] = ''
+				search['name'] = ''
 				search[key] = value
 				this.setState({search:search});
 				reload(this)
 			}		
 		}
-		return <SearchLv2 value={this.state.search.code || this.state.search.income || this.state.search.expense} 
+		return <SearchLv2 value={this.state.search.code || this.state.search.name} 
 					open_search_key={_=>this.setState({open_search_key:true})}
 					cur_select={this.state.cur_select_search_filter || ''}
-					clear={e=>{e.stopPropagation();this.setState({search:{...this.state.search,code: '', income: '', expense: ''}},_=>reload(this))}} 
-					param={search_cfg} />
+			clear={e => { e.stopPropagation(); this.setState({ search: { ...this.state.search, code: '', name: ''}},_=>reload(this))}} 
+					param={search_cfg} set_anchor={anchor=>this.search_anchor=anchor} />
 	}
 
 	renderFixed(){
@@ -58,7 +57,7 @@ class RegulatoryPage extends Component{
 		<div className="fixed-top-box">	
 			<div className="money-care-books-title fixed-top" style={{ top: this.tbHeight+'px', fontSize: '.32rem' }}>
                 <span className="money-care-books-title-item-4">业务部门</span>
-                <span className="money-care-books-title-item-4">收入总计</span>
+                <span className="money-care-books-title-item-4">部门代码</span>
                 <span className="money-care-books-title-item-4">支出总计</span>
                 <span className="money-care-books-title-item-4">可用余额</span>
             </div>
@@ -77,19 +76,17 @@ class RegulatoryPage extends Component{
 		    	this.props.s.user.sid && 
 	    		<Fragment>
 					<div style={{width: '100px', height: '62px'}}></div>
-					<div className="dialog-select-position" ref="anchor" style={{height:(AppCore.os==='ios'?44:56)}}></div>
 
 					<Popover
 					animation = "none"
 					direction = "down"
 			      	isOpen={this.state.open_search_key}
 			      	onCancel={() => this.setState({open_search_key: false})}
-			      	getTarget={() => this.refs.anchor}
+			      	getTarget={() => this.search_anchor}
 			    	>
 			        	<div className="dialog-select-box">
-			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'code', text: '部门编号'}})}>部门编号</div>
-			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'income', text: '收入总计'}})}>收入总计</div>
-			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'expense', text: '支出总计'}})}>支出总计</div>
+			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'name', text: '部门名称'}})}>部门名称</div>
+			        	  <div className="dialog-select-item" onClick={_=>this.setState({open_search_key:false,cur_select_search_filter:{search: 'code', text: '部门代码'}})}>部门代码</div>
 			        	</div>
 			    	</Popover>
 	    			{

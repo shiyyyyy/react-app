@@ -558,7 +558,7 @@ function get_read_param(action, cfg, data) {
     return param;
 }
 
-function get_req_data(cfg, data) {
+export function get_req_data(cfg, data) {
     if (!cfg) {
         return data;
     }
