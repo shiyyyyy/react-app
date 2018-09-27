@@ -747,7 +747,7 @@ export function record(data){
     return(
         <div className="doc-module">
             <div className="doc-title">
-				<div className="spjl">调用单据</div>
+				<div className="spjl">审批记录</div>
 			</div>
             <div className="doc-main-cell-num" style={{color: '#000', fontWeight: '700'}}><span>操作人</span><span>审批意见</span><span>审批备注</span><span>操作时间</span></div>
             {data.map((item,i) => !item.editable &&

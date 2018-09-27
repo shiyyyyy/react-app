@@ -11,8 +11,12 @@ export default class Calendar extends React.Component {
       year: now.getFullYear(),
       month: now.getMonth() + 1,
       date: now.getDate(),
+      cur_date: this.pre_view.cur_date
     }
     this.state.weeks = this.getWeeks()
+  }
+  componentWillReceiveProps(nextProps){
+    this.setState({ cur_date: nextProps.view.state.cur_date})
   }
 
 
@@ -147,32 +151,44 @@ export default class Calendar extends React.Component {
   }
   renderCell(cell){
     let dep_date = cell.year +"-"+ cell.month +"-"+ cell.date;
-    let group_i;
-    let match = this.groups.find( i => {
-      if(i.dep_date===dep_date){
-        group_i = i.id;
-        return true
-      }else{
-        return false
+    let group_i = [];
+    // let match = this.groups.find( i => {
+    //   if(i.dep_date===dep_date){
+    //     group_i = i.id;
+    //     return true
+    //   }else{
+    //     return false
+    //   }
+    // });
+    let match = this.groups.filter(i => {
+      if(i.dep_date === dep_date){
+        group_i.push(i.id)
       }
-    });
-    if(!match){
+      return i.dep_date === dep_date
+    })
+    if(match.length === 0){
       return;
     }
+    let once = match.length > 1 ? true : false
     return (
         <div onClick={_=>this.selectGroup(cell,group_i)} className='exist'>
-            <span className={this.seatClass(cell)}>余 {match.seat_surplus}</span><br />
-            <span className={this.zkClass(cell)}>￥{match.zk_price * 1 || 0}</span>
+            {/* <span className={this.seatClass(cell)}>余 {match.seat_surplus}</span><br /> */}
+            <span className={this.seatClass(cell)}>{once ? ('多选') : ('余' + match[0].seat_surplus)}</span><br />
+            <span className={this.zkClass(cell)}>￥{match[0].zk_price * 1}</span>
         </div>
     );
   }
 
   selectGroup(cell,group_i){
-    if(!group_i) return
-
-    let date = cell.year+'-'+cell.month+'-'+cell.date
-    this.setState({cur_date: date})
-    this.pre_view.setState({selected_group:group_i})
+    if(group_i.length === 0) return
+    if(group_i.length === 1){
+      let date = cell.year + '-' + cell.month + '-' + cell.date
+      // this.setState({ cur_date: date }, () => console.log(this))
+      this.pre_view.setState({ selected_group: group_i[0], cur_date: date }, () => console.log(this.pre_view))
+      
+    } else if (group_i.length > 1){
+      this.pre_view.setState({ open_MG: true, mg_groupId_arr: group_i})
+    }
   }
 
   render() {

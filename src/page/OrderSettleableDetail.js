@@ -191,7 +191,6 @@ class OrderSettleableDetail extends Component{
 			this.setState({price_type: value});
 			if (value >= 0){
 				let price_type_config = this.state.group_price_config[value];
-				console.log(price_type_config)
 				data['row']['price_type'] = value;
 				data['row']['price_type_comment'] = price_type_config['comment'] || '';
 				data['row']['unit_price'] = price_type_config['peer_price'];
@@ -263,9 +262,7 @@ class OrderSettleableDetail extends Component{
 	}
 
 	setNewValue(value,key){
-
 		let data = this.state.data;
-
 		data['row'][key] = value;
 		this.setState({data:data});
 	}

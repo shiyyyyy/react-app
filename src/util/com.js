@@ -492,6 +492,40 @@ export class OpDialog extends React.Component{
     }
 }
 
+// 一天中有多个团 弹框选择
+export class MultiGroupDialog extends React.Component{
+    constructor(props){
+        super(props)
+        this.props.MG_ctrl.groupId_arr
+    }
+    filterArr(){
+        return this.props.MG_info.filter(item => this.props.MG_ctrl.groupId_arr.indexOf(item.id) !== -1)
+    }
+    render(){
+        return (
+		<Dialog
+        animation="none" 
+		isOpen={this.props.MG_ctrl.open_MG}
+		isCancelable={true}
+		onCancel={this.props.MG_ctrl.selectCb}>
+			<div className="zs-popup">
+                <div className="popup-title">请选择</div>
+                {
+                    this.filterArr().map(item => 
+                    <div className="popup-main" key={item.id}
+                    onClick={()=> this.props.MG_ctrl.selectCb(item.id, item.dep_date)}>
+                        <span>{item.dep_date}</span>
+                        <span>余: {item.seat_surplus}</span>
+                        <span style={{ 'color': '#e43c3c' }}>￥{item.zk_price * 1}</span>
+                    </div>
+                    )
+                }
+		    </div>
+		</Dialog>
+        )
+    }
+}
+
 
 function progress({s}) {
     return (

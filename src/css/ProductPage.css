@@ -301,7 +301,23 @@
     text-decoration: none;
     display: inline-block;
 }
-
+/* 一天多团情况 样式 */
+.zs-popup .popup-title{
+    font-size: .4rem;
+    line-height: 1.173333rem;
+    border-bottom: 1px solid #66ccdd;
+}
+.zs-popup .popup-main{
+    font-size: .346667rem;
+    line-height: 1.066667rem;
+    padding: 0 .426667rem;
+    border-bottom: 1px dashed #66ccdd;
+    display: flex;
+    justify-content: space-between;
+}
+.zs-popup .popup-main:last-child{
+    margin-bottom: .533333rem;
+}
 
 /* ---------------------------- 日历 -------------------------------------- */
 /* 日历面板  */

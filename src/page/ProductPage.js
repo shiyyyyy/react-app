@@ -6,7 +6,7 @@ import {Carousel,CarouselItem,Page} from 'react-onsenui';
 import {plugin,hasPlugin,AppCore,share,loadIfEmpty,testing,log,goTo,Enum,goBack} from '../util/core';
 
 import '../css/ProductPage.css'
-import {shareWith,nonBlockLoading,info,ErrorBoundary,error,OpDialog, SupplierDialog} from '../util/com';
+import { shareWith, nonBlockLoading, info, ErrorBoundary, error, OpDialog, SupplierDialog, MultiGroupDialog} from '../util/com';
 
 import {loadPdf,prePage,nextPage,zoomIn,zoomOut} from '../util/pdf';
 
@@ -31,6 +31,10 @@ class ProductPageRender extends Component{
 		this.state = {
 			open_supplier: false,
 			open_op: false,
+			open_MG: false,
+			// 如果一天有多个团,则多个团的id都在这个数组里(calendar传过来的)// cur_date: 多的团的时候控制不了cal的当前样式,用这个给默认值
+			mg_groupId_arr: [],
+			cur_date: '',
 			picIdx: 0,
 			// selected_group:props.p.group_id,
 			selected_group:'',
@@ -187,6 +191,16 @@ class ProductPageRender extends Component{
 		return ( <OpDialog op_ctrl={op_ctrl} op_info={this.state.data['接单人详情'][0] || ''} /> )
 	}
 
+	Multi_Group_Dialog(){
+		let MG_ctrl = {
+			open_MG: this.state.open_MG,
+			groupId_arr: this.state.mg_groupId_arr,
+			selectCb: (id,date) => {
+				this.setState({ selected_group: id, cur_date: date, open_MG: false }, () => console.log(this))
+			}
+		}
+		return (<MultiGroupDialog MG_ctrl={MG_ctrl} MG_info={this.state.data['产品团期'] || ''} />)
+	}
 
 	render(){
 		return (
@@ -284,6 +298,8 @@ class ProductPageRender extends Component{
 
 				{ this.state.data && this.state.data['发布人详情'] && this.SupplierDialog()}
 				{ this.state.data && this.state.data['接单人详情'] && this.OpDialog()}
+				{/* 一天多团 弹出选择框 */}
+				{this.state.data && this.state.data['产品详情'] && this.Multi_Group_Dialog()}
 			</Page>
 		);
 	}
