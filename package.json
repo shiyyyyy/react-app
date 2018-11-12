@@ -6,6 +6,7 @@
   "dependencies": {
     "moment": "^2.22.2",
     "onsenui": "^2.10.1",
+    "qrcode.react": "^0.8.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-onsenui": "^1.11.1",

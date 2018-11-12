@@ -27,6 +27,25 @@ import SelectItemPage from './SelectItemPage';
 import MyAccountPage from './MyAccountPage';
 import RegulatoryPage from './RegulatoryPage';
 import RegulatoryDetailPage from './RegulatoryDetailPage';
+import QrCodePage from './QrCodePage';
+
+import ClaimFunds from './ClaimFunds';
+import ClaimFundsDone from './ClaimFundsDone';
+
+import ClaimDoc from './ClaimDoc';
+import DocList from './DocList';
+
+import ContractList from './ContractList';
+import AddContract1 from './AddContract1';
+import AddContract2 from './AddContract2';
+import AddContract3 from './AddContract3';
+import AddContract4 from './AddContract4';
+import AddSingleContract2 from './AddSingleContract2';
+import AddSingleContract3 from './AddSingleContract3';
+
+import IncomeExpensesList from './IncomeExpensesList';
+import IncomeExpensesEditDoc from './IncomeExpensesEditDoc';
+
 
 
 export default {
@@ -66,5 +85,31 @@ export default {
 
 	'我的账户':MyAccountPage,
 	'账户监管':RegulatoryPage,
-	'账户详情': RegulatoryDetailPage
+	'账户详情': RegulatoryDetailPage,
+
+	'我的二维码':QrCodePage,
+
+	'资金认领': ClaimFunds,
+	'资金认领结果': ClaimFundsDone,
+
+	'认领单据页': ClaimDoc,
+	'单据列表': DocList,
+
+	'合同列表': ContractList,
+	'新增合同1': AddContract1,
+	'新增合同2': AddContract2,
+	'新增合同3': AddContract3,
+	'新增合同4': AddContract4,
+	'新增单项合同2': AddSingleContract2,
+	'新增单项合同3': AddSingleContract3,
+	'修改合同1': AddContract1,
+	'修改合同2': AddContract2,
+	'修改合同3': AddContract3,
+	'修改合同4': AddContract4,
+	'修改单项合同2': AddSingleContract2,
+	'修改单项合同3': AddSingleContract3,
+
+	'收支申请列表': IncomeExpensesList,
+	'修改收支申请': IncomeExpensesEditDoc,
+
 };

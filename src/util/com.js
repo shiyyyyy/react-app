@@ -1,7 +1,7 @@
 import * as ons from 'onsenui';
 import React from 'react';
 import {PullHook,Icon,Modal,Button,Dialog,ProgressBar,AlertDialog,AlertDialogButton} from 'react-onsenui';
-import {log,reloadSilent,i18n,resetTo,goTo,goBack,AppCore,AppMeta,Enum,trigger,clickToLog} from './core';
+import {log,reloadSilent,i18n,resetTo,goTo,goBack,AppCore,AppMeta,Enum,trigger,clickToLog,post} from './core';
 import { connect } from 'react-redux';
 import { doForceUpdate } from './update';
 
@@ -144,8 +144,8 @@ function alert({s}) {
     return (
         <AlertDialog animation="none" isOpen={!!s.alert.message} isCancelable={false} modifier="rowfooter">
          <div className="alert-dialog-title">{s.alert.title}</div>
-         <div className="alert-dialog-content">
-           {s.alert.message}
+         <div className="alert-dialog-content" dangerouslySetInnerHTML={{ __html: s.alert.message }}>
+           {/* {s.alert.message} */}
          </div>
          <div className="alert-dialog-footer">
          {
@@ -367,7 +367,7 @@ export class SearchLv2 extends React.Component{
             <ons-toolbar>
               <div className="center search-input-box-box">
                   <div className="search-input-box">
-                      <div className="search-left" onClick={_=>goBack()}>
+                      <div className="search-left" onClick={_=>this.props.param.goBack?this.props.param.goBack():goBack()}>
                           <img src="img/back.png" />
                       </div>
                       <div className="search-center">
@@ -526,6 +526,130 @@ export class MultiGroupDialog extends React.Component{
     }
 }
 
+//  签名弹窗 图片
+
+export class OpDialogImg extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+    render() {
+        return (
+            <Dialog
+                animation="none"
+                isOpen={this.props.imgInfo.open_img}
+                isCancelable={true}
+                onCancel={this.props.imgInfo.closeImg}>
+                <div className="zs-popup">
+                    <div className="popup-title">客户签名</div>
+                    <div className="popup-main">
+                        <img src={AppCore.HOST+'/'+this.props.imgInfo.open_img_url || 'img/avatar1.png'} className="dialog-img" />
+                    </div>
+                </div>
+            </Dialog>
+        )
+    }
+}
+
+// 备注信息 弹框
+export class OpDialogComment extends React.Component {
+    constructor(props) {
+        super(props)
+        console.log(this)
+        this.state={
+            comment: '',
+            propup: false,
+        }
+    }
+    commentChange(val){
+        this.setState({comment: val})
+    }
+    confirm(){
+        console.log(this)
+        if(!this.state.comment){
+            this.setState({propup: true})
+            return;
+        }
+        this.setState({ propup: false })
+        this.props.param.confirm(this.state.comment)
+    }
+    render() {
+        return (
+            <Dialog
+                animation="none"
+                isOpen={this.props.param.open_Show}
+                isCancelable={true}
+                onCancel={this.props.param.close}>
+                <div className="zs-popup">
+                    <div className="popup-title">单据备注</div>
+                    <div className="popup-main">
+                            <input onChange={e => this.commentChange(e.target.value)}
+                                className="add-con-cell-contenteditable" style={{margin: '4px 0'}} 
+                                placeholder={this.state.propup?"请填写备注在保存":'请填写备注'}/>
+                    </div>
+                    <div className="zs-popup-btn-box">
+                        <div className="zs-popup-btn-submit">
+                            <span onClick={_ => this.confirm()} >确定</span>
+                        </div>
+                        <div className="zs-popup-btn-cancel">
+                            <span onClick={_ => this.props.param.close()} >取消</span>
+                        </div>
+                    </div>
+                </div>
+            </Dialog>
+        )
+    }
+}
+//  关联信息 弹窗
+export class OpDialogAssocInfo extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            data: []
+        }
+        console.log(this)
+    }
+    componentDidMount(){
+        let url = this.props.param.url
+        post(url).then(r => {
+            console.log(this)
+            let data = this.state.data
+            data = r.data.ref_doc_id.split(',')
+            this.setState({ data: data })
+        })
+    }
+    componentWillReceiveProps(nextProps){
+        if(nextProps.param.url !== this.props.param.url){
+            let url = this.props.param.url
+            post(url).then(r => {
+                console.log(this)
+                let data = this.state.data
+                data = r.data.ref_doc_id.split(',')
+                this.setState({ data: data })
+            })
+        }
+    }
+    render() {
+        return (
+            <Dialog
+                animation="none"
+                isOpen={this.props.param.open_Show}
+                isCancelable={true}
+                onCancel={this.props.param.close}>
+                {
+                    // this.state.data.length>0 && 
+                    <div className="zs-popup">
+                        <div className="popup-title">关联信息</div>
+                        <div className="popup-main" style={{ display: 'block' }}>
+                            <div>关联单据: {this.state.data[0] || ''}</div>
+                            <div>关联调用单据: {this.state.data[1] || ''}</div>
+                            <div>关联发票: {this.state.data[2] || ''}</div>
+                        </div>
+                    </div>
+                }
+            </Dialog>
+        )
+    }
+}
 
 function progress({s}) {
     return (

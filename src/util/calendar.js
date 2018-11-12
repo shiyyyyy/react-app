@@ -134,9 +134,10 @@ export default class Calendar extends React.Component {
           // (this.state.cur_date === (cell.year+'-'+cell.month+'-'+cell.date) ? 'active-main-seat-surplus':'')
   }
 
-  zkClass(cell){
+  zkClass(cell,len){
     return 'main-zk-price' +' '+ 
-        (this.state.month === (cell.month-0) ? '':'hide')
+        (this.state.month === (cell.month-0) ? '':'hide') + ' ' + 
+        (len.length>1?'hide':'')
         // (this.state.cur_date === (cell.year+'-'+cell.month+'-'+cell.date) ? 'active-main-zk-price':'')
   }
   
@@ -174,7 +175,7 @@ export default class Calendar extends React.Component {
         <div onClick={_=>this.selectGroup(cell,group_i)} className='exist'>
             {/* <span className={this.seatClass(cell)}>余 {match.seat_surplus}</span><br /> */}
             <span className={this.seatClass(cell)}>{once ? ('多选') : ('余' + match[0].seat_surplus)}</span><br />
-            <span className={this.zkClass(cell)}>￥{match[0].zk_price * 1}</span>
+            <span className={this.zkClass(cell,match)}>￥{match[0].zk_price * 1}</span>
         </div>
     );
   }
@@ -184,7 +185,7 @@ export default class Calendar extends React.Component {
     if(group_i.length === 1){
       let date = cell.year + '-' + cell.month + '-' + cell.date
       // this.setState({ cur_date: date }, () => console.log(this))
-      this.pre_view.setState({ selected_group: group_i[0], cur_date: date }, () => console.log(this.pre_view))
+      this.pre_view.setState({ selected_group: group_i[0], cur_date: date })
       
     } else if (group_i.length > 1){
       this.pre_view.setState({ open_MG: true, mg_groupId_arr: group_i})

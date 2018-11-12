@@ -1,0 +1,159 @@
+/* ======================== 合同 列表页===================== */
+.contract-item{
+    font-size: .32rem;
+    background: #fff;
+    margin: .32rem 0;
+    border-radius: .106667rem;
+    padding: .32rem .32rem 0 .32rem;
+}
+.contract-cell{
+    line-height: .853333rem;
+    display: flex;
+    justify-content: space-between;
+}
+.contract-cell-left{
+
+}
+.contract-cell-right{
+
+}
+.contract-item-main{
+    border-bottom: 1px solid #d9d9d9;
+}
+.contract-item-name{
+    margin: 6px 0;
+    line-height: 20px;
+    max-height: 40px;
+    overflow: hidden;
+}
+.contract-main-cell{
+    font-size: .266667rem;
+    color: #999;
+    line-height: .64rem;
+    display: flex;
+    justify-content: space-between;
+}
+.contract-cell-main{
+    width: 33%;
+}
+
+.goBack-img-box{
+    padding-left: 8px;
+    display: flex;
+    align-items: center;
+}
+.goBack-img{
+    width: .64rem;
+    height: .64rem;
+}
+.dialog-img{
+    width: 100%;
+}
+
+/* ======================== 合同 新增页1 ===================== */
+.add-con-mod{
+    font-size: 14px;
+    background: #fff;
+    margin-top: .32rem;
+    padding: 0 .32rem;
+    line-height: 1.066667rem;
+}
+.add-con-title{
+    font-weight: 600;
+    position: relative;
+}
+.add-con-main{
+    position: relative;
+}
+.add-con-title-num{
+    position: absolute;
+    width: 80px;
+    font-size: 25px;
+    line-height: 40px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0%;
+    display: flex;
+    justify-content: space-around;
+}
+.add-con-cell{
+    border-top: 1px solid #d9d9d9;
+    display: flex;
+    align-items: center;
+}
+.add-con-cell-left{
+    color: #666;
+    margin-right: 12px;
+}
+.add-con-cell-right{
+    flex: 1;
+}
+.add-con-cell-only-right{
+    width: 100%;
+    font-size: .4rem;
+    text-align: right;
+    padding-right: .426667rem;
+    display: block;
+}
+.add-con-cell-right-select{
+    font-size: .373333rem;
+    height: 76%;
+    box-sizing: border-box;
+    padding-left: .32rem;
+    margin-top: .133333rem;
+    display: flex;
+    align-items: center;
+    border: none;
+    background-color:transparent; 
+    border-color:transparent;
+    -webkit-appearance: none;
+    padding-right: .533333rem;
+}
+.add-con-cell-right-input{
+    height: 90%;
+    width: 100%;
+}
+.add-con-btn-box{
+    display: flex;
+    align-items: center;
+}
+.add-con-btn{
+    width: 42%;
+    height: .96rem;
+    line-height: .96rem;
+    color: #fff;
+    background: #6FC5D8;
+    border-radius: 4px;
+    margin: .853333rem auto;
+    text-align: center;
+    
+}
+
+
+/* 合同 3/4 */
+.add-com-next-input{
+    height: 1.013333rem;
+    width: 90%;
+    padding-left: 6%;
+    margin: 0 auto;
+}
+
+/* 单项合同 2/3 */
+.add-con-cell-text-box{
+    margin-top: 2px;
+}
+.add-con-cell-contenteditable{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    min-height: .986667rem;
+    max-height: 3.2rem;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    line-height: .586667rem;
+    padding: 4px 8px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    overflow: auto;
+}

@@ -57,7 +57,7 @@ class RegulatoryPage extends Component{
 		<div className="fixed-top-box">	
 			<div className="money-care-books-title fixed-top" style={{ top: this.tbHeight+'px', fontSize: '.32rem' }}>
                 <span className="money-care-books-title-item-4">业务部门</span>
-                <span className="money-care-books-title-item-4">部门代码</span>
+                <span className="money-care-books-title-item-4">收入总计</span>
                 <span className="money-care-books-title-item-4">支出总计</span>
                 <span className="money-care-books-title-item-4">可用余额</span>
             </div>

@@ -301,29 +301,6 @@
     text-decoration: none;
     display: inline-block;
 }
-.zs-popup-btn-box{
-    display: flex;
-    justify-content: space-around;
-}
-.zs-popup-btn-submit{
-    width: 35%;
-    color: #fff;
-    background: #6FC5D8;
-    border: 1px solid #66ccdd;
-    padding: 4px;
-    margin: 12px 0;
-    border-radius: 4px;
-}
-.zs-popup-btn-cancel{
-    width: 35%;
-    color: #999;
-    background: #fff;
-    border: 1px solid #66ccdd;
-    padding: 4px;
-    margin: 12px 0;
-    border-radius: 4px;
-}
-
 /* 一天多团情况 样式 */
 .zs-popup .popup-title{
     font-size: .4rem;

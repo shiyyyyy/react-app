@@ -274,7 +274,6 @@ class OrderSettleableDetail extends Component{
             return;
 		}
 		let acc_item = {'参团费用':this.state.data['参团费用'],'其他费用':this.state.data['其他费用']};
-
         let data = this.pre_view.state.data;
         let settleable = 0;
         this.state.data['参团费用'].forEach(function(item){
@@ -288,6 +287,7 @@ class OrderSettleableDetail extends Component{
 		data['订单应转'][0] = data['订单应转'][0] || {};
 		data['订单应转'][0]['acc_item'] = acc_item;
 		data['订单应转'][0]['settled'] = data['订单应转'][0]['settled'] || 0;
+		data['订单应转'][0]['settleable'] = settleable;
 		data['订单应转'][0]['settle_diff'] = settleable - data['订单应转'][0]['settled'];
 		data['订单应转'][0]['settle_obj_id'] = data['订单应转'][0]['settle_obj_id'];
 

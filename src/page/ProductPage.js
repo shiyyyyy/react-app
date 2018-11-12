@@ -98,7 +98,7 @@ class ProductPageRender extends Component{
 			scene,this.state.data['产品详情'].pd_name,
 			this.state.data['产品详情'].product_modular['产品特色'] || this.state.data['产品详情'].pd_name,
 			encodeURI(AppCore.HOST+'/'+this.state.data['产品详情'].product_modular['产品图片'][0].thumbnail),
-			AppCore.SHARE_HOST+'?pd='+this.props.p.pd_id
+			AppCore.SHARE_HOST+'?pd='+this.props.p.pd_id+'&user='+this.props.s.user.employee_id
 		];
 		share(...argv);
 	}

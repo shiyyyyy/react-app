@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import {Page,Switch,Icon} from 'react-onsenui';
 
-import {trigger,post,resetTo,loadIfEmpty,i18n,clickToLog,reload,haveModAuth,AppCore,goTo} from '../util/core';
+import { trigger, post, resetTo, loadIfEmpty, i18n, clickToLog, reload, haveModAuth, AppCore, goTo, testing} from '../util/core';
 import {pullHook,confirm,nonBlockLoading} from '../util/com';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -18,7 +18,9 @@ class ProfilePage extends Component{
 	    			,data:{'订单数据':{},'账户数据':{},'账户监管':[{}],'消息通知':[]
 	    			,'员工数据':[{}]}
 	    			,'has_account_auth':false
-	    			,'has_regulatory_auth':false};
+					,'has_regulatory_auth':false
+					,'has_claimFunds_auth': false
+					,'has_contract_auth': false};
 	    this.url = '/PublicApi/read_home?mod=HOME';
 	    this.click_history = [];
 	}
@@ -29,6 +31,10 @@ class ProfilePage extends Component{
 		this.setState({has_account_auth:has_account_auth});
 		let has_regulatory_auth = haveModAuth('账户监管');
 		this.setState({has_regulatory_auth:has_regulatory_auth});
+		let has_claimFunds_auth = haveModAuth('资金认领');
+		this.setState({ has_claimFunds_auth: has_claimFunds_auth });
+		let has_contract_auth = haveModAuth('电子合同-订单');
+		this.setState({ has_contract_auth: has_contract_auth });
 	}
 
 
@@ -65,6 +71,10 @@ class ProfilePage extends Component{
 			return ; 
 		}
 		goTo('我的账户');
+	}
+
+	otherFuc(target){
+		goTo(target)
 	}
 
 	LoadMoreTodayDepOrder(params){
@@ -191,7 +201,14 @@ class ProfilePage extends Component{
 				<div className="user-operation">
 					{
 						this.props.s.user.sid && 
-							<div className="" onClick={_=>this.logout()}>退出登录</div>
+							<Fragment>
+								<div className="" onClick={_=>this.logout()}>退出登录</div>
+								{
+									<div onClick={_ => goTo('我的二维码')}>
+										<span >我的二维码</span>
+									</div>
+								}
+							</Fragment>
 					}
 					{
 						!this.props.s.user.sid && 
@@ -220,6 +237,35 @@ class ProfilePage extends Component{
 					</div>
 				</div>
 			</div>
+			}
+			{ /* 其他功能 */
+				this.props.s.user.sid && 
+				<div className="model-box-bald">
+					<div className="model-box-bald-title">
+						<div className="model-box-bald-title-text dingdan">其他功能</div>
+						{/* <div className="model-box-bald-title-more" onClick={_ => this.LoadMoreTodayDepOrder()}>详情</div> */}
+					</div>
+					<div className="model-box-bald-main" style={{justifyContent:'start'}}>
+					{this.state.has_claimFunds_auth &&
+						<div className="other-fuc-item" onClick={_=>this.otherFuc("资金认领")}>
+							<img className="other-img" src="img/books2.png" />
+							<div>资金认领</div>
+						</div>
+					}
+					{this.state.has_contract_auth &&
+						<div className="other-fuc-item" onClick={_=>this.otherFuc("合同列表")}>
+							<img className="other-img" src="img/doc_icon/rzxq.png" />
+							<div>合同列表</div>
+						</div>
+					}
+					{/* {this.state.has_claimFunds_auth && */}
+						<div className="other-fuc-item" onClick={_ => this.otherFuc("收支申请列表")}>
+							<img className="other-img" src="img/dingdan.png" />
+							<div>收支申请</div>
+						</div>
+					{/* } */}
+					</div>
+				</div>
 			}
 			{/* 最近订单 */
 				this.props.s.user.sid && 

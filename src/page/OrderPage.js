@@ -1,6 +1,6 @@
 import React, { Component,Fragment } from 'react';
 
-import {Page,AlertDialog,Icon,Popover} from 'react-onsenui';
+import { Page, AlertDialog, Icon, Popover, ActionSheet} from 'react-onsenui';
 
 import {AppCore,goTo,loadMore,loadIfEmpty,testing,AppMeta,post,trigger,reload,Enum,goBack,haveModAuth,haveActionAuth,hasPlugin} from '../util/core';
 import {pullHook,loginToPlay,Search,nonBlockLoading,info,NoPv,confirm} from '../util/com';
@@ -22,6 +22,8 @@ class OrderPage extends Component{
 				id: ''
 			},
 			has_auth:false,
+			selectConShow: false, // 选择合同类型 控制器
+			contract_order: '', // 选择合同的订单
 
 			dep_date_from:'',
 			dep_date_to:'',
@@ -76,6 +78,31 @@ class OrderPage extends Component{
 	    );
 	}
 
+	// 选择合同类型弹窗 && 跳转页面
+	selectContract(){
+		return(
+			< ActionSheet isCancelable = { true} isOpen = { this.state.selectConShow } 
+			onCancel = { _=>this.selectConColse() } modifier="contract-style-box" 
+			onDeviceBackButton = {_=>this.selectConColse()}>
+				<div className="contract-style" onClick={_=>this.contractType(1)}>出境合同</div>
+				<div className="contract-style" onClick={_=>this.contractType(2)}>国内合同</div>
+				<div className="contract-style" onClick={_=>this.contractType(3)}>单项合同</div>
+			</ActionSheet >
+		)
+	}
+	selectConColse(){
+		this.setState({ selectConShow: false })
+	}
+	contractType(type){
+		this.setState({ selectConShow: false })
+		let order = this.state.contract_order
+		let data = {
+			type_id: type,
+			order_id:order.id
+		}
+		if (!order)return;
+		goTo('新增合同1',{data})
+	}
 	RevokeOrder(order){
 		confirm('确认撤回吗？').then(r=>r && this.SureToRevoke(order))
 	}
@@ -410,6 +437,12 @@ class OrderPage extends Component{
 									disabled={ (haveActionAuth('实报订单-订单管理',this.mod) && (order.state ==1 || order.state ==2) )?"":"disabled"}
 									onClick={_=>this.RealSignUp(order)}>实报</button>
 								}
+								{
+									haveActionAuth('新增电子合同-订单管理','订单管理')&&
+									<button className={(((order.state ==3 || order.state ==4 || order.state ==5) && order.contract_id ==0 && order.pap_contract_id ==0 && (order.settle_change_flow ==0 || order.settle_change_flow ==4)) ? "":"btn-disabled")+" order-btn-item"}
+									 disabled={ ((order.state ==3 || order.state ==4 || order.state ==5) && order.contract_id ==0 && order.pap_contract_id ==0 && (order.settle_change_flow ==0 || order.settle_change_flow ==4))?"":"disabled"}
+									onClick={_=>this.setState({selectConShow: true, contract_order: order})}>合同</button>
+								}
 								</div>
 							  }
 
@@ -426,7 +459,8 @@ class OrderPage extends Component{
 		    }
 		    {
 		  		!this.props.s.user.sid && loginToPlay()
-		    }
+			}
+			{this.state.selectConShow && this.selectContract()}
 
 		    </Page>
 		);

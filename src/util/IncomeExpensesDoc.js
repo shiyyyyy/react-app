@@ -123,44 +123,76 @@ export function fund(data){
 
 
 
-// 结算信息组件 (内转单没有这个)
-export function billing_info(data,type) {
-    return(
+// 结算信息组件 (内转单没有这个)  资金结算&
+export function billing_info(data, view, mod, type) {
+	return (
 		<div className="doc-module">
 			<div className="doc-title">
 				<div className="jsxx">结算信息</div>
 			</div>
 			<div className="doc-main">
-				<div className={ (type === '业务支出' ? '':'hide') +" doc-main-cell"}>
+				<div className={(type === '业务支出' ? '' : 'hide') + " doc-main-cell"}>
 					<span className="cell-left-5">业务类型:</span><span className="cell-right">{Enum.InvoiceBusinessType[data.business_type]}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">结算方式:</span><span className="cell-right">{Enum.SettleWay[data.settle_way_id]}</span>
+					{/* <span className="cell-left-5">结算方式:</span>
+					<select selected={data.settle_way_id}
+						onChange={e => view.changeModMain(mod, 'settle_way_id', e.target.value)}
+						disabled={view.edit} >
+						{Object.keys(Enum.SettleWay).map(item =>
+							<option value={item} key={item}>{Enum.SettleWay[item]}</option>
+						)}
+					</select> */}
+
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">结算银行:</span><span className="cell-right">{Enum.SettleBank[data.settle_bank_id]}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">支票号:</span><span className="cell-right">{data.check_number}</span>
+					{/* <span className="cell-left-5">支票号:</span>
+					<input className="cell-right"
+						value={data.check_number}
+						onChange={e => view.changeModMain(mod, 'check_number', e.target.value)}
+						disabled={!view.edit} /> */}
 				</div>
-				<div className={ (type === '汇款方名称' ? '':'hide') +" doc-main-cell"}>
+				<div className={(type === '汇款方名称' ? '' : 'hide') + " doc-main-cell"}>
 					<span className="cell-left-5">汇款方名称:</span><span className="cell-right">{data.remitter}</span>
+					{/* <span className="cell-left-5">汇款方名称:</span>
+					<input className="cell-right"
+						value={data.remitter}
+						onChange={e => view.changeModMain(mod, 'remitter', e.target.value)}
+						disabled={!view.edit} /> */}
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">结算币种:</span><span className="cell-right">{Enum.Currency[data.currency_id]}</span>
+					{/* <span className="cell-left-5">结算币种:</span>
+					<select selected={data.currency_id}
+						onChange={e => view.changeModMain(mod, 'currency_id', e.target.value)}
+						disabled={!view.edit} >
+						{Object.keys(Enum.Currency).map(item =>
+							<option value={item} key={item}>{Enum.Currency[item]}</option>
+						)}
+					</select> */}
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">汇率:</span><span className="cell-right">{data.rate}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">本币金额:</span><span className="cell-right">{(data.settle_amount/data.rate).toFixed(2)}</span>
+					{/* <span className="cell-left-5">本币金额:</span>
+					<input className="cell-right" type="number"
+						value={(data.settle_amount / data.rate)}
+						onChange={e => view.changeModMain(mod, 'settle_amount', (e.target.value * 1))}
+						disabled={!view.edit} /> */}
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">人民币金额:</span><span className="cell-right">{data.settle_amount}</span>
 				</div>
 			</div>
 		</div>
-    )
+	)
 }
 
 // 应收明细
@@ -721,7 +753,7 @@ export function kk_info(data){
 }
 
 // 单据备注 
-export function documents_note(data){
+export function documents_note(data, view, mod){
     return(
         <div className="doc-module">
 			<div className="doc-title">
@@ -734,7 +766,11 @@ export function documents_note(data){
 						<span className="cell-left-4">备注人: </span> <span className="cell-right-wrap"> {item.employee_name} &nbsp;&nbsp;&nbsp; {item.create_at}</span><br />
 					</div>
 					<div className="doc-main-cell">
-						<span className="cell-left-4">内容:  </span> <span className="cell-right-wrap">{item.comment}</span>
+						{/* <span className="cell-left-4">内容:  </span> <span className="cell-right-wrap">{item.comment}</span> */}
+						<span className="cell-left-4">内容:  </span> 
+						<input className="cell-right-wrap" value={item.comment} 
+						onChange={e => view.changeModMain(mod, 'comment', e.target.value)} 
+						disabled={!view.edit} placeholder={!view.edit?'':'请输入备注'} />
 					</div>
 				</div>
 				)
@@ -742,6 +778,7 @@ export function documents_note(data){
 		</div>
     )
 }
+
 
 // 审批记录
 export function record(data){
@@ -762,8 +799,8 @@ export function record(data){
 
 // ----------------------------------- 可编辑的 -------------------------------------
 
-// 基础信息组件 1 资金收款
-export function basisClaim_zjsk(data) {
+// 基础信息组件 1
+export function basisClaim(data, price) {
 	return (
 		<div className="doc-module">
 			<div className="doc-title">
@@ -783,34 +820,7 @@ export function basisClaim_zjsk(data) {
 					<span className="cell-left-4">部门编号:</span><span className="cell-right">{data.code}</span>
 				</div>
 				<div className="doc-main-cell">
-					<span className="cell-left-4">结算金额:</span><span className="cell-right">{data.settle_amount}</span>
-				</div>
-			</div>
-		</div>
-	);
-}
-//  基础信息 业务收款
-export function basisClaim_ywsk(data, price) {
-	return (
-		<div className="doc-module">
-			<div className="doc-title">
-				<div className="jcxx">基础信息</div>
-			</div>
-			<div className="doc-main">
-				<div className="doc-main-cell">
-					<span className="cell-left-4">单据类型:</span><span className="cell-right">{Enum.Doc[data.doc_type_id]}</span>
-				</div>
-				<div className="doc-main-cell">
-					<span className="cell-left-4">单据编号:</span><span className="cell-right">{get_doc_id(data)}</span>
-				</div>
-				<div className="doc-main-cell">
-					<span className="cell-left-4">制单人:</span><span className="cell-right">{data.company_name}-{data.department_name}-{data.employee_name}</span>
-				</div>
-				<div className="doc-main-cell">
-					<span className="cell-left-4">部门编号:</span><span className="cell-right">{data.code}</span>
-				</div>
-				<div className="doc-main-cell">
-					<span className="cell-left-4">结算金额:</span><span className="cell-right">{Math.round(price.reduce((acc, cur) => (cur.amount ? cur.amount : 0) - 0 + acc, 0) * 100) / 100} &nbsp; &nbsp;
+					<span className="cell-left-4">结算金额:</span><span className="cell-right">{Math.round(price.reduce((acc, cur) => (cur.amount ? cur.amount : 0) - 0 + acc, 0) * 100) / 100} &nbsp; &nbsp; 
 					({convertCurrency(Math.round(price.reduce((acc, cur) => (cur.amount ? cur.amount : 0) - 0 + acc, 0) * 100) / 100)})</span>
 				</div>
 			</div>
@@ -859,9 +869,7 @@ export function fundClaim(data, price) {
 					</div>
 				</div>
 			)}
-			{price &&
-				<div className="doc-main-cell-right" style={{ fontSize: '.426667rem' }}>合计: {Math.round(price.reduce((acc, cur) => (cur.amount ? cur.amount : 0) - 0 + acc, 0) * 100) / 100}</div>
-			}
+			<div className="doc-main-cell-right" style={{ fontSize: '.426667rem' }}>合计: {Math.round(price.reduce((acc, cur) => (cur.amount ? cur.amount : 0) - 0 + acc, 0) * 100) / 100}</div>
 		</div>
 	);
 }
@@ -931,4 +939,193 @@ export function receivable_EditDetail(view) {
 			<div className="doc-main-cell-right" style={{ fontSize: '.426667rem' }}>合计: {Math.round(view.state.GL_SK_DOC.reduce((acc, cur) => (cur.amount?cur.amount:0) - 0 + acc, 0) * 100) / 100}</div>
 		</div>
 	)
+}
+
+
+
+// ====================================================== 结算信息---------------------
+
+export function billing_info_zj(data, view, mod, type) {
+	return (
+		<div className="doc-module">
+			<div className="doc-title">
+				<div className="jsxx">结算信息</div>
+			</div>
+			<div className="doc-main">
+				<div className={(type === '业务支出' ? '' : 'hide') + " doc-main-cell"}>
+					<span className="cell-left-5">业务类型:</span><span className="cell-right">{Enum.InvoiceBusinessType[data.business_type]}</span>
+				</div>
+				<div className="doc-main-cell" onClick={_ => view.changeModMain(mod, 'settle_way_id')}>
+					{/* <span className="cell-left-5">结算方式:</span><span className="cell-right">{Enum.SettleWay[data.settle_way_id]}</span> */}
+					<span className="cell-left-5">结算方式:</span>
+					<select selected={data.settle_way_id}
+						onChange={e => view.changeModMain(mod, 'settle_way_id', e.target.value)}
+						disabled={view.edit} >
+						{Object.keys(Enum.SettleWay).map(item =>
+							<option value={item} key={item}>{Enum.SettleWay[item]}</option>
+						)}
+					</select>
+
+				</div>
+				<div className="doc-main-cell">
+					<span className="cell-left-5">结算银行:</span><span className="cell-right">{Enum.SettleBank[data.settle_bank_id]}</span>
+				</div>
+				<div className="doc-main-cell">
+					{/* <span className="cell-left-5">支票号:</span><span className="cell-right">{data.check_number}</span> */}
+					<span className="cell-left-5">支票号:</span>
+					<input className="cell-right"
+						value={data.check_number}
+						onChange={e => view.changeModMain(mod, 'check_number', e.target.value)}
+						disabled={!view.edit} />
+				</div>
+				<div className={(type === '汇款方名称' ? '' : 'hide') + " doc-main-cell"}>
+					{/* <span className="cell-left-5">汇款方名称:</span><span className="cell-right">{data.remitter}</span> */}
+					<span className="cell-left-5">汇款方名称:</span>
+					<input className="cell-right"
+						value={data.remitter}
+						onChange={e => view.changeModMain(mod, 'remitter', e.target.value)}
+						disabled={!view.edit} />
+				</div>
+				<div className="doc-main-cell">
+					{/* <span className="cell-left-5">结算币种:</span><span className="cell-right">{Enum.Currency[data.currency_id]}</span> */}
+					<span className="cell-left-5">结算币种:</span>
+					<select selected={data.currency_id}
+						onChange={e => view.changeModMain(mod, 'currency_id', e.target.value)}
+						disabled={!view.edit} >
+						{Object.keys(Enum.Currency).map(item =>
+							<option value={item} key={item}>{Enum.Currency[item]}</option>
+						)}
+					</select>
+				</div>
+				<div className="doc-main-cell">
+					<span className="cell-left-5">汇率:</span><span className="cell-right">{data.rate}</span>
+				</div>
+				<div className="doc-main-cell">
+					{/* <span className="cell-left-5">本币金额:</span><span className="cell-right">{(data.settle_amount/data.rate).toFixed(2)}</span> */}
+					<span className="cell-left-5">本币金额:</span>
+					<input className="cell-right" type="number"
+						value={(data.settle_amount / data.rate)}
+						onChange={e => view.changeModMain(mod, 'settle_amount', (e.target.value * 1))}
+						disabled={!view.edit} />
+				</div>
+				<div className="doc-main-cell">
+					<span className="cell-left-5">人民币金额:</span><span className="cell-right">{data.settle_amount}</span>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+export function billing_info_yw(data, view, mod, type) {
+	return (
+		<div className="doc-module">
+			<div className="doc-title">
+				<div className="jsxx">结算信息</div>
+			</div>
+			<div className="doc-main">
+				<div className={(type === '业务支出' ? '' : 'hide') + " doc-main-cell"}>
+					<span className="cell-left-5">业务类型:</span><span className="cell-right">{Enum.InvoiceBusinessType[data.business_type]}</span>
+				</div>
+				<div className="doc-main-cell">
+					{/* <span className="cell-left-5">结算方式:</span><span className="cell-right">{Enum.SettleWay[data.settle_way_id]}</span> */}
+					<span className="cell-left-5">结算方式:</span>
+					<select selected={data.settle_way_id}
+						onChange={e => view.changeModMain(mod, 'settle_way_id', e.target.value)}
+						disabled={!view.edit} >
+						{Object.keys(Enum.SettleWay).map(item =>
+							<option value={item} key={item}>{Enum.SettleWay[item]}</option>
+						)}
+					</select>
+
+				</div>
+				<div className="doc-main-cell">
+					<span className="cell-left-5">结算银行:</span><span className="cell-right">{Enum.SettleBank[data.settle_bank_id]}</span>
+				</div>
+				<div className="doc-main-cell">
+					{/* <span className="cell-left-5">支票号:</span><span className="cell-right">{data.check_number}</span> */}
+					<span className="cell-left-5">支票号:</span>
+					<input className="cell-right"
+						value={data.check_number}
+						onChange={e => view.changeModMain(mod, 'check_number', e.target.value)}
+						disabled={!view.edit} />
+				</div>
+				<div className={(type === '汇款方名称' ? '' : 'hide') + " doc-main-cell"}>
+					{/* <span className="cell-left-5">汇款方名称:</span><span className="cell-right">{data.remitter}</span> */}
+					<span className="cell-left-5">汇款方名称:</span>
+					<input className="cell-right"
+						value={data.remitter}
+						onChange={e => view.changeModMain(mod, 'remitter', e.target.value)}
+						disabled={!view.edit} />
+				</div>
+				<div className="doc-main-cell">
+					{/* <span className="cell-left-5">结算币种:</span><span className="cell-right">{Enum.Currency[data.currency_id]}</span> */}
+					<span className="cell-left-5">结算币种:</span>
+					<select selected={data.currency_id}
+						onChange={e => view.changeModMain(mod, 'currency_id', e.target.value)}
+						disabled={!view.edit} >
+						{Object.keys(Enum.Currency).map(item =>
+							<option value={item} key={item}>{Enum.Currency[item]}</option>
+						)}
+					</select>
+				</div>
+				<div className="doc-main-cell">
+					<span className="cell-left-5">汇率:</span><span className="cell-right">{data.rate}</span>
+				</div>
+				<div className="doc-main-cell">
+					<span className="cell-left-5">本币金额:</span><span className="cell-right">{(data.settle_amount / data.rate).toFixed(2)}</span>
+				</div>
+				<div className="doc-main-cell">
+					<span className="cell-left-5">人民币金额:</span><span className="cell-right">{data.settle_amount}</span>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+// ============================================================入账详情================
+export function fund_edit(data, view, mod) {
+	return (
+		<div className="doc-module">
+			<div className="doc-title">
+				<div className="rzxq">入账详情</div>
+				<div className="doc-title-right"
+					onClick={_ => goTo('单据列表', { view: view })}>添加订单</div>
+			</div>
+			{data.map((item, i) =>
+				<div className="doc-main" key={i}>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">入账编号:</span><span className="cell-right">{item.fund_num}</span>
+					</div>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">结算方式:</span><span className="cell-right">{Enum.SettleWay[item.settle_way_id]}</span>
+					</div>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">结算银行:</span><span className="cell-right">{Enum.SettleBank[item.settle_bank_id]}</span>
+					</div>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">结算日期:</span><span className="cell-right">{item.settle_date}</span>
+					</div>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">汇款方名称:</span><span className="cell-right">{item.remitter}</span>
+					</div>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">结汇金额:</span><span className="cell-right">{item.exchange_amount}</span>
+					</div>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">已用金额:</span><span className="cell-right">{item.used}</span>
+					</div>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">未用金额:</span><span className="cell-right">{item.used_diff}</span>
+					</div>
+					<div className="doc-main-cell">
+						<span className="cell-left-4">认领人:</span><span className="cell-right">{item.claimed_name}</span>
+					</div>
+					<div className="doc-main-cell-right" style={{ borderBottom: '1px solid #F4F8F9' }}>
+						<span>本次收款:{item.amount}</span>
+					</div>
+				</div>
+			)}
+			<div className="doc-main-cell-right" style={{ fontSize: '.426667rem' }}>合计: {Math.round(data.reduce((acc, cur) => cur.amount - 0 + acc, 0) * 100) / 100}</div>
+		</div>
+	);
 }
