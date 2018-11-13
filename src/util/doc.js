@@ -886,16 +886,16 @@ export function documents_editNote(view) {
 
 
 // 应收明细
-export function receivable_EditDetail(view) {
+export function receivable_EditDetail(data, view, mod) {
 	return (
 		<div className="doc-module">
 			<div className="doc-title">
 				<div className="ysmx">应收明细</div>
 				<div className="doc-title-right"
-				onClick={_=>goTo('单据列表',{view:view})}>添加订单</div>
+				onClick={_=>goTo('订单管理',{view:view, mod: mod})}>添加订单</div>
 			</div>
-			{view.state && view.state.GL_SK_DOC &&
-				view.state.GL_SK_DOC.map((item, i) =>
+			{
+				data.map((item, i) =>
 					<div className="doc-main" key={i} style={{ borderBottom: '1px solid #F4F8F9' }}>
 						<div className="doc-main-cell">
 							<span className="cell-left-4">订单号: </span><span className="cell-right">D0{item.order_id}</span>
@@ -928,7 +928,7 @@ export function receivable_EditDetail(view) {
 					</div>
 				)
 			}
-			<div className="doc-main-cell-right" style={{ fontSize: '.426667rem' }}>合计: {Math.round(view.state.GL_SK_DOC.reduce((acc, cur) => (cur.amount?cur.amount:0) - 0 + acc, 0) * 100) / 100}</div>
+			<div className="doc-main-cell-right" style={{ fontSize: '.426667rem' }}>合计: {Math.round(data.reduce((acc, cur) => (cur.amount?cur.amount:0) - 0 + acc, 0) * 100) / 100}</div>
 		</div>
 	)
 }

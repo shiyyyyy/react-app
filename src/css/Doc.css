@@ -6,7 +6,7 @@
 .doc-module{
     font-size: .373333rem;
     line-height: 1.173333rem;
-    margin-top: .32rem;
+    margin-bottom: .32rem;
     background-color: #fff;
     box-shadow: 6px 1px 3px rgba(0,0,0,.1);
 }
@@ -115,6 +115,11 @@
     border-top: 1px solid #F4F8F9;
     box-sizing: border-box;
     padding: 0 .426667rem;
+}
+.doc-main-cell-right-input{
+    max-width: 2.666667rem;
+    width: 2.133333rem;
+    height: .9rem;
 }
 
 /* 单据备注 */

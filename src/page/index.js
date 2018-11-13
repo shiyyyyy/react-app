@@ -33,7 +33,8 @@ import ClaimFunds from './ClaimFunds';
 import ClaimFundsDone from './ClaimFundsDone';
 
 import ClaimDoc from './ClaimDoc';
-import DocList from './DocList';
+import OrderManagementList from './OrderManagementList';
+import FundManagementList from './FundManagementList';
 
 import ContractList from './ContractList';
 import AddContract1 from './AddContract1';
@@ -93,7 +94,8 @@ export default {
 	'资金认领结果': ClaimFundsDone,
 
 	'认领单据页': ClaimDoc,
-	'单据列表': DocList,
+	'订单管理': OrderManagementList,
+	'资金认领列表': FundManagementList,
 
 	'合同列表': ContractList,
 	'新增合同1': AddContract1,

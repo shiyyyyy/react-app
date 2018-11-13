@@ -25,9 +25,10 @@ class DocPageRender extends Component {
         super(props);
         this.state = { 
             dialog: false , 
-            data: {},
+            data: {
+                GL_SK_DOC: [],
+            },
             comment: '',
-            GL_SK_DOC: [],
         };
         this.action = this.newAction();
         this.pre_view = this.props.p.view
@@ -36,16 +37,16 @@ class DocPageRender extends Component {
 
     // 关联收款 填写收款金额
     GL_SK_DOC_changePrice(e,i){
-        let GL_SK_DOC = this.state.GL_SK_DOC;
+        let data = this.state.data
         let price = e.target.value-0;
-        GL_SK_DOC[i].amount = price;
+        data.GL_SK_DOC[i].amount = price;
 
-        this.setState({ GL_SK_DOC })
+        this.setState({ data: data })
     }
     reduce_GL_SK(i){
-        let GL_SK_DOC = this.state.GL_SK_DOC;
-        GL_SK_DOC.splice(i,1)
-        this.setState({ GL_SK_DOC })
+        let data = this.state.data
+        data.GL_SK_DOC.splice(i,1)
+        this.setState({ data: data })
     }
 
     renderToolbar() {
@@ -120,7 +121,7 @@ class DocPageRender extends Component {
         if (this.docType(this.props.p.action)) {
             data[this.docType(this.props.p.action)] = [];
         }
-        this.state.GL_SK_DOC.map(item => {
+        this.state.data.GL_SK_DOC.map(item => {
             data[actionType].push({'rmb_total':item.amount})
             if (this.docType(this.props.p.action)) {
                 data[this.docType(this.props.p.action)].push({
@@ -131,7 +132,7 @@ class DocPageRender extends Component {
             }
 
         })
-
+        this.props.p.params['单据信息'][0]['settle_obj_id'] = this.state.data.GL_SK_DOC[this.state.data.GL_SK_DOC.length - 1].cstm_id
         trigger('加载等待');
         let cfg = AppMeta.actions[this.action];
         let param = get_req_data(cfg.submit.data, data);
@@ -193,21 +194,20 @@ class DocPageRender extends Component {
                 {
                     this.props.p.action === '业务收款单-认领' &&
                     <div className="doc">
-                        {console.log(this)}
                         {/* 基础信息 */}
-                        {doc.basisClaim_ywsk(this.props.p.params['单据信息'][0], this.state.GL_SK_DOC)}
+                        {doc.basisClaim_ywsk(this.props.p.params['单据信息'][0], this.state.data.GL_SK_DOC)}
                         {/* {doc.basis(this.props.p.params['单据信息'][0])} */}
 
                         {/*入账详情-查看*/}
                         {
                             this.props.p.params['入账详情'] &&
                             // doc.fund(this.props.p.params['入账详情-查看'][0])
-                            doc.fundClaim(this.props.p.params['入账详情'], this.state.GL_SK_DOC)
+                            doc.fundClaim(this.props.p.params['入账详情'])
                         }
                         {/*应收明细-可编辑*/}
                         {
                             // doc.fund(this.props.p.params['入账详情-查看'][0])
-                            doc.receivable_EditDetail(this)
+                            doc.receivable_EditDetail(this.state.data['GL_SK_DOC'], this, 'GL_SK_DOC')
                         }
                         {/* 单据备注 可编辑 */}
                         {doc.documents_editNote(this)}

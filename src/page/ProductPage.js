@@ -196,7 +196,7 @@ class ProductPageRender extends Component{
 			open_MG: this.state.open_MG,
 			groupId_arr: this.state.mg_groupId_arr,
 			selectCb: (id,date) => {
-				this.setState({ selected_group: id, cur_date: date, open_MG: false }, () => console.log(this))
+				this.setState({ selected_group: id, cur_date: date, open_MG: false })
 			}
 		}
 		return (<MultiGroupDialog MG_ctrl={MG_ctrl} MG_info={this.state.data['产品团期'] || ''} />)

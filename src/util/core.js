@@ -202,25 +202,6 @@ export function goTo(key, p) {
 export function goBack() {
     return navigator.popPage();
 }
-
-export function resetTo(key) {
-    navigator.popPage().then(
-        r => {
-            resetTo(key, navigator);
-        },
-        e => {
-            if(key != curRoute()){
-                // AppCore.TabPage.setState({ index: 2 })
-
-                navigator.replacePage({
-                    page: pages[key],
-                    key: key
-                });
-            }
-        }
-    );
-}
-
 export function resetToLv2Page(key) {
 
     navigator.popPage().then(
@@ -230,6 +211,22 @@ export function resetToLv2Page(key) {
         e => {
             if (key != curRoute()) {
                 navigator.pushPage({
+                    page: pages[key],
+                    key: key
+                });
+            }
+        }
+    );
+}
+
+export function resetTo(key) {
+    navigator.popPage().then(
+        r => {
+            resetTo(key, navigator);
+        },
+        e => {
+            if(key != curRoute()){
+                navigator.replacePage({
                     page: pages[key],
                     key: key
                 });
@@ -613,6 +610,7 @@ function get_mod_cfg(mod) {
 
 function get_read_param(action, cfg, data) {
     var param = { action: action, front_enum: Enum.ver };
+
     if (cfg.mod) {
         param.mod = cfg.mod;
     }
@@ -630,12 +628,14 @@ export function get_req_data(cfg, data) {
     if (!cfg) {
         return data;
     }
+
     if (typeof(cfg) === 'string') {
         return data[cfg];
     }
     let rst = {};
     Object.keys(cfg).forEach(function(k) {
         let item = cfg[k];
+
         //'订单信息.id'
         if (item.indexOf('.') > 0) {
 
@@ -697,6 +697,7 @@ export function get_req_data(cfg, data) {
             }
         }
     });
+
     return rst;
 }
 //------------------------i18n---------------------------
@@ -737,7 +738,6 @@ export const i18n = {
 
 }
 
-// ---------------------------------------------------------
 // 将人民币金额变成大写
 export function convertCurrency(money) {
     //汉字的数字
@@ -828,7 +828,6 @@ export function convertCurrency(money) {
     }
     return chineseStr;
 }
-
 // ---------------------------------------------------------
 export function doc_map(data) {
     switch (data.doc_type_id) {

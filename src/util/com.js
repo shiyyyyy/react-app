@@ -554,7 +554,6 @@ export class OpDialogImg extends React.Component {
 export class OpDialogComment extends React.Component {
     constructor(props) {
         super(props)
-        console.log(this)
         this.state={
             comment: '',
             propup: false,
@@ -564,7 +563,6 @@ export class OpDialogComment extends React.Component {
         this.setState({comment: val})
     }
     confirm(){
-        console.log(this)
         if(!this.state.comment){
             this.setState({propup: true})
             return;
@@ -606,12 +604,10 @@ export class OpDialogAssocInfo extends React.Component {
         this.state = {
             data: []
         }
-        console.log(this)
     }
     componentDidMount(){
         let url = this.props.param.url
         post(url).then(r => {
-            console.log(this)
             let data = this.state.data
             data = r.data.ref_doc_id.split(',')
             this.setState({ data: data })
@@ -621,7 +617,6 @@ export class OpDialogAssocInfo extends React.Component {
         if(nextProps.param.url !== this.props.param.url){
             let url = this.props.param.url
             post(url).then(r => {
-                console.log(this)
                 let data = this.state.data
                 data = r.data.ref_doc_id.split(',')
                 this.setState({ data: data })

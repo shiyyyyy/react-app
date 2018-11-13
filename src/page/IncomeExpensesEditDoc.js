@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { log, post, trigger, AppCore, AppMeta, loadIfEmpty, get_req_data, goBack, submit, reload } from '../util/core';
-import { error, nonBlockLoading, info, ErrorBoundary } from '../util/com';
+import { log, post, trigger, AppCore, AppMeta, loadIfEmpty, get_req_data, goBack, submit, reload, Enum } from '../util/core';
+import { error, nonBlockLoading, info, ErrorBoundary, confirm } from '../util/com';
 import { connect } from 'react-redux';
 
 import { Page, Button, Input, AlertDialog, AlertDialogButton } from 'react-onsenui';
@@ -23,48 +23,137 @@ class DocPageRender extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { dialog: false };
+        this.state = { dialog: false, settle_amount_mod: '' };
         this.action = props.p.action;
         this.pre_view = props.p.pre_view;
         this.edit = props.p.edit || false;
-        console.log(this)
     }
 
-    changeModMain(mod,key,val){
-        console.log(this)
-        console.log(mod)
-        console.log(key)
-        console.log(val)
-        // this.zj_sk_settle_info_change(key)
+    afterLoad(){
+        //结算信息部分
+        let obj = {
+            '借款结算信息': '单据信息'
+            , '支出结算信息': '单据信息'
+            , '资金支出结算信息': '资金支出单据信息'
+            , '资金借款结算信息': '资金借款单据信息'
+            , '资金退款单结算信息': '单据信息'
+            , '工资单结算信息': '工资单单据信息'
+            , '业务收款结算信息': '单据信息'
+            , '业务退回结算信息': '单据信息'
+            , '资金退回结算信息': '单据信息'
+            , '资金收款结算信息': '单据信息'
+        }
         let data = this.state.data
-        data[mod][0][key] = val
-        this.setState({data: data})
+        var settle_amount_mod = ''
+        Object.keys(obj).forEach(item=>{
+            if (data && data[item]){
+                settle_amount_mod = obj[item]
+                data[item][0].rmb_total = data[obj[item]][0]['settle_amount'];
+                if (data[item][0].currency_id){
+                    data[item][0].rate = Enum.CurrencyRate[data[item][0].currency_id]
+                    if (data[item][0].rmb_total && data[item][0].rate){
+                        data[item][0].local_currency_total = (data[item][0].rmb_total / data[item][0].rate).toFixed(2);
+                    }
+                }
+            }
+        })
+        // 可选币种(选择节选方式后,币种是限定的)(这里是修改时用)
+        if (settle_amount_mod !== ''){
+            this.state.data['可选币种'] = Enum.SettleWayCurrency[this.state.data[settle_amount_mod][0].settle_way_id]
+        }
+        this.setState({ data: data, settle_amount_mod: settle_amount_mod })
+
     }
+
+    changeModMain(mod,key,i,val){
+        let data = this.state.data
+        data = this.change_settle_way(data, mod, key, val) ? this.change_settle_way(data, mod, key, val) : data
+        data = this.zj_sk_settle_info_change(data, mod,key,val)?this.zj_sk_settle_info_change(data, mod,key,val):data
+        data = this.price_change_rmb(data, mod, key, val) ? this.price_change_rmb(data, mod, key, val) : data
+        data = this.bill_price_change(data, mod, key, i, val) ? this.bill_price_change(data, mod, key, i, val) : data
+        data[mod][i][key] = val
+        this.setState({ data: data })
+    }
+
+    // 选择 支付方式后 币种根据支付方式改变
+    change_settle_way(data, mod, key, val) {
+        if((mod === '资金收款结算信息' && key === 'settle_way_id') || (mod === '业务收款结算信息' && key === 'settle_way_id')){
+            data['可选币种'] = Enum['SettleWayCurrency'][val];
+        }
+    }
+
 
     // 选择币种之后 汇率变换
-    // zj_sk_settle_info_change(key) {
-    //     if (key === '资金收款结算信息') {
-    //         var settle_info = this.state.data['资金收款结算信息'][0];
-    //         if (settle_info.currency_id) {
-    //             settle_info.rate = scope.isEdit ? (EnumSrvc.CurrencyRate[settle_info.currency_id]) : settle_info.rate;
-    //             if (settle_info.local_currency_total
-    //                 && settle_info.rate) {
-    //                 settle_info.rmb_total = (settle_info.local_currency_total * settle_info.rate).toFixed(2);
-    //                 scope.data['单据信息'][0]['settle_amount'] = settle_info.rmb_total;
-    //                 // 获取金额中文大写
-    //                 var cn_amount = $rootScope.convertCurrency(settle_info.rmb_total);
-    //                 scope.data['单据信息'][0]['cn_settle_amount'] = cn_amount;
-    //             }
-    //         }
-    //     }
-    // }
+    zj_sk_settle_info_change(data, mod, key, val) {
+        if ((mod === '资金收款结算信息' && key === 'currency_id') || (mod === '业务收款结算信息' && key === 'currency_id')) {
+            let data = this.state.data
+            data[mod] = this.state.data[mod];
+            if (data[mod][0].currency_id) {
+                data[mod][0].rate = Enum.CurrencyRate[val]
+                data[mod][0].settle_amount = (parseInt(data[mod][0].local_currency_total * data[mod][0].rate)*100)/100
+                data[this.state.settle_amount_mod][0].settle_amount = data[mod][0].settle_amount
+                data[mod][0].rmb_total = data[mod][0].settle_amount
+                return data
+            }
+        }
+    }
+    // 改变本币金额 人民币总价变
+    price_change_rmb(data, mod, key, val){
+        if ((mod === '资金收款结算信息' && key === 'local_currency_total') || (mod === '业务收款结算信息' && key === 'local_currency_total')) {
+            let data = this.state.data
+            data[mod] = this.state.data[mod];
+            if (data[mod][0].local_currency_total) {
+                data[mod][0].settle_amount = (parseInt(val * data[mod][0].rate) * 100) / 100
+                data[mod][0].rmb_total = data[mod][0].settle_amount
+                data[this.state.settle_amount_mod][0].settle_amount = data[mod][0].settle_amount
+                return data
+            }
+        }
+    }
+    // 改变调用单据-应收 总价&结算金额&本币金额改变(现在只有业务有这个)
+    bill_price_change(data, mod, key,i, val) {
+        if ((mod === '收款订单' && key === 'amount')) {
+            let data = this.state.data
+            data[mod] = this.state.data[mod];
+            let price = 0
+            data[mod].forEach((item, index) => {
+                if (index == i) {
+                    price += (val - 0)
+                } else {
+                    price += (item.amount - 0)
+                }
+            })
+
+            data[this.state.settle_amount_mod ? this.state.settle_amount_mod : '单据信息'][0].settle_amount = price
+            if (data && data['业务收款结算信息']) {
+                // data[mod][0].settle_amount = (parseInt(val * data[mod][0].rate) * 100) / 100
+                data['业务收款结算信息'][0].settle_amount = price
+                data['业务收款结算信息'][0].rmb_total = price
+                data['业务收款结算信息'][0].local_currency_total = (parseInt(price / data['业务收款结算信息'][0].rate) * 100) /100
+                return data
+            }
+            if (data && data['入账详情']){
+                data['入账详情'][0].amount = price
+            }
+        }
+    }
+
+
+    // 删除 已选(应收明细/)
+    reduce_list(mod, i){
+        let data = this.state.data
+        data[mod].splice(i,1)
+        this.setState({data: data})
+    }
 
 
     renderToolbar() {
         return (
             <ons-toolbar>
                 <div className='left'><ons-back-button></ons-back-button></div>
-                <div className={(AppCore.os === 'ios' ? "" : "Andriod-title") + " center"}>{this.props.p.action}</div>
+                <div className={(AppCore.os === 'ios' ? "" : "Andriod-title") + " center"}>
+                    {(this.edit?"修改":"查看")+this.props.p.action.slice(2)}
+                </div>
             </ons-toolbar>
         );
     }
@@ -74,26 +163,28 @@ class DocPageRender extends Component {
     }
 
     approve(opinion) {
+        confirm('确认保存修改吗?').then( r =>{
+            trigger('加载等待');
+            submit(
+                this,
+                _ => info('修改成功').then(
+                    _ => {
+                        goBack();
+                        reload(this.pre_view);
+                    }
+                )
+            );
+        })
         let data = this.state.data;
-        data['审批记录'].forEach(item => {
-            if (item.editable) {
-                item.opinion = opinion;
-                item.comment = this.state.comment;
-            }
-        });
+        // data['审批记录'].forEach(item => {
+        //     if (item.editable) {
+        //         item.opinion = opinion;
+        //         item.comment = this.state.comment;
+        //     }
+        // });
 
-        this.setState({ dialog: false, data: data });
-        trigger('加载等待');
-        submit(
-            this,
-            _ => info('审批完成').then(
-                _ => {
-                    goBack();
-                    reload(this.pre_view);
-                    trigger('加载等待');
-                }
-            )
-        );
+        // this.setState({ data: data });
+        
     }
 
     render() {
@@ -101,7 +192,7 @@ class DocPageRender extends Component {
         return (
             <Page
                 renderToolbar={_ => this.renderToolbar()}
-                onShow={_ => loadIfEmpty(this)}>
+                onShow={_ => loadIfEmpty(this, this.afterLoad)}>
                 {
                     this.state.loading && nonBlockLoading()
 
@@ -117,13 +208,13 @@ class DocPageRender extends Component {
                         {
                             this.state.data['入账详情-查看'] &&
                             // doc.fund(this.state.data['入账详情-查看'][0])
-                            doc.fund_edit(this.state.data['入账详情-查看'])
+                            doc.fund_edit(this.state.data['入账详情-查看'], this, '入账详情-查看')
                         }
 
                         {/* 结算信息 */}
                         {
                             this.state.data['资金收款结算信息'] &&
-                            doc.billing_info(this.state.data['资金收款结算信息'][0], this, '资金收款结算信息')
+                            doc.billing_info_zj(this.state.data['资金收款结算信息'][0], this, '资金收款结算信息')
                         }
 
                         {/* 单据备注 */}
@@ -141,17 +232,17 @@ class DocPageRender extends Component {
                         {/*入账详情*/}
                         {
                             this.state.data['入账详情'] &&
-                            doc.fund_edit(this.state.data['入账详情'])
+                            doc.fund_edit(this.state.data['入账详情'], this, '入账详情')
                         }
 
                         {/* 结算信息 */}
                         {
                             this.state.data['业务收款结算信息'] &&
-                            doc.billing_info(this.state.data['资金收款结算信息'][0], this, '资金收款结算信息', '汇款方名称')
+                            doc.billing_info_yw(this.state.data['业务收款结算信息'][0], this, '业务收款结算信息', '汇款方名称')
                         }
 
                         {/* 订单信息 */}
-                        {doc.receivable_detail(this.state.data['收款订单'])}
+                        {doc.receivable_detail(this.state.data['收款订单'], this, '收款订单')}
 
                         {/* 单据备注 */}
                         {doc.documents_note(this.state.data['单据备注'], this, '单据备注')}
@@ -447,25 +538,11 @@ class DocPageRender extends Component {
                 }
 
                 {
-                    this.state.data &&
+                    this.state.data && this.edit && 
                     <section className="doc-approve-btn-box">
-                        <button onClick={_ => this.setState({ dialog: true })}>保存</button>
+                        <button onClick={_ => this.approve()}>保存</button>
                     </section>
                 }
-                <AlertDialog isOpen={this.state.dialog} isCancelable={false} modifier="rowfooter">
-                    <div className='alert-dialog-title'>确认保存</div>
-                    <div className='alert-dialog-content'>
-                        <Input value={this.state.comment} onChange={e => this.setState({ comment: e.target.value })} modifier="underbar" float></Input>
-                    </div>
-                    <div className='alert-dialog-footer'>
-                        <AlertDialogButton onClick={_ => this.setState({ dialog: false })} modifier="rowfooter" >
-                            取消
-		                </AlertDialogButton>
-                        <AlertDialogButton onClick={_ => this.approve(1)} modifier="rowfooter" >
-                            确认
-		                </AlertDialogButton>
-                    </div>
-                </AlertDialog>
             </Page>
         );
     }

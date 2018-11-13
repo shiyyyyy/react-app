@@ -40,9 +40,12 @@ class IncomeExpensesList extends Component {
     }
 
     editContract(item) {
-        console.log(item)
         let action = doc_map(item)
         goTo('修改收支申请', { data: { id: item.id }, action: action, pre_view: this, edit: true });
+    }
+    checkContract(item) {
+        let action = doc_map(item)
+        goTo('修改收支申请', { data: { id: item.id }, action: action, pre_view: this, edit: false });
     }
     DeleteContract(item) {
         let action = '删除电子合同';
@@ -114,7 +117,6 @@ class IncomeExpensesList extends Component {
     }
 
     selectSettle_method(item){
-        console.log(item)
         this.setState({ settle_way_id: item})
     }
     Settle_methodSubmit(){
@@ -184,7 +186,6 @@ class IncomeExpensesList extends Component {
 
     DialogComment(i) {
         let that = this
-        console.log(this)
         if (this.state.cur_com_i !== '' && this.state.open_Comment){
             let param = {
                 open_Show: this.state.open_Comment,
@@ -208,7 +209,6 @@ class IncomeExpensesList extends Component {
     }
     DialogAssocInfo(i) {
         let that = this
-        console.log(this.state.cur_AsIofo_i !== '' && this.state.open_AssocInfo)
         if (this.state.cur_AsIofo_i !== '' && this.state.open_AssocInfo){
             let param = {
                 open_Show: this.state.open_AssocInfo,
@@ -363,7 +363,7 @@ class IncomeExpensesList extends Component {
                             {
                                 this.state.data.map((item, index) =>
                                     <Fragment key={item.id}>
-                                        <div className="contract-item" >
+                                        <div className="contract-item" onClick={_ => this.checkContract(item)}>
                                             <div className="contract-cell" style={{ borderBottom: '1px solid #d9d9d9' }}>
                                                 <span className="contract-cell-left">系统编号: {this.get_doc_id(item)}</span>
                                                 <span className="contract-cell-right">{item.company_name}-{item.department_name}-{item.employee_name}</span>
@@ -393,7 +393,7 @@ class IncomeExpensesList extends Component {
                                                 </div>
                                             </div>
 
-                                            {<div className="order-btn">
+                                            {<div className="order-btn" onClick={e=>e.stopPropagation()}>
                                                 {
                                                     <button
                                                         className={((haveActionAuth('修改单据', this.mod) && (item.flow == 1 || item.flow == 3) && (item.doc_type_id == 1||item.doc_type_id ==13)) ? "" : "btn-disabled") + " order-btn-item"}
