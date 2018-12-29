@@ -80,8 +80,7 @@ class AddContract4 extends Component {
         let url;
         this.action='合同预览';
         let cfg = AppMeta.actions[this.action];
-        url = cfg.read.url + '?action=' + this.action +'&id=' + this.state.data.contract_id
-            +'&dataSource='+ this.state.data.dataSource;
+        url = cfg.read.url + '?action=' + this.action +'&id=' + this.state.data.contract_id;
         trigger('加载等待');
         post(url).then(
             r => {
@@ -97,7 +96,6 @@ class AddContract4 extends Component {
 
     SaveContract(){
         trigger('加载等待');
-        this.state.data.dataSource='app'
         submit(this,this.submit_done.bind(this));
     }
     submit_done(r){
@@ -153,7 +151,7 @@ class AddContract4 extends Component {
     // 其他约定 违约责任
     editComment(e,index) {
         let data = this.state.data
-        data['其他约定'][index].comment = e.target.value
+        data['其他约定'][index].context = e.target.value
         this.setState({ data: data })
     }
     afterLoad(){
@@ -212,7 +210,7 @@ class AddContract4 extends Component {
                                     </div>
                                     <div className={(item.agree-0) === 1?'':'hide'}>
                                         <input onChange={e => this.yuedingComment(e,index)} value={item.comment || ''} className="add-com-next-input"
-                                            placeholder={"请填写备注信息"} />
+                                        placeholder={(item.solution === '我社委托其他旅行社履行合同' || item.solution === '采用拼团方式拼至其他旅行社成团') ?'请填写旅行社名称':"请填写备注信息"} />
                                     </div>
                                 </div>
                                 )}
@@ -236,7 +234,7 @@ class AddContract4 extends Component {
                                         </div>
                                         <div className={(item.choose - 0) === 1 ? '' : 'hide'}>
                                         <input onChange={e => this.zhengyiComment(e, index)} value={item.solution_detail || ''} className="add-com-next-input"
-                                                placeholder={"请填写备注信息"} />
+                                                placeholder={item.solution === '提交仲裁委员会仲裁' ? '请填写仲裁委员会名称' : '请填写人民法院名称'} />
                                         </div>
                                     </div>
                                 )}
@@ -259,7 +257,7 @@ class AddContract4 extends Component {
                                 this.state.data['其他约定'].map((item, index) =>
                                 <div className="add-con-cell" style={{ display: 'block',border:'none' }} key={index}>
                                     <div className="add-con-cell-text-box">
-                                        <input value={item.comment||''} onChange={e => this.editComment(e, index)} className="add-con-cell-contenteditable"
+                                        <input value={item.context||''} onChange={e => this.editComment(e, index)} className="add-con-cell-contenteditable"
                                         />
                                     </div>
                                 </div>

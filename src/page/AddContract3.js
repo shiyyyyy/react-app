@@ -91,7 +91,7 @@ class AddContract3 extends Component {
     Verification(){
         let data = this.props.p.data
         if (!data['收款账户-电子合同'][0].to_bank) { info('请选择开户行'); return true }
-        if (!this.state.data['保险详情'][0].agree && this.state.data['保险详情'][0].agree!==0) { info('请选择意外保险'); return true }
+        if (!this.state.data['保险详情'][0].agree && this.state.data['保险详情'][0].agree===0) { info('请选择意外保险'); return true }
         return false
     }
 
@@ -164,7 +164,8 @@ class AddContract3 extends Component {
                                     <div className="add-con-cell-right">
                                         <select className="add-con-cell-right-select"
                                             onChange={e => this.selectInsurance(e.target.value)} defaultChecked={this.state.data['保险详情'][0].agree}
-                                            value={this.state.data['保险详情'][0].agree}>
+                                            value={this.state.data['保险详情'][0].agree || ''}>
+                                            <option value='' >请选择</option>
                                             {
                                                 Object.keys(Enum['InsuranceAgree']).map(_k =>
                                                     <option key={_k} value={_k}>{Enum['InsuranceAgree'][_k]}</option>

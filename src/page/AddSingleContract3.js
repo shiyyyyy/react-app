@@ -92,8 +92,7 @@ class AddSingleContract3 extends Component {
         let url;
         this.action='合同预览';
         let cfg = AppMeta.actions[this.action];
-        url = cfg.read.url + '?action=' + this.action +'&id=' + this.state.data.contract_id
-            +'&dataSource='+ this.state.data.dataSource;
+        url = cfg.read.url + '?action=' + this.action +'&id=' + this.state.data.contract_id;
         trigger('加载等待');
         post(url).then(
             r => {
@@ -110,7 +109,6 @@ class AddSingleContract3 extends Component {
     SaveContract(){
         if(this.Verification())return;
         trigger('加载等待');
-        this.state.data.dataSource='app'
         submit(this,this.submit_done.bind(this));
     }
     submit_done(r){

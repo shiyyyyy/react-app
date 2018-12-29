@@ -381,8 +381,9 @@ class OrderPage extends Component{
 					      			<div className="pro-item-right">
 										<div className="pro-item-name">{order.pd_name}</div>
 										<div className="pro-item-dep_city flex-j-sb">
-											<span>团期: {order.dep_date}</span>
-											<span>{order.pd_provider}</span>
+											<span style={{width: '37.5%'}}>出团: {order.dep_date}</span>
+											<span style={{width: '37.5%'}}>回团: {order.back_date}</span>
+											<span style={{width: '25%', whiteSpace: 'nowrap', overflow:'auto', textAlign:'right'}}>{order.pd_provider}</span>
 										</div>
 										<div className="pro-item-price flex-j-sb">
 											<span>客户: {order.short_name}</span>

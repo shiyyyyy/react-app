@@ -22,13 +22,31 @@ export default class ClaimFunds extends Component {
     }
 
     submit() {
-        let flag = Object.keys(this.state.search).some(item=>this.state.search[item]==='')
-        if(flag){
-            info('请填写全部搜索条件');
-            return;
+        console.log(this)
+        debugger
+        let action = null;
+        if (this.props.p && this.props.p.type === '高级资金搜索'){
+            // 高级 搜索 条件 (只有两个必填 => 汇款方名称/到账金额)
+            if (!this.state.search['remitter']) {
+                info('请填写汇款方名称');
+                return;
+            }
+            if (!this.state.search['arrived_amount']) {
+                info('请填写到账金额');
+                return;
+            }
+            action = '高级资金查询'
+        }else{
+            // 普通 搜索 条件 (全部都是必填)
+            let flag = Object.keys(this.state.search).some(item => this.state.search[item] === '')
+            if (flag) {
+                info('请填写全部搜索条件');
+                return;
+            }
+            action = '资金查询'
         }
         // goTo('资金认领结果', { settle_date_from: '2018-09-24',settle_date_to: '2018-10-31',settle_way_id: 1,currency_id: 2,remitter: '10000',arrived_amount: '10000',action: '资金查询',limit: 30,page: 1, })
-        goTo('资金认领结果', {...this.state.search});
+        goTo('资金认领结果', { search: { ...this.state.search}, action: action });
     }
 
 

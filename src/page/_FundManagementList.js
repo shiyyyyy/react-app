@@ -7,36 +7,32 @@ import { pullHook, loginToPlay, SearchLv2, nonBlockLoading, info } from '../util
 import { connect } from 'react-redux';
 import { appConst } from '../util/const';
 
-class OrderManagementList extends Component {
+class FundManagementList extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            state: 'initial', data: [], search: { order_id: '', short_name: '' },
+            state: 'initial', data: [], search: { used: '', used_diff: '' },
 
             open_search_key: false,
-            cur_select_search_filter: { search: 'order_id', text: '订单号' },
+            cur_select_search_filter: { search: 'used', text: '已用金额' },
         };
-        this.mod = '订单管理';
+        this.mod = '资金认领';
         // this.action = '选择收款订单';
         this.pageSize = 20
         this.view = this.props.p.view
         this.view_mod = this.props.p.mod
     }
 
-
-    componentDidMount() {
-    }
-
-    selectDoc(doc){
-        if(this.view.state.data[this.view_mod].find(item => item.order_id === doc.order_id)){
-            goBack()
-            return
-        }
+    selectDoc(doc) {
         let data = this.view.state.data
-        data[this.view_mod].push(doc)
-        this.view.setState({ data: data })
+        console.log(doc)
+        // 这个单据信息不应该写死,但是现在够用,等单据多了在抽象出来
+        // data['单据信息'][0].settle_amount = doc.amount
+
+        data[this.view_mod][0] = doc
+        this.view.setState({data: data})
         goBack()
     }
 
@@ -47,57 +43,18 @@ class OrderManagementList extends Component {
             key: 'MyAccount',
             cb: (value, key) => {
                 let search = this.state.search
-                search['order_id'] = ''
-                search['short_name'] = ''
+                search['used'] = ''
+                search['used_diff'] = ''
                 search[key] = value
                 this.setState({ search: search });
                 reload(this)
             }
         }
-        return <SearchLv2 value={this.state.search.order_id || this.state.search.short_name || ''}
+        return <SearchLv2 value={this.state.search.used || this.state.search.used_diff || ''}
             open_search_key={_ => this.setState({ open_search_key: true })}
             cur_select={this.state.cur_select_search_filter || ''}
-            clear={e => { e.stopPropagation(); this.setState({ search: { ...this.state.search, order_id: '', short_name: '' } }, _ => reload(this)) }}
+            clear={e => { e.stopPropagation(); this.setState({ search: { ...this.state.search, used: '', used_diff: '' } }, _ => reload(this)) }}
             param={search_cfg} set_anchor={anchor => this.search_anchor = anchor} />
-    }
-
-    get_doc_id(row) {
-        let v = row.id;
-        switch (row.doc_type_id) {
-            case appConst.DOC_ORDER_SK:
-            case appConst.DOC_ZJ_SK:
-                return v ? 'SK0' + v : '';
-            case appConst.DOC_YJ:
-                return v ? 'YJ0' + v : '';
-            case appConst.DOC_YW_TK:
-            case appConst.DOC_YJ_TK:
-            case appConst.DOC_ZJ_TK:
-                return v ? 'TK0' + v : '';
-            case appConst.DOC_YW_JK:
-            case appConst.DOC_ZJ_JK:
-                return v ? 'JK0' + v : '';
-            case appConst.DOC_ACC_ZC:
-            case appConst.DOC_ZJ_ZC:
-                return v ? 'ZC0' + v : '';
-            case appConst.DOC_YC:
-                return v ? 'YC0' + v : '';
-            case appConst.DOC_YZ:
-                return v ? 'YZ0' + v : '';
-            case appConst.DOC_YW_NZ:
-            case appConst.DOC_ZJ_NZ:
-                return v ? 'NZ0' + v : '';
-            case appConst.DOC_TZ:
-                return v ? 'TZ0' + v : '';
-            case appConst.DOC_KK:
-                return v ? 'KK0' + v : '';
-            case appConst.DOC_HK:
-                return v ? 'HK0' + v : '';
-            case appConst.DOC_GZ:
-                return v ? 'GZ0' + v : '';
-            case appConst.DOC_YW_TH:
-            case appConst.DOC_ZJ_TH:
-                return v ? 'TH0' + v : '';
-        }
     }
 
     renderFixed() {
@@ -111,10 +68,11 @@ class OrderManagementList extends Component {
         return (
             <div className="fixed-top-box" >
                 <div className="money-care-books-title fixed-top" style={{ top: this.tbHeight + 'px', fontSize: '.32rem' }}>
-                    <span className="money-care-books-title-item-4">订单号</span>
-                    <span className="money-care-books-title-item-4">报名人</span>
-                    <span className="money-care-books-title-item-4">客户简称</span>
-                    <span className="money-care-books-title-item-4">未收</span>
+                    <span className="money-care-books-title-item-4">创建人</span>
+                    <span className="money-care-books-title-item-4">结算方式</span>
+                    <span className="money-care-books-title-item-4">结算币种</span>
+                    <span className="money-care-books-title-item-4">已用金额</span>
+                    <span className="money-care-books-title-item-4">未用金额</span>
                 </div>
             </div>
         )
@@ -137,8 +95,8 @@ class OrderManagementList extends Component {
                             getTarget={() => this.search_anchor}
                         >
                             <div className="dialog-select-box">
-                                <div className="dialog-select-item" onClick={_ => this.setState({ open_search_key: false, cur_select_search_filter: { text: '订单号', search: 'order_id' } })}>订单号</div>
-                                <div className="dialog-select-item" onClick={_ => this.setState({ open_search_key: false, cur_select_search_filter: { text: '客户简称', search: 'short_name', } })}>客户简称</div>
+                                <div className="dialog-select-item" onClick={_ => this.setState({ open_search_key: false, cur_select_search_filter: { text: '已用金额', search: 'used' } })}>已用金额</div>
+                                <div className="dialog-select-item" onClick={_ => this.setState({ open_search_key: false, cur_select_search_filter: { text: '未用金额', search: 'used_diff', } })}>未用金额</div>
                             </div>
                         </Popover>
                         {
@@ -148,11 +106,12 @@ class OrderManagementList extends Component {
                             <div className="money-care-books-main">
                                 {this.state.data.map((doc, i) =>
                                     <div className="money-care-books-main-item" key={doc.id} style={{ fontSize: '.266667rem' }}
-                                    onClick={_=>this.selectDoc(doc)}>
-                                        <span className="money-care-books-main-item-col-4">D0{doc.order_id}</span>
+                                        onClick={_ => this.selectDoc(doc)}>
                                         <span className="money-care-books-main-item-col-4">{doc.employee_name}</span>
-                                        <span className="money-care-books-main-item-col-4">{doc.short_name}</span>
-                                        <span className="money-care-books-main-item-col-4">{doc.receive_diff}</span>
+                                        <span className="money-care-books-main-item-col-4">{Enum.SettleWay[doc.settle_way_id]}</span>
+                                        <span className="money-care-books-main-item-col-4">{Enum.Currency[doc.currency_id]}</span>
+                                        <span className="money-care-books-main-item-col-4">{doc.used}</span>
+                                        <span className="money-care-books-main-item-col-4">{doc.used_diff}</span>
                                     </div>
                                 )}
                             </div>
@@ -171,5 +130,5 @@ class OrderManagementList extends Component {
     }
 }
 
-export default connect(s => ({ s: s }))(OrderManagementList)
+export default connect(s => ({ s: s }))(FundManagementList)
 

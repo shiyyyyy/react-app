@@ -769,16 +769,18 @@ export function documents_note(data, view, mod){
 			</div>
 			{
 				data.map((item,i)=>
-				<div className="doc-main"  key={i}>
+				<div className={(!view.edit && i === (data.length - 1)) ? "hide" : "doc-main"} key={i} >
 					<div className="doc-main-cell">
 						<span className="cell-left-4">备注人: </span> <span className="cell-right-wrap"> {item.employee_name} &nbsp;&nbsp;&nbsp; {item.create_at}</span><br />
 					</div>
 					<div className="doc-main-cell">
 						{/* <span className="cell-left-4">内容:  </span> <span className="cell-right-wrap">{item.comment}</span> */}
 						<span className="cell-left-4">内容:  </span> 
-						<input className="cell-right-wrap" value={item.comment} 
+						<input className={"cell-right-wrap"} 
+						value={item.comment || ''} 
 						onChange={e => view.changeModMain(mod, 'comment', i, e.target.value)} 
-						disabled={!view.edit} placeholder={!view.edit?'':'请输入备注'} />
+						disabled={(!view.edit || (i !== data.length-1))} 
+						placeholder={!view.edit?'':'请输入备注'} />
 					</div>
 				</div>
 				)
@@ -963,11 +965,12 @@ export function billing_info_zj(data, view, mod, type) {
 				<div className="doc-main-cell">
 					{/* <span className="cell-left-5">结算方式:</span><span className="cell-right">{Enum.SettleWay[data.settle_way_id]}</span> */}
 					<span className="cell-left-5">结算方式:</span>
-					<select selected={data.settle_way_id}
+					<select 
 						onChange={e => view.changeModMain(mod, 'settle_way_id', 0, e.target.value)}
 						disabled={!view.edit} >
-						{Object.keys(Enum.SettleWay).map(item =>
-							<option value={item} key={item}>{Enum.SettleWay[item]}</option>
+						{Object.keys(Enum.SettleWayNonAccount).map(item =>
+							<option value={item} key={item} selected={data.settle_way_id === item}
+							>{Enum.SettleWayNonAccount[item]}</option>
 						)}
 					</select>
 
@@ -994,13 +997,14 @@ export function billing_info_zj(data, view, mod, type) {
 				<div className="doc-main-cell">
 					{/* <span className="cell-left-5">结算币种:</span><span className="cell-right">{Enum.Currency[data.currency_id]}</span> */}
 					<span className="cell-left-5">结算币种:</span>
-					<select selected={data.currency_id}
+					<select 
 						onChange={e => view.changeModMain(mod, 'currency_id', 0, e.target.value)}
 						disabled={!view.edit} >
 						{view.state.data && view.state.data['可选币种'] &&
-							view.state.data['可选币种'].map(cell => Object.keys(Enum.Currency)[cell]).map(item =>
-								<option value={item} key={item}>{Enum.Currency[item]}</option>
-							)}
+							view.state.data['可选币种'].map(cell => 
+							<option value={cell} key={cell} selected={data.currency_id === cell}
+							>{Enum.Currency[cell]}</option>
+						)}
 					</select>
 				</div>
 				<div className="doc-main-cell">
@@ -1033,11 +1037,12 @@ export function billing_info_yw(data, view, mod, type) {
 				<div className="doc-main-cell">
 					{/* <span className="cell-left-5">结算方式:</span><span className="cell-right">{Enum.SettleWay[data.settle_way_id]}</span> */}
 					<span className="cell-left-5">结算方式:</span>
-					<select selected={data.settle_way_id}
+					<select 
 						onChange={e => view.changeModMain(mod, 'settle_way_id', 0, e.target.value)}
 						disabled={!view.edit} >
 						{Object.keys(Enum.SettleWayNonAccount).map(item =>
-							<option value={item} key={item}>{Enum.SettleWayNonAccount[item]}</option>
+							<option value={item} key={item} selected={data.settle_way_id === item}
+							>{Enum.SettleWayNonAccount[item]}</option>
 						)}
 					</select>
 
@@ -1064,12 +1069,13 @@ export function billing_info_yw(data, view, mod, type) {
 				<div className="doc-main-cell">
 					{/* <span className="cell-left-5">结算币种:</span><span className="cell-right">{Enum.Currency[data.currency_id]}</span> */}
 					<span className="cell-left-5">结算币种:</span>
-					<select selected={data.currency_id}
+					<select 
 						onChange={e => view.changeModMain(mod, 'currency_id', 0, e.target.value)}
 						disabled={!view.edit} >
 						{view.state.data && view.state.data['可选币种'] &&
-							view.state.data['可选币种'].map(cell => Object.keys(Enum.Currency)[cell]).map(item =>
-							<option value={item} key={item}>{Enum.Currency[item]}</option>
+							view.state.data['可选币种'].map(cell =>
+							<option value={cell} key={cell} selected={data.currency_id === cell}
+							>{Enum.Currency[cell]}</option>
 						)}
 					</select>
 				</div>
@@ -1093,8 +1099,8 @@ export function fund_edit(data, view, mod) {
 		<div className="doc-module">
 			<div className="doc-title">
 				<div className="rzxq">入账详情</div>
-				<div className={view.edit ? "doc-title-right":"hide"}
-					onClick={_ => goTo('资金认领列表', { view: view, mod: mod })}>添加订单</div>
+				{/* <div className={(view.edit ? "doc-title-right" : "hide ")}
+					onClick={_ => goTo('资金认领列表', { view: view, mod: mod })}>选择认领资金</div> */}
 			</div>
 			{data.map((item, i) =>
 				<div className="doc-main" key={i}>

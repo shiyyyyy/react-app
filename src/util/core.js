@@ -62,6 +62,7 @@ export const Enum = {
         3: ['委托我社购买', 'Entrusted to buy'][i]
     },
     ElcContractState:{1:['未关联','not related'][i], 2:['已关联','related'][i], 3:['待签字','wait signed'][i], 4:['已签字','signed`'][i], 5:['已作废','abolished'][i], 6:['已盖章','stamped'][i],},
+    ApplyState: { 1: ['未占位', 'not hold'][i], 2: ['已占位', 'holding seat'][i] },
 };
 
 export const AppMeta = {};

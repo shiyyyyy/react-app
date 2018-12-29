@@ -38,7 +38,7 @@ class AddContract2 extends Component {
         this.setState({ data: data })
     }
     prevPage(){
-        goBack('');
+        goBack();
     }
     nextPage() {
         if (this.Verification()) return;

@@ -609,7 +609,7 @@ export class OpDialogAssocInfo extends React.Component {
         let url = this.props.param.url
         post(url).then(r => {
             let data = this.state.data
-            data = r.data.ref_doc_id.split(',')
+            data = r.data
             this.setState({ data: data })
         })
     }
@@ -635,9 +635,9 @@ export class OpDialogAssocInfo extends React.Component {
                     <div className="zs-popup">
                         <div className="popup-title">关联信息</div>
                         <div className="popup-main" style={{ display: 'block' }}>
-                            <div>关联单据: {this.state.data[0] || ''}</div>
-                            <div>关联调用单据: {this.state.data[1] || ''}</div>
-                            <div>关联发票: {this.state.data[2] || ''}</div>
+                            <div>关联单据: {this.state.data.ref_doc_id || '无'}</div>
+                            <div>关联调用单据: {this.state.data.ref_tz_doc_id_see || '无'}</div>
+                            <div>关联发票: {this.state.data.ref_invoice_id || '无'}</div>
                         </div>
                     </div>
                 }
@@ -645,6 +645,134 @@ export class OpDialogAssocInfo extends React.Component {
         )
     }
 }
+
+//  ======================    微信订单 弹窗  WechatOrderList  ================================//
+// Appoint 指定 按钮 弹窗
+export class WechatAppoint extends React.Component {
+    constructor(){
+        super()
+        this.state = {
+            val: '',
+            data: {},
+        }
+    }
+    componentDidMount() {
+        let that = this
+        let url = `/sale/OrderApply/get_creater?action=指定订单&employee_id=${this.props.param.item.employee_id}`
+
+        post(url).then(r => {
+            that.setState({ data: r.data['可报名人'] })
+        })
+    }
+    change(val){
+        this.setState({ val: val })
+    }
+    close(){
+        this.setState({val: ''})
+        this.props.param.close()
+    }
+    render(){
+        return(
+            <Dialog
+                animation="none"
+                isOpen={this.props.param.open}
+                isCancelable={true}
+                onCancel={this.close.bind(this)}>
+                {
+                    // Object.keys(this.state.data).length > 0 && 
+                    <div className="wechatOrder">
+                        <div className="wechatOrder-title">指定</div>
+                        <div className="wechatOrder-input">
+                            <span>报名人：</span>
+                            {JSON.stringify(this.state.data) === '{}' &&
+                                <span>订单暂无报名人</span>
+                            }
+                            {JSON.stringify(this.state.data) !== '{}' &&
+                                <select className="order-receivable-modal-info-item-right-select"
+                                    onChange={e => this.change(e.target.value)}
+                                    value={this.state.val ? this.state.val : this.props.param.item.employee_name}>
+                                    <option value='' >请选择报名人</option>
+                                    {
+                                        Object.keys(this.state.data).map(_k =>
+                                            <option key={_k} value={_k}>{this.state.data[_k]}</option>
+                                        )
+                                    }
+                                </select> 
+                            }
+                            
+                        </div>
+                        <div className="wechatOrder-confirm" 
+                        onClick={_ => this.props.param.confirm(this.state.val,this.props.param.item)}>确定</div>
+                    </div>
+                }
+            </Dialog>
+        )
+    }  
+}
+// seat占位 微信订单
+export class WechatSeat extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            val: '',
+            data: {},
+        }
+    }
+    componentDidMount(){
+        let that = this
+        let url = `/sale/OrderApply/get_assitant?action=占位订单-微信订单&group_id=${this.props.param.item.group_id}`
+        post(url).then(r => {
+            that.setState({data: r.data['可接单人']})
+        })
+    }
+    change(val) {
+        this.setState({ val: val })
+    }
+    close() {
+        this.setState({ val: '' })
+        this.props.param.close()
+    }
+    render() {
+        return (
+            <Dialog
+                animation="none"
+                isOpen={this.props.param.open}
+                isCancelable={true}
+                onCancel={this.close.bind(this)}>
+                {
+                    // Object.keys(this.state.data).length>0 && 
+                    <div className="wechatOrder">
+                        <div className="wechatOrder-title">占位</div>
+                        <div className="wechatOrder-input">
+                            <span>接单人：</span>
+                            {JSON.stringify(this.state.data) === '{}' && 
+                            <span>订单暂无接单人</span>
+                            }
+                            {JSON.stringify(this.state.data) !== '{}' && 
+                                <select className="order-receivable-modal-info-item-right-select"
+                                    onChange={e => this.change(e.target.value)}
+                                    value={this.state.val ? this.state.val : this.props.param.item.assitant_name}>
+                                    <option value='' >请选择接单人</option>
+                                    {
+                                        Object.keys(this.state.data).map(_k =>
+                                            <option key={_k} value={_k}>{this.state.data[_k]}</option>
+                                        )
+                                    }
+                                </select>  
+                            }
+                        </div>
+                        <div className="wechatOrder-confirm"
+                            onClick={_ => this.props.param.confirm(this.state.val, this.props.param.item)}>确定</div>
+                    </div>
+                }
+            </Dialog>
+        )
+    }
+}
+
+// ===========================================================================
+
+
 
 function progress({s}) {
     return (

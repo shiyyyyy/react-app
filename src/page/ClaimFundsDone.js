@@ -15,16 +15,18 @@ class ClaimFundsDone extends Component {
         this.state = {
             state: 'initial', data: {}, 
             select_id: '',
-            search: { ...this.props.p },
+            search: { ...this.props.p.search },
             loading: false
         };
         this.pageSize = 30;
         this.url = '/fin/Fund/search_fund';
-        this.action = '资金查询'
+        this.action = this.props.p.action
+        console.log(this)
+        debugger
     }
 
     componentDidMount(){
-        this.setState({ search: { ...this.props.p, action: this.action}})
+        this.setState({ search: { ...this.props.p.search, action: this.action}})
     }
 
     renderToolbar() {

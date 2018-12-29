@@ -1,0 +1,17 @@
+/* ======================================= 微信 订单 ==================================== */
+.wechatOrder{
+    padding: 24px;
+}
+.wechatOrder-title{
+    text-align: center;
+    line-height: 1.066667rem;
+    font-size: .373333rem;
+    color: #333;
+}
+.wechatOrder-input{
+    display: flex;
+
+}
+.wechatOrder-confirm{
+    
+}

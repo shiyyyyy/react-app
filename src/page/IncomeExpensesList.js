@@ -45,35 +45,11 @@ class IncomeExpensesList extends Component {
     }
     checkContract(item) {
         let action = doc_map(item)
-        goTo('修改收支申请', { data: { id: item.id }, action: action, pre_view: this, edit: false });
+        if (item.doc_type_id === appConst.DOC_ORDER_SK || item.doc_type_id === appConst.DOC_ZJ_SK){
+            goTo('修改收支申请', { data: { id: item.id }, action: action, pre_view: this, edit: false });
+        }
     }
-    DeleteContract(item) {
-        let action = '删除电子合同';
-        let cfg = AppMeta.actions[action];
-        trigger('加载等待');
-        post(cfg.submit.url, { id: item.id }).then(
-            r => info(r.message).then(
-                _ => {
-                    reload(this);
-                }
-            )
-        );
-    }
-    SubmitContract(item) {
-        confirm('是否确认操作？').then(r => r && this.sureToSubmit(item));
-    }
-    sureToSubmit(item) {
-        let action = '提交电子合同';
-        let cfg = AppMeta.actions[action];
-        trigger('加载等待');
-        post(cfg.submit.url, { id: item.id }).then(
-            r => info(r.message).then(
-                _ => {
-                    reload(this);
-                }
-            )
-        );
-    }
+
 
     SubmitDoc(item) {
         let action = '提交单据';
@@ -96,13 +72,13 @@ class IncomeExpensesList extends Component {
     }
 
     
-    depDateClick() {
+    SubmitDateClick() {      
         this.setState({
             open_filter: '',
             search: {
                 ...this.state.search,
-                submit_from: this.state.submit_from || undefined,
-                submit_to: this.state.submit_to || undefined
+                submit_from: this.state.submit_from || this.state.search.submit_from || undefined,
+                submit_to: this.state.submit_to || this.state.search.submit_to || undefined
             }
         });
         reload(this);
@@ -124,20 +100,21 @@ class IncomeExpensesList extends Component {
         this.setState({ open_filter: '', search: { ...this.state.search, settle_way_id: cur_settle_way_id } });
         reload(this);
     }
-    dep_date_cur() {
-        if (this.state.open_filter === 'dep_date' || this.state.submit_from) {
+
+    submit_from_cur() {
+        if (this.state.open_filter === 'submit_from' || this.state.submit_from || this.state.search.submit_from) {
             return true
         }
         return false
     }
-    back_date_cur() {
-        if (this.state.open_filter === 'back_date' || this.state.submit_to) {
+    submit_to_cur() {
+        if (this.state.open_filter === 'submit_to' || this.state.submit_to || this.state.search.submit_to) {
             return true
         }
         return false
     }
     Settle_method(){
-        if (this.state.open_filter === 'Settle_method' || this.state.settle_way_id) {
+        if (this.state.open_filter === 'Settle_method' || this.state.settle_way_id || this.state.search.settle_way_id) {
             return true
         }
         return false
@@ -244,15 +221,15 @@ class IncomeExpensesList extends Component {
                 onClick={_ => { this.clear_param() }}
             >
                 <ons-row class="option-type" onClick={e => e.stopPropagation()}>
-                    <ons-col onClick={_ => this.setState({ open_filter: 'dep_date' })}>
-                        <span className={this.dep_date_cur() ? "cur-option-type-text" : "option-type-text"}>出团日期</span>
-                        {this.dep_date_cur() && <Icon className="cur-option-type-item" icon="md-caret-up" />}
-                        {!this.dep_date_cur() && <Icon className="option-type-item" icon="md-caret-down" />}
+                    <ons-col onClick={_ => this.setState({ open_filter: 'submit_from' })}>
+                        <span className={this.submit_from_cur() ? "cur-option-type-text" : "option-type-text"}>提交日起</span>
+                        {this.submit_from_cur() && <Icon className="cur-option-type-item" icon="md-caret-up" />}
+                        {!this.submit_from_cur() && <Icon className="option-type-item" icon="md-caret-down" />}
                     </ons-col>
-                    <ons-col onClick={_ => this.setState({ open_filter: 'back_date' })}>
-                        <span className={this.back_date_cur() ? "cur-option-type-text" : "option-type-text"}>回团日期</span>
-                        {this.back_date_cur() && <Icon className="cur-option-type-item" icon="md-caret-up" />}
-                        {!this.back_date_cur() && <Icon className="option-type-item" icon="md-caret-down" />}
+                    <ons-col onClick={_ => this.setState({ open_filter: 'submit_to' })}>
+                        <span className={this.submit_to_cur() ? "cur-option-type-text" : "option-type-text"}>提交日止</span>
+                        {this.submit_to_cur() && <Icon className="cur-option-type-item" icon="md-caret-up" />}
+                        {!this.submit_to_cur() && <Icon className="option-type-item" icon="md-caret-down" />}
                     </ons-col>
                     <ons-col onClick={_ => this.setState({ open_filter: 'Settle_method' })}>
                         <span className={this.Settle_method() ? "cur-option-type-text" : "option-type-text"}>结算方式</span>
@@ -263,7 +240,7 @@ class IncomeExpensesList extends Component {
                 <div onClick={e => e.stopPropagation()}>
 
                     {/* 出团日期-选择框 */
-                        this.state.open_filter == 'dep_date' &&
+                        this.state.open_filter == 'submit_from' &&
                         <div className="dialog-box">
                             <div className="options-popup">
                                 <div className="selected-date">
@@ -272,13 +249,13 @@ class IncomeExpensesList extends Component {
                                 </div>
                                 <div className="options-btn">
                                     <div className="options-reset" onClick={_ => this.setState({ submit_from: '', search: { ...this.state.search, submit_from: '' } })}>重置</div>
-                                    <div className="options-submit" onClick={_ => this.depDateClick()}>确定</div>
+                                    <div className="options-submit" onClick={_ => this.SubmitDateClick()}>确定</div>
                                 </div>
                             </div>
                         </div>
                     }
                     {/* 回团日期-选择框 */
-                        this.state.open_filter == 'back_date' &&
+                        this.state.open_filter == 'submit_to' &&
                         <div className="dialog-box">
                             <div className="options-popup">
                                 <div className="selected-date">
@@ -287,7 +264,7 @@ class IncomeExpensesList extends Component {
                                 </div>
                                 <div className="options-btn">
                                     <div className="options-reset" onClick={_ => this.setState({ submit_to: '', search: { ...this.state.search, submit_to: '' } })}>重置</div>
-                                    <div className="options-submit" onClick={_ => this.depDateClick()}>确定</div>
+                                    <div className="options-submit" onClick={_ => this.SubmitDateClick()}>确定</div>
                                 </div>
                             </div>
                         </div>
@@ -302,7 +279,7 @@ class IncomeExpensesList extends Component {
                                 )}
                             </div>
                             <div className="options-btn" style={{ backgroundColor: '#fff' }}>
-                                <div className="options-reset" onClick={_ => this.setState({ search: { ...this.state.search, settle_way_id: '' } })}>重置</div>
+                                <div className="options-reset" onClick={_ => this.setState({ settle_way_id:'', search: { ...this.state.search, settle_way_id: '' } })}>重置</div>
                                 <div className="options-submit" onClick={_ => this.Settle_methodSubmit()}>确定</div>
                             </div>
                         </Fragment>
@@ -317,7 +294,9 @@ class IncomeExpensesList extends Component {
             key: 'Contract_id',
             cb: (value, key) => {
                 let search = this.state.search
-                search['contract_id'] = ''
+                search['id'] = ''
+                search['settle_obj'] = ''
+                search['settle_amount'] = ''
                 search[key] = value
                 this.setState({ search: search });
                 reload(this)
@@ -326,7 +305,7 @@ class IncomeExpensesList extends Component {
         return <SearchLv2 value={this.state.search.id || this.state.search.settle_amount || this.state.search.settle_obj}
             open_search_key={_ => this.setState({ open_search_key: true })}
             cur_select={this.state.cur_select_search_filter || ''}
-            clear={e => { e.stopPropagation(); this.setState({ search: { ...this.state.search, id: '', settle_amount: '', settle_obj: '' } }, _ => reload(this)) }}
+            clear={e => { e.stopPropagation(); this.setState({ search: { ...this.state.search, id: '', settle_amount: '', settle_obj: ''} }, _ => reload(this)) }}
             param={search_cfg} set_anchor={anchor => this.search_anchor = anchor} />
     }
 
@@ -379,7 +358,7 @@ class IncomeExpensesList extends Component {
                                                     <span className="contract-cell-main">
                                                         提交日期: {item.submit_at.split(' ')[0]}</span>
                                                     <span className="contract-cell-main" style={{ textAlign: 'center' }}>
-                                                        出团日期: {item.dep_date}</span>
+                                                        过审日期: {item.approved_at.split(' ')[0]}</span>
                                                     <span className="contract-cell-main" style={{ textAlign: 'right' }}>
                                                         部门编号: {item.code}</span>
                                                 </div>

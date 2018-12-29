@@ -81,6 +81,7 @@
     margin: 0 .32rem .32rem .32rem;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 /* 其他功能 */
@@ -88,7 +89,7 @@
     width: 24%;
     font-size: .32rem;
     text-align: center;
-    margin: 0 .5%;
+    margin: .213333rem .5%;
 }
 .other-fuc-item .other-img{
     width: .8rem;
@@ -492,4 +493,51 @@
     border-radius: .08rem;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+
+
+/* ======================================= 微信 订单 ==================================== */
+.wechatOrder{
+    padding: 12px 24px 24px 24px;
+    background: #fff;
+}
+.wechatOrder-title{
+    text-align: center;
+    line-height: 1.066667rem;
+    font-size: 16px;
+    color: #333;
+}
+.wechatOrder-input{
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+}
+.wechatOrder-input span:first-child{
+    width: 1.733333rem;
+    height: 32px;
+    line-height: 32px;
+}
+.wechatOrder-input span:nth-child(2){
+    width: 100px;
+    height: 32px;
+    line-height: 32px;
+}
+.wechatOrder-input select{
+    flex: 1;
+    height: 32px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+}
+.wechatOrder-confirm{
+    width: 40%;
+    height: 32px;
+    line-height: 32px;
+    margin: 0 auto;
+    text-align: center;
+    border: 1px solid #6FC5D8;
+    border-radius: 4px;
+    background: #6FC5D8;
+    color: #fff;
 }

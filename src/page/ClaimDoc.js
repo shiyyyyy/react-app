@@ -4,6 +4,7 @@ import { error, nonBlockLoading, info, ErrorBoundary } from '../util/com';
 import { connect } from 'react-redux';
 
 import { Page, Button, Input, AlertDialog, AlertDialogButton } from 'react-onsenui';
+import { appConst } from "../util/const";
 import * as doc from '../util/doc'
 
 export default class ClaimDoc extends Component {
@@ -132,7 +133,9 @@ class DocPageRender extends Component {
             }
 
         })
-        this.props.p.params['单据信息'][0]['settle_obj_id'] = this.state.data.GL_SK_DOC[this.state.data.GL_SK_DOC.length - 1].cstm_id
+        if (this.props.p.params['单据信息'][0].doc_type_id === appConst.DOC_ORDER_SK){
+            this.props.p.params['单据信息'][0]['settle_obj_id'] = this.state.data.GL_SK_DOC[this.state.data.GL_SK_DOC.length - 1].cstm_id
+        } 
         trigger('加载等待');
         let cfg = AppMeta.actions[this.action];
         let param = get_req_data(cfg.submit.data, data);

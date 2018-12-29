@@ -85,6 +85,9 @@
     background-color: #fff;
     color: #000;
     text-align: center;
+
+    max-height: 8.933333rem;
+    overflow: auto;
 }
 
 .selected{
@@ -97,7 +100,7 @@
     padding: .533333rem .533333rem;
     border-top: 1px solid #f4f8f9;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 .selected-date-input{
     text-align: center;

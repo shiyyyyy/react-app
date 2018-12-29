@@ -13,10 +13,10 @@ class DocList extends Component {
         super(props);
 
         this.state = {
-            state: 'initial', data: [], search: { order_id: '', short_name: '' },
+            state: 'initial', data: [], search: { id: '', settle_amount: '' },
 
             open_search_key: false,
-            cur_select_search_filter: { search: 'order_id', text: '订单号' },
+            cur_select_search_filter: { search: 'id', text: '单据编号' },
         };
         this.mod = '订单管理';
         // this.action = '选择收款订单';
@@ -47,17 +47,17 @@ class DocList extends Component {
             key: 'MyAccount',
             cb: (value, key) => {
                 let search = this.state.search
-                search['order_id'] = ''
-                search['short_name'] = ''
+                search['id'] = ''
+                search['settle_amount'] = ''
                 search[key] = value
                 this.setState({ search: search });
                 reload(this)
             }
         }
-        return <SearchLv2 value={this.state.search.order_id || this.state.search.short_name || ''}
+        return <SearchLv2 value={this.state.search.id || this.state.search.settle_amount}
             open_search_key={_ => this.setState({ open_search_key: true })}
             cur_select={this.state.cur_select_search_filter || ''}
-            clear={e => { e.stopPropagation(); this.setState({ search: { ...this.state.search, order_id: '', short_name: '' } }, _ => reload(this)) }}
+            clear={e => { e.stopPropagation(); this.setState({ search: { ...this.state.search, id: '', settle_amount: '' } }, _ => reload(this)) }}
             param={search_cfg} set_anchor={anchor => this.search_anchor = anchor} />
     }
 
@@ -113,8 +113,8 @@ class DocList extends Component {
                 <div className="money-care-books-title fixed-top" style={{ top: this.tbHeight + 'px', fontSize: '.32rem' }}>
                     <span className="money-care-books-title-item-4">订单号</span>
                     <span className="money-care-books-title-item-4">报名人</span>
+                    <span className="money-care-books-title-item-4">供应商</span>
                     <span className="money-care-books-title-item-4">客户简称</span>
-                    <span className="money-care-books-title-item-4">未收</span>
                 </div>
             </div>
         )
@@ -137,8 +137,8 @@ class DocList extends Component {
                             getTarget={() => this.search_anchor}
                         >
                             <div className="dialog-select-box">
-                                <div className="dialog-select-item" onClick={_ => this.setState({ open_search_key: false, cur_select_search_filter: { text: '订单号', search: 'order_id' } })}>订单号</div>
-                                <div className="dialog-select-item" onClick={_ => this.setState({ open_search_key: false, cur_select_search_filter: { text: '客户简称', search: 'short_name', } })}>客户简称</div>
+                                <div className="dialog-select-item" onClick={_ => this.setState({ open_search_key: false, cur_select_search_filter: { text: '单据编号', search: 'id' } })}>单据编号</div>
+                                <div className="dialog-select-item" onClick={_ => this.setState({ open_search_key: false, cur_select_search_filter: { text: '结算金额', search: 'settle_amount', } })}>结算金额</div>
                             </div>
                         </Popover>
                         {
@@ -149,10 +149,10 @@ class DocList extends Component {
                                 {this.state.data.map((doc, i) =>
                                     <div className="money-care-books-main-item" key={doc.id} style={{ fontSize: '.266667rem' }}
                                     onClick={_=>this.selectDoc(doc)}>
-                                        <span className="money-care-books-main-item-col-4">D0{doc.order_id}</span>
+                                        <span className="money-care-books-main-item-col-4">{doc.order_id}</span>
                                         <span className="money-care-books-main-item-col-4">{doc.employee_name}</span>
+                                        <span className="money-care-books-main-item-col-4">{doc.pd_provider}</span>
                                         <span className="money-care-books-main-item-col-4">{doc.short_name}</span>
-                                        <span className="money-care-books-main-item-col-4">{doc.receive_diff}</span>
                                     </div>
                                 )}
                             </div>

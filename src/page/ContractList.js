@@ -43,9 +43,8 @@ class ContractList extends Component {
     PreviewContract(item){
         let url;
         item.action='合同预览';
-        item.dataSource='app';
         let cfg = AppMeta.actions[item.action];
-        url = cfg.read.url + '?action=' + item.action +'&id=' + item.id +'&dataSource='+ item.dataSource;
+        url = cfg.read.url + '?action=' + item.action +'&id=' + item.id;
         trigger('加载等待');
         post(url).then(
             r => {

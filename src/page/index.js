@@ -34,7 +34,7 @@ import ClaimFundsDone from './ClaimFundsDone';
 
 import ClaimDoc from './ClaimDoc';
 import OrderManagementList from './OrderManagementList';
-import FundManagementList from './FundManagementList';
+// import FundManagementList from './FundManagementList';
 
 import ContractList from './ContractList';
 import AddContract1 from './AddContract1';
@@ -46,6 +46,9 @@ import AddSingleContract3 from './AddSingleContract3';
 
 import IncomeExpensesList from './IncomeExpensesList';
 import IncomeExpensesEditDoc from './IncomeExpensesEditDoc';
+
+import WechatOrderList from './WechatOrderList';
+import SharePage from './SharePage';
 
 
 
@@ -95,7 +98,7 @@ export default {
 
 	'认领单据页': ClaimDoc,
 	'订单管理': OrderManagementList,
-	'资金认领列表': FundManagementList,
+	// '资金认领列表': FundManagementList,
 
 	'合同列表': ContractList,
 	'新增合同1': AddContract1,
@@ -113,5 +116,9 @@ export default {
 
 	'收支申请列表': IncomeExpensesList,
 	'修改收支申请': IncomeExpensesEditDoc,
+
+	'微信订单': WechatOrderList,
+
+	'微信分享': SharePage,
 
 };

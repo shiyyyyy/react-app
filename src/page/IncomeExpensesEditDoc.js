@@ -4,7 +4,9 @@ import { error, nonBlockLoading, info, ErrorBoundary, confirm } from '../util/co
 import { connect } from 'react-redux';
 
 import { Page, Button, Input, AlertDialog, AlertDialogButton } from 'react-onsenui';
-import * as doc from '../util/IncomeExpensesDoc'
+import {appConst} from '../util/const';
+import * as doc from '../util/IncomeExpensesDoc';
+
 
 export default class DocPageWrap extends Component {
     constructor(props) {
@@ -44,9 +46,11 @@ class DocPageRender extends Component {
             , '资金收款结算信息': '单据信息'
         }
         let data = this.state.data
+        let settle_amount_mod_key = ''
         var settle_amount_mod = ''
         Object.keys(obj).forEach(item=>{
             if (data && data[item]){
+                settle_amount_mod_key = item
                 settle_amount_mod = obj[item]
                 data[item][0].rmb_total = data[obj[item]][0]['settle_amount'];
                 if (data[item][0].currency_id){
@@ -61,13 +65,13 @@ class DocPageRender extends Component {
         if (settle_amount_mod !== ''){
             this.state.data['可选币种'] = Enum.SettleWayCurrency[this.state.data[settle_amount_mod][0].settle_way_id]
         }
-        this.setState({ data: data, settle_amount_mod: settle_amount_mod })
+        this.setState({ data: data, settle_amount_mod: settle_amount_mod, settle_amount_mod_key: settle_amount_mod_key })
 
     }
 
     changeModMain(mod,key,i,val){
         let data = this.state.data
-        data = this.change_settle_way(data, mod, key, val) ? this.change_settle_way(data, mod, key, val) : data
+        data = this.change_settle_way(data, mod, key, i, val) ? this.change_settle_way(data, mod, key, i, val) : data
         data = this.zj_sk_settle_info_change(data, mod,key,val)?this.zj_sk_settle_info_change(data, mod,key,val):data
         data = this.price_change_rmb(data, mod, key, val) ? this.price_change_rmb(data, mod, key, val) : data
         data = this.bill_price_change(data, mod, key, i, val) ? this.bill_price_change(data, mod, key, i, val) : data
@@ -75,10 +79,13 @@ class DocPageRender extends Component {
         this.setState({ data: data })
     }
 
-    // 选择 支付方式后 币种根据支付方式改变
-    change_settle_way(data, mod, key, val) {
+    // 选择 结算方式后 币种根据支付方式改变
+    change_settle_way(data, mod, key, i, val) {
         if((mod === '资金收款结算信息' && key === 'settle_way_id') || (mod === '业务收款结算信息' && key === 'settle_way_id')){
             data['可选币种'] = Enum['SettleWayCurrency'][val];
+            data[mod][i]['currency_id'] = Enum['SettleWayCurrency'][val][i];
+            data[mod][i].rate = Enum.CurrencyRate[Enum['SettleWayCurrency'][val][i]]
+            data[mod][i].local_currency_total = (parseInt(data[mod][i].settle_amount / data[mod][i].rate) * 100) / 100
         }
     }
 
@@ -90,8 +97,9 @@ class DocPageRender extends Component {
             data[mod] = this.state.data[mod];
             if (data[mod][0].currency_id) {
                 data[mod][0].rate = Enum.CurrencyRate[val]
-                data[mod][0].settle_amount = (parseInt(data[mod][0].local_currency_total * data[mod][0].rate)*100)/100
-                data[this.state.settle_amount_mod][0].settle_amount = data[mod][0].settle_amount
+                // data[mod][0].settle_amount = (parseInt(data[mod][0].local_currency_total * data[mod][0].rate) * 100) / 100
+                data[mod][0].local_currency_total = (parseInt(data[mod][0].settle_amount / data[mod][0].rate)*100)/100
+                // data[this.state.settle_amount_mod][0].settle_amount = data[mod][0].settle_amount
                 data[mod][0].rmb_total = data[mod][0].settle_amount
                 return data
             }
@@ -163,28 +171,47 @@ class DocPageRender extends Component {
     }
 
     approve(opinion) {
+        let that = this
         confirm('确认保存修改吗?').then( r =>{
+            let data = this.state.data
             trigger('加载等待');
-            submit(
-                this,
-                _ => info('修改成功').then(
-                    _ => {
-                        goBack();
-                        reload(this.pre_view);
-                    }
-                )
-            );
+            data = this.addModOrAddProps(that,data)
+            this.setState({data: data},_=> {
+                submit(
+                    this,
+                    _ => info('修改成功').then(
+                        _ => {
+                            goBack();
+                            reload(this.pre_view);
+                        }
+                    )
+                );
+            })
         })
-        let data = this.state.data;
-        // data['审批记录'].forEach(item => {
-        //     if (item.editable) {
-        //         item.opinion = opinion;
-        //         item.comment = this.state.comment;
-        //     }
-        // });
+    }
 
-        // this.setState({ data: data });
-        
+    addModOrAddProps(view, data){
+        if (view.action === '修改资金收款单' || view.action === '修改业务收款单'){
+            if (data['入账详情'] === undefined || data['入账详情'] == '') {
+                data['入账详情'] = []
+                data['入账详情'][0] = {}
+                if (view.action === '修改资金收款单'){
+                    return data
+                }
+                data['入账详情'][0].amount = data[view.state.settle_amount_mod][0].settle_amount
+            }else{
+                let cur_data = {}
+                AppMeta.actions[view.action].block.forEach(item=>{
+                    cur_data[item] = []
+                    cur_data[item][0] = {}
+                    if (item === '业务收款结算信息'){
+                        cur_data[item][0].rmb_total = data['单据信息'][0].settle_amount
+                    }
+                })
+                data = Object.assign({}, cur_data, data)
+            }
+        }
+        return data
     }
 
     render() {

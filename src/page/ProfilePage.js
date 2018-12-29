@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 
 import {Page,Switch,Icon} from 'react-onsenui';
 
-import { trigger, post, resetTo, loadIfEmpty, i18n, clickToLog, reload, haveModAuth, AppCore, goTo, testing} from '../util/core';
+import { trigger, post, resetTo, loadIfEmpty, i18n, clickToLog, reload, haveModAuth, haveActionAuth, AppCore, goTo, testing} from '../util/core';
 import {pullHook,confirm,nonBlockLoading} from '../util/com';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -20,7 +20,10 @@ class ProfilePage extends Component{
 	    			,'has_account_auth':false
 					,'has_regulatory_auth':false
 					,'has_claimFunds_auth': false
-					,'has_contract_auth': false};
+					,'has_claimFundsSenior_auth': false
+					,'has_contract_auth': false
+					, 'has_doc_apply_auth': false
+					,'has_wechat_auth': false};
 	    this.url = '/PublicApi/read_home?mod=HOME';
 	    this.click_history = [];
 	}
@@ -31,10 +34,17 @@ class ProfilePage extends Component{
 		this.setState({has_account_auth:has_account_auth});
 		let has_regulatory_auth = haveModAuth('账户监管');
 		this.setState({has_regulatory_auth:has_regulatory_auth});
-		let has_claimFunds_auth = haveModAuth('资金认领');
+		let has_claimFunds_auth = haveActionAuth('搜索资金','资金认领');
 		this.setState({ has_claimFunds_auth: has_claimFunds_auth });
+		let has_claimFundsSenior_auth = haveActionAuth('搜索资金', '资金认领');
+		this.setState({ has_claimFundsSenior_auth: has_claimFundsSenior_auth });
+
 		let has_contract_auth = haveModAuth('电子合同-订单');
 		this.setState({ has_contract_auth: has_contract_auth });
+		let has_doc_apply_auth = haveModAuth('收支申请');
+		this.setState({ has_doc_apply_auth: has_doc_apply_auth });
+		let has_wechat_auth = haveModAuth('微信订单');
+		this.setState({ has_wechat_auth: has_wechat_auth });
 	}
 
 
@@ -73,8 +83,9 @@ class ProfilePage extends Component{
 		goTo('我的账户');
 	}
 
-	otherFuc(target){
-		goTo(target)
+	otherFuc(target, action){
+		let type = action || null
+		goTo(target, type)
 	}
 
 	LoadMoreTodayDepOrder(params){
@@ -246,11 +257,17 @@ class ProfilePage extends Component{
 						{/* <div className="model-box-bald-title-more" onClick={_ => this.LoadMoreTodayDepOrder()}>详情</div> */}
 					</div>
 					<div className="model-box-bald-main" style={{justifyContent:'start'}}>
-					{this.state.has_claimFunds_auth &&
-						<div className="other-fuc-item" onClick={_=>this.otherFuc("资金认领")}>
+					{this.state.has_claimFunds_auth && 
+						<div className="other-fuc-item" onClick={_ => this.otherFuc("资金认领")}>
 							<img className="other-img" src="img/books2.png" />
 							<div>资金认领</div>
 						</div>
+					}
+					{this.state.has_claimFundsSenior_auth && 
+							<div className="other-fuc-item" onClick={_ => this.otherFuc("资金认领", { type: '高级资金搜索' })}>
+								<img className="other-img" src="img/books2.png" />
+								<div>资金认领(高)</div>
+							</div>
 					}
 					{this.state.has_contract_auth &&
 						<div className="other-fuc-item" onClick={_=>this.otherFuc("合同列表")}>
@@ -258,13 +275,24 @@ class ProfilePage extends Component{
 							<div>合同列表</div>
 						</div>
 					}
-					{/* {this.state.has_claimFunds_auth && */}
+					{this.state.has_doc_apply_auth &&
 						<div className="other-fuc-item" onClick={_ => this.otherFuc("收支申请列表")}>
 							<img className="other-img" src="img/dingdan.png" />
 							<div>收支申请</div>
 						</div>
-					{/* } */}
+					}
+					{this.state.has_wechat_auth &&
+						<div className="other-fuc-item" onClick={_ => this.otherFuc("微信订单")}>
+							<img className="other-img" src="img/dingdan.png" />
+							<div>微信订单</div>
+						</div>
+					}
+						<div className="other-fuc-item" onClick={_ => this.otherFuc("微信分享")}>
+							<img className="other-img" src="img/dingdan.png" />
+							<div>微信分享</div>
+						</div>	
 					</div>
+
 				</div>
 			}
 			{/* 最近订单 */

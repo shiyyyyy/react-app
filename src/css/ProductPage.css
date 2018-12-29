@@ -316,7 +316,7 @@
 }
 .zs-popup-btn-cancel{
     width: 35%;
-    color: #999;
+    color: rgba(0,0,0,.65);
     background: #fff;
     border: 1px solid #66ccdd;
     padding: 4px;
