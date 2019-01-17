@@ -132,7 +132,6 @@ class ContractList extends Component {
             confirm(val,item){
                 let action = '指定订单';
                 item.employee_id = val
-                console.log(item)
 
                 that.setState({ AppointOpen: false }, that.sureToDo(item, action))
             },
@@ -152,7 +151,6 @@ class ContractList extends Component {
             confirm(val,item) {
                 let action = '占位订单-微信订单';
                 item.assitant_id = val
-                console.log(item)
                 that.setState({ SeatOpen: false }, that.sureToDo(item, action))
             },
             close(){

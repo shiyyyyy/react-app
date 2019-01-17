@@ -23,6 +23,45 @@ body {
     margin: auto;
     padding-top: .986667rem;
 }
+
+
+/* App-EnterPrev */
+.App-EnterPrev{
+    width: 100vw;
+    height: 100vh;
+    line-height: 100vh;
+}
+
+/* enterpage */
+.EnterPage{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+}
+.EnterPage-img{
+
+}
+.EnterPage-btn-box{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100px;
+}
+.EnterPage-btn{
+    width: 2.666667rem;
+    height: 1.173333rem;
+    line-height: 1.173333rem;
+    color: #fff;
+    text-align: center;
+    margin: 0 auto;
+    background: #13B8CD;
+    border-radius: 1.173333rem;
+    box-shadow: 2px 2px 10px rgba(0,0,0,.4);
+}
+
 /* 常用 class name  */
 
 

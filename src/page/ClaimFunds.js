@@ -22,19 +22,17 @@ export default class ClaimFunds extends Component {
     }
 
     submit() {
-        console.log(this)
-        debugger
         let action = null;
-        if (this.props.p && this.props.p.type === '高级资金搜索'){
-            // 高级 搜索 条件 (只有两个必填 => 汇款方名称/到账金额)
+        if (this.props.p && this.props.p.action === '高级资金搜索'){
+            // 高级 搜索 条件 (只有1个必填 => 汇款方名称)
             if (!this.state.search['remitter']) {
                 info('请填写汇款方名称');
                 return;
             }
-            if (!this.state.search['arrived_amount']) {
-                info('请填写到账金额');
-                return;
-            }
+            // if (!this.state.search['arrived_amount']) {
+            //     info('请填写到账金额');
+            //     return;
+            // }
             action = '高级资金查询'
         }else{
             // 普通 搜索 条件 (全部都是必填)

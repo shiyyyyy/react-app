@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {Page,Icon} from 'react-onsenui';
 
 import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit,post,get_req_data,reload} from '../util/core';
-import {pullHook,loginToPlay,OpDialog, SupplierDialog,ErrorBoundary,info,footer,nonBlockLoading,confirm} from '../util/com';
+import { pullHook, loginToPlay, OpDialog, SupplierDialog, ErrorBoundary, info, footer, nonBlockLoading, confirm, BlackPrompt, BlackList} from '../util/com';
 import { connect } from 'react-redux';
 
 
@@ -29,7 +29,12 @@ class OrderEditPageRender extends Component{
 	constructor(props) {
 	    super(props);
 		
-		this.state = {'data':{'comment':''},'group_id':props.p.data.id,'inited':false,'open_supplier':false,'open_op':false};
+		this.state = {
+			'data':{'comment':''},'group_id':props.p.data.id,'inited':false,
+			BlackPromptShow: false,
+			BlackListShow: false,
+			BlackUserNameArr: [],
+			'open_supplier':false,'open_op':false};
 		this.action = props.p.action;
 		let cfg = AppMeta.actions[this.action];
 		this.text = cfg.text;
@@ -104,10 +109,12 @@ class OrderEditPageRender extends Component{
 		goTo('录入订单应转明细',{view:this,data:this.state.data['订单应转'][0].acc_item,action:'录入订单应转明细'});
 	}
 	submit(){
-		confirm('是否确认操作？').then(r=>r && this.sureToSubmit())
+		this.setState({submitType: '临时保存'})
+		confirm('是否确认操作？').then(r=>r && this.BlackListVer())
 	}
 
 	sureToSubmit(){
+
 		let data = this.state.data;
 		data['订单详情'][0]['assitant_id'] = data['接单人'].id;
 		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
@@ -117,16 +124,17 @@ class OrderEditPageRender extends Component{
 	}
 
 	submitRealSignUp(){
-		confirm('是否确认操作？').then(r=>r && this.sureToRealSignUp())
+		this.setState({submitType: '提交实报'})
+		confirm('是否确认操作？').then(r => r && this.BlackListVer())
 	}
 
 	sureToRealSignUp(){
+
 		let data = this.state.data;
 		data['订单详情'][0]['assitant_id'] = data['接单人'].id;
 		data['订单备注'] = [{'comment':data['comment'],'editable':true}];
 		this.setState({data:data});
 		trigger('加载等待');
-
 		let cfg = AppMeta.actions[this.action];
 		let param = get_req_data(cfg.submit.data,data);
 		param.real_sign_up = true;
@@ -137,6 +145,28 @@ class OrderEditPageRender extends Component{
 	    );
 	}	
 
+	BlackListVer(){
+		// 判断黑名单
+		let that = this
+		let data = this.state.data;
+		let trouList = data['订单参团']
+
+		post('/sale/TouristBlacklist/tourist_check', { tourist_data: trouList }).then(
+			r => {
+				if (r.data.length>0) {
+					that.setState({ BlackUserNameArr: r.data, BlackPromptShow: true })
+				} else {
+					if (that.state.submitType === '提交实报'){
+						that.sureToRealSignUp()
+					} else if (that.state.submitType === '临时保存'){
+						that.sureToSubmit()
+					}
+				}
+
+			}
+		)
+	}
+
 	submitDone(r){
 		info(r.message).then(
 			_=>{
@@ -144,6 +174,50 @@ class OrderEditPageRender extends Component{
 				reload(AppCore.OrderPage);
 			}
 		)
+	}
+
+	BlackPromptDialog(){
+		let that = this
+		let param = {
+			show: this.state.BlackPromptShow,
+			blackUser: this.state.BlackUserNameArr,
+			submit(val){
+				that.setState({BlackListShow: true})
+			},
+			close(val) {
+				that.setState({ BlackPromptShow: false })
+				confirm('是否继续修改订单？').then(
+					(r,e)=> {
+						if (r) {
+							that.state.BlackUserNameArr.map(item => {
+								let blackList = that.state.data['订单参团'].filter(cell => {
+									if (cell.name === item) {
+										cell.tourist_blacklist = 1
+									}
+								})
+							})
+							if (that.state.submitType === '提交实报') {
+								that.sureToRealSignUp()
+							} else if (that.state.submitType === '临时保存') {
+								that.sureToSubmit()
+							}
+						}
+					}, 
+				)
+			}
+		}
+		return (<BlackPrompt param={param} />)
+	}
+	BlackListDialog(){
+		let that = this
+		let param = {
+			show: this.state.BlackListShow,
+			tourist_name: this.state.BlackUserNameArr || [],
+			close(val) {
+				that.setState({ BlackListShow: false })
+			}
+		}
+		return (<BlackList param={param} />)
 	}
 
 	SupplierDialog(){
@@ -376,6 +450,8 @@ class OrderEditPageRender extends Component{
 				}
 				{ this.state.data && this.state.data['开团人详情'] && this.SupplierDialog()}
 				{ this.state.data && this.state.data['接单人详情'] && this.OpDialog()}
+				{ this.state.data && this.BlackPromptDialog() }
+				{ this.state.data && this.state.BlackListShow && this.BlackListDialog() }
 		    </Page>
 		);
 	}

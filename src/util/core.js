@@ -185,7 +185,10 @@ export function post(url, body, cfg) {
 
 let navigator;
 export function curRoute() {
-    return navigator.routes[navigator.routes.length - 1].key;
+    if (navigator){
+        return navigator.routes[navigator.routes.length - 1].key;
+    }
+    return false
 }
 
 export function setNav(nav) {
@@ -476,7 +479,7 @@ function _reload(view, done) {
         if(!cfg){
             return ;
         }
-        url = cfg.read.url + '?' + encUrl({...view.state.search, limit: view.pageSize || pageSize, mod: view.mod, front_enum: Enum.ver });
+        url = cfg.read.url + '?' + encUrl({ ...view.state.search, limit: view.pageSize || pageSize, mod: view.mod, front_enum: Enum.ver });
     } else if (view.action) {
         let cfg = AppMeta.actions[view.action];
         if(!cfg){

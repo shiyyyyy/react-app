@@ -1,7 +1,7 @@
 import * as ons from 'onsenui';
 import React from 'react';
 import {PullHook,Icon,Modal,Button,Dialog,ProgressBar,AlertDialog,AlertDialogButton} from 'react-onsenui';
-import {log,reloadSilent,i18n,resetTo,goTo,goBack,AppCore,AppMeta,Enum,trigger,clickToLog,post} from './core';
+import { log, reloadSilent, i18n, resetTo, goTo, goBack, AppCore, AppMeta, Enum, trigger, clickToLog, post,encUrl} from './core';
 import { connect } from 'react-redux';
 import { doForceUpdate } from './update';
 
@@ -770,9 +770,114 @@ export class WechatSeat extends React.Component {
     }
 }
 
+// ==================================黑名单 提示弹窗 && 当前黑名单列表==================================
+// 黑名单提示
+export class BlackPrompt extends React.Component {
+    constructor() {
+        super()
+        this.state = {}
+    }
+
+    close() {
+        this.props.param.close()
+    }
+    render() {
+        return (
+            <Dialog
+                animation="none"
+                isOpen={this.props.param.show}
+                isCancelable={true}
+                onCancel={this.close.bind(this)}
+            >
+                {
+                    // Object.keys(this.state.data).length>0 && 
+                    <div className="BlockPrompt">
+                        <div className="BlockPrompt-title">游客黑名单：</div>
+                        <div className="BlockPrompt-input">
+                            警告！游客名单
+                            {this.props.param.blackUser.map( (item,index) => 
+                                <span style={{ color: 'red' }}>{item}<span className={index === this.props.param.blackUser.length-1?'hide':''}>、</span></span>
+                            )}
+                            与黑名单中姓名一致，有旅游诈骗嫌疑请点击查看核对信息，如无问题请关闭。
+                        </div>
+                        <div className="BlockPrompt-btn" >
+                            <div className="BlockPrompt-btn-submit" onClick={_ => this.props.param.submit(this.state.val)}>查看</div>    
+                            <div className="BlockPrompt-btn-close" onClick={_ => this.props.param.close(this.state.val)}>关闭</div>    
+                        </div>
+                    </div>
+                }
+            </Dialog>
+        )
+    }
+}
+// 当前黑名单列表
+export class BlackList extends React.Component {
+    constructor() {
+        super()
+        this.state = {data:[]}
+    }
+    componentDidMount() {
+        let that = this
+        let param = this.props.param.tourist_name
+        let url = '/sale/TouristBlacklist/read_see?'+encUrl({tourist_name:param})
+            post(url).then(
+                r => {
+                    that.setState({ data: r.data['核对游客黑名单'] })
+                }
+            )
+    }
+
+    close() {
+        this.props.param.close()
+    }
+    render() {
+        return (
+            <Dialog
+                animation="none"
+                isOpen={this.props.param.show}
+                isCancelable={true}
+                onCancel={this.close.bind(this)}>
+                {
+                    this.state.data && 
+                    <div className="Blacklist">
+                        <div className="Blacklist-title">游客黑名单：</div>
+                        <div className="Blacklist-list-box">
+                            {this.state.data.map( item =>
+                                <div className="Blacklist-list-item">
+                                    <div className="Blacklist-list-cell">
+                                        <span className="Blacklist-list-cell-left">姓名: </span>
+                                        <span className="Blacklist-list-cell-right">{item.tourist_name}</span>
+                                    </div>
+                                    <div className="Blacklist-list-cell">
+                                        <span className="Blacklist-list-cell-left">性别: </span>
+                                        <span className="Blacklist-list-cell-right">{Enum['Gender'][item.gender]}</span>
+                                    </div>
+                                    <div className="Blacklist-list-cell">
+                                        <span className="Blacklist-list-cell-left">出生日期: </span>
+                                        <span className="Blacklist-list-cell-right">{item.birthday}</span>
+                                    </div>
+                                    <div className="Blacklist-list-cell">
+                                        <span className="Blacklist-list-cell-left">手机号码: </span>
+                                        <span className="Blacklist-list-cell-right">{item.mobile}</span>
+                                    </div>
+                                    <div className="Blacklist-list-cell">
+                                        <span className="Blacklist-list-cell-top">备注: </span>
+                                        <span className="Blacklist-list-cell-btm">{item.comment}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="Blacklist-btn"
+                            onClick={_ => this.props.param.close()}>关闭</div>
+                    </div>
+                }
+            </Dialog>
+        )
+    }
+}
+
+
 // ===========================================================================
-
-
 
 function progress({s}) {
     return (

@@ -21,8 +21,6 @@ class ClaimFundsDone extends Component {
         this.pageSize = 30;
         this.url = '/fin/Fund/search_fund';
         this.action = this.props.p.action
-        console.log(this)
-        debugger
     }
 
     componentDidMount(){

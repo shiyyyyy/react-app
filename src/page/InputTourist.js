@@ -60,6 +60,12 @@ export default class InputTourist extends Component {
 			let data = this.pre_view.state.data
 
 			data[this.block][this.tourist_index] = addTourist
+
+			// 如果 黑名单提示 已经提示过,则重置黑名单提示
+			if (data[this.block][this.tourist_index] && data[this.block][this.tourist_index].tourist_blacklist) {
+				data[this.block][this.tourist_index].tourist_blacklist = ''
+			}
+			
 			this.pre_view.setState({data:data})
 			goBack();
 	}

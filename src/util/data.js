@@ -34,9 +34,8 @@ export function userInit() {
 	        updateEnum(r.data.enum_ver);
 	    }
     );
-    pollInit();
-
-    if(curRoute()!=='登录页'){
+	pollInit();
+	if (curRoute() && curRoute()!=='登录页'){
     	loadIfEmpty(AppCore.HomePage);
     }
 }
@@ -45,7 +44,7 @@ function enumInit(em){
     Object.assign(Enum,em);
 }
 function loginJump() {
-    if(curRoute()==='登录页' && Enum.ver){
+	if (curRoute() && curRoute()==='登录页' && Enum.ver){
     	trigger('取消等待');
     	resetTo('底栏菜单');
     }

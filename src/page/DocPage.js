@@ -193,7 +193,7 @@ class DocPageRender extends Component{
 						{doc.basis(this.state.data['单据信息'][0])}
 
 						{/* 结算信息 */}
-						{doc.billing_info(this.state.data['支出结算信息'][0],'业务支出')}
+						{doc.billing_info(this.state.data['支出结算信息'][0],'支出')}
 
 						{/* 汇款账号 */}
 						{doc.account_info(this.state.data['汇款账号'][0])}
@@ -224,7 +224,7 @@ class DocPageRender extends Component{
 						}
 
 						{/* 结算信息 */}
-						{doc.billing_info(this.state.data['资金支出结算信息'][0])}
+						{doc.billing_info(this.state.data['资金支出结算信息'][0], '支出')}
 
 						{/* 汇款账号 */}
 						{doc.account_info(this.state.data['汇款账号'][0])}

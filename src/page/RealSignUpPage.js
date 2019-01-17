@@ -2,8 +2,8 @@ import React, { Component,Fragment } from 'react';
 
 import {Page,Dialog,Icon} from 'react-onsenui';
 
-import {AppCore,resetTo,AppMeta,goTo,Enum,loadIfEmpty,goBack,trigger,submit} from '../util/core';
-import {pullHook,loginToPlay,ErrorBoundary,info,ProInfo,OpDialog, SupplierDialog,nonBlockLoading,confirm} from '../util/com';
+import { AppCore, resetTo, AppMeta, goTo, Enum, loadIfEmpty, goBack, trigger, submit, post} from '../util/core';
+import { pullHook, loginToPlay, ErrorBoundary, info, ProInfo, OpDialog, SupplierDialog, nonBlockLoading, confirm, BlackPrompt, BlackList} from '../util/com';
 import { connect } from 'react-redux';
 
 import '../css/OrderEditPage.css'
@@ -26,7 +26,12 @@ class RealSignUpPageRender extends Component{
 	constructor(props) {
 	    super(props);
 		
-		this.state = {'data':{'comment':''},'group_id':props.p.data.id,'inited':false,'open_op':false,'open_supplier':false};
+		this.state = {
+			'data':{'comment':''},'group_id':props.p.data.id,'inited':false,'open_op':false,'open_supplier':false,
+			BlackPromptShow: false,
+			BlackListShow: false,
+			BlackUserNameArr: [],
+		};
 		this.action = props.p.action;
 		let cfg = AppMeta.actions[this.action];
 		this.text = cfg.text;
@@ -115,7 +120,7 @@ class RealSignUpPageRender extends Component{
 	}
 
 	submitRealSignUp(){
-		confirm('是否确认操作？').then(r=>r && this.sureToRealSignUp())
+		confirm('是否确认操作？').then(r => r && this.BlackListVer())
 	}
 
 	sureToRealSignUp(){
@@ -133,6 +138,59 @@ class RealSignUpPageRender extends Component{
 				goBack();
 			}
 		)
+	}
+
+	BlackListVer() {
+		// 判断黑名单
+		let that = this
+		let data = this.state.data;
+		let trouList = data['订单参团']
+		post('/sale/TouristBlacklist/tourist_check', { tourist_data: trouList }).then(
+			r => {
+				if (r.data.length > 0) {
+					that.setState({ BlackUserNameArr: r.data, BlackPromptShow: true })
+				} else {
+					that.sureToRealSignUp()
+				}
+			}
+		)
+	}
+	BlackPromptDialog() {
+		let that = this
+		let param = {
+			show: this.state.BlackPromptShow,
+			blackUser: this.state.BlackUserNameArr,
+			submit(val) {
+				that.setState({ BlackListShow: true })
+			},
+			close(val) {
+				that.setState({ BlackPromptShow: false })
+				confirm('是否继续修改订单？').then((r, e) => {
+					if (r) {
+						that.state.BlackUserNameArr.map(item => {
+							let blackList = that.state.data['订单参团'].filter(cell => {
+								if (cell.name === item) {
+									cell.tourist_blacklist = 1
+								}
+							})
+						})
+						that.sureToRealSignUp()
+					}
+				})
+			}
+		}
+		return (<BlackPrompt param={param} />)
+	}
+	BlackListDialog() {
+		let that = this
+		let param = {
+			show: this.state.BlackListShow,
+			tourist_name: this.state.BlackUserNameArr || '',
+			close(val) {
+				that.setState({ BlackListShow: false })
+			}
+		}
+		return (<BlackList param={param} />)
 	}
 
 	SupplierDialog(){
@@ -327,6 +385,9 @@ class RealSignUpPageRender extends Component{
 			}
 				{ this.state.data && this.state.data['开团人详情'] && this.SupplierDialog()}
 				{ this.state.data && this.state.data['接单人详情'] && this.OpDialog()}
+				{/* 黑名单提示及详情 */}
+				{this.state.data && this.BlackPromptDialog()}
+				{this.state.data && this.state.BlackListShow && this.BlackListDialog()}
 		    </Page>
 		);
 	}

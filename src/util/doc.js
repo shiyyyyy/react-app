@@ -131,8 +131,11 @@ export function billing_info(data,type) {
 				<div className="jsxx">结算信息</div>
 			</div>
 			<div className="doc-main">
-				<div className={ (type === '业务支出' ? '':'hide') +" doc-main-cell"}>
+				<div className={ (type === '支出' ? '':'hide') +" doc-main-cell"}>
 					<span className="cell-left-5">业务类型:</span><span className="cell-right">{Enum.InvoiceBusinessType[data.business_type]}</span>
+				</div>
+				<div className={(type === '支出' ? '' : 'hide') + " doc-main-cell"}>
+					<span className="cell-left-5">服务名称:</span><span className="cell-right">{data.service_name || ''}</span>
 				</div>
 				<div className="doc-main-cell">
 					<span className="cell-left-5">结算方式:</span><span className="cell-right">{Enum.SettleWay[data.settle_way_id]}</span>

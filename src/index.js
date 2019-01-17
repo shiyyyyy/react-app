@@ -7,12 +7,11 @@ import './index.css';
 import './util/init';
 
 import App from './App';
-import EnterPage from './EnterPage';
 // import registerServiceWorker from './registerServiceWorker';
 
 import { Provider } from 'react-redux';
 import {store} from './util/core';
 
 
-ReactDOM.render(<Provider store={store}><EnterPage /></Provider>, document.getElementById('root'));
+ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
 // registerServiceWorker();

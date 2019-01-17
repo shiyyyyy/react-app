@@ -75,6 +75,8 @@
 
 
 .model-box-bald-main{
+    min-height: 2.48rem;
+    box-sizing: border-box;
     background-color: #fff;
     border-radius: .266667rem;
     padding: .373333rem .64rem;
@@ -393,6 +395,23 @@
     white-space: nowrap;
 }
 
+/* ==================================== 整体蒙层 ============================================ */
+.fixed-mod{
+    border-radius: .266667rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0,0,0,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fixed-mod-icon{
+    font-size: .693333rem;
+}
+
 /* ==================================== 账本详情 ============================================ */
 .reg-detail-body{
 
@@ -540,4 +559,180 @@
     border-radius: 4px;
     background: #6FC5D8;
     color: #fff;
+}
+
+/* -===============================    数据统计    =================================- */
+/*  时间 选择 页   */
+.StatisticsDate{
+    width: 100%;
+    height: 100%;
+    background: #fff;
+}
+.StatisticsDate-input-box{
+    padding: .64rem .32rem 0 .32rem;
+}
+.StatisticsDate-input-cell{
+    padding: .32rem 0;
+    line-height: .853333rem;
+    display: flex;
+    align-items: center;
+}
+.StatisticsDate-input-cell-left-img{
+    width: .64rem;
+    height: .64rem;
+    margin-right: .32rem;
+}
+.StatisticsDate-input-cell-left{
+    width: 2.133333rem;
+}
+
+.StatisticsDate-input-cell-right{
+    flex: 1;
+}
+.StatisticsDate-input-cell-right input{
+    min-width: 3.2rem;
+}
+/*  数据呈现 页   */
+.StatisticalPresentation{
+    padding: 0 .32rem .32rem .32rem;
+}
+.StatisticalPresentation-date{
+    background: #fff;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-around;
+    /* border-bottom: 1px solid #d9d9d9; */
+    box-shadow: 0px 1px 0px rgba(0,0,0,.1);
+}
+.StatisticalPresentation-main{
+    background: #fff;
+    border-radius: 4px;
+    padding: .32rem;
+}
+
+/* 单行 样式 */
+.StatisticalPresentation-one-item{
+    height: 1.013333rem;
+    line-height: 1.013333rem;
+    font-size: .346667rem;
+    display: flex;
+    border-bottom: 1px dashed #d9d9d9;
+}
+.StatisticalPresentation-one-item:last-child{
+    border-bottom: none;
+}
+.StatisticalPresentation-one-num{
+    width: 10%;
+}
+.StatisticalPresentation-one-name{
+    width: 27%;
+    padding: 0 1%;
+    white-space: nowrap;
+    overflow: auto;
+}
+.StatisticalPresentation-one-price{
+    width: 40%;
+    padding: 0 1%;
+    white-space: nowrap;
+    overflow: auto;
+}
+.StatisticalPresentation-one-num_people{
+    width: 23%;
+    padding: 0 1%;
+    white-space: nowrap;
+    overflow: auto;
+}
+/* 双行 样式 */
+.StatisticalPresentation-two-item{
+    height: 1.013333rem;
+    line-height: 1.013333rem;
+    padding: 4px 0;
+    font-size: .346667rem;
+    display: flex;
+    border-bottom: 1px dashed #d9d9d9;
+}
+.StatisticalPresentation-two-item:last-child{
+    border-bottom: none;
+}
+
+.StatisticalPresentation-two-num{
+    width: 10%;
+}
+.StatisticalPresentation-two-name{
+    width: 67%;
+    /* line-height: .533333rem; */
+    padding: 0 1%;
+}
+.StatisticalPresentation-two-name > div{
+    line-height: .533333rem;
+    height: .533333rem;
+    white-space: nowrap;
+    overflow: auto;
+}
+.StatisticalPresentation-two-num_people{
+    width: 24%;
+    padding: 0 1%;
+    white-space: nowrap;
+    overflow: auto;
+}
+
+
+
+
+/* 统计 业务资金 页 ==================================== */
+.StatisticalFund{
+    padding: .32rem;
+}
+.StatisticalFund-filter{
+    font-size: .32rem;
+    display: flex;
+    justify-content: space-around;
+    box-shadow: 0px 5px 10px -5px rgba(0,0,0,.15);
+}
+.StatisticalFund-filter-item{
+    width: 16%;
+    height: 26px;
+    line-height: 26px;
+    padding: 0 1%;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+}
+.StatisticalFund-filter-item-active{
+    border-color: #4285F4; 
+    color: #4285F4;
+}
+.StatisticalFund-item{
+    padding: .32rem;
+    background: #fff;
+    border-radius: 4px;
+    margin-bottom: .32rem;
+}
+.StatisticalFund-item-title{
+    font-size: .48rem;
+    color: #4285F4;
+    /* text-align: center; */
+    line-height: .96rem;
+}
+.StatisticalFund-item-main{
+    padding-left: .426667rem;
+}
+.StatisticalFund-item-cell{
+    display: flex;
+    align-items: center;
+    line-height: 32px;
+}
+.StatisticalFund-item-cell-img{
+    width: .64rem;
+    height: .64rem;
+}
+.StatisticalFund-item-cell-text{
+    margin-left: .426667rem;
+    margin-right: .426667rem;
+}
+.StatisticalFund-item-cell-price{
+    flex: 1;
+    font-size: .426667rem;
+    font-weight: bold;
+    text-align: right;
+    padding-right: 24px;
 }

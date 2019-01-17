@@ -48,8 +48,10 @@ import IncomeExpensesList from './IncomeExpensesList';
 import IncomeExpensesEditDoc from './IncomeExpensesEditDoc';
 
 import WechatOrderList from './WechatOrderList';
-import SharePage from './SharePage';
-
+// 数据统计 页面
+import StatisticsDate from './StatisticsDate';
+import StatisticalPresentation from './StatisticalPresentation';
+import StatisticalFund from './StatisticalFund';
 
 
 export default {
@@ -119,6 +121,8 @@ export default {
 
 	'微信订单': WechatOrderList,
 
-	'微信分享': SharePage,
+	'统计时间选择': StatisticsDate,
+	'统计呈现': StatisticalPresentation,
+	'统计业务资金': StatisticalFund,
 
 };

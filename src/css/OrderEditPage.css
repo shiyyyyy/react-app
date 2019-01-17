@@ -145,3 +145,99 @@
     display: inline-block;
 }
 
+/* ================================== 黑名单 ========================================= */
+/* 黑名单提示 */
+.BlockPrompt{
+    padding: .32rem;
+}
+.BlockPrompt-title{
+    line-height: 1.066667rem;
+    text-align: center;
+}
+.BlockPrompt-input{
+    font-size: .373333rem;
+    text-indent: 2em;
+}
+.BlockPrompt-btn{
+    margin-top: .426667rem;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+}
+.BlockPrompt-btn-submit{
+    width: 40%;
+    height: .853333rem;
+    line-height: .853333rem;
+    border-radius: 4px;
+    background: #6FC5D8;
+    color: #fff;
+}
+.BlockPrompt-btn-close{
+    width: 40%;
+    height: .853333rem;
+    line-height: .853333rem;
+    border-radius: 4px;
+    background: #6FC5D8;
+    color: #fff;    
+}
+/* 黑名单列表 */
+.Blacklist{
+    width: 7.466667rem;
+    height: 10.133333rem;
+    padding: .32rem;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.Blacklist-title{
+    line-height: 1.066667rem;
+    text-align: center;
+}
+.Blacklist-list-box{
+    font-size: .373333rem;
+    line-height: .64rem;
+    color: #666;
+    max-height: 6.666667rem;
+    overflow: auto;
+}
+.Blacklist-list-item{
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: .32rem;
+    margin: 8px;
+}
+.Blacklist-list-cell{
+
+}
+.Blacklist-list-cell-left{
+    width: 1.866667rem;
+    display: inline-block;
+}
+.Blacklist-list-cell-right{
+    color: #333;
+}
+.Blacklist-list-cell-top{
+    width: 100%;
+    display: block;
+}
+.Blacklist-list-cell-btm{
+    color: #333;
+    text-indent: 2em;
+    display: block;
+    line-height: 20px;
+    max-height: 60px;
+    overflow: hidden;
+}
+.Blacklist-btn{
+    width: 25%;
+    height: .96rem;
+    line-height: .96rem;
+    color: #fff;
+    text-align: center;
+    background: #6FC5D8;
+    border-radius: 4px;
+    margin: 0 auto;
+    margin-top: .426667rem;
+    position: absolute;
+    left: 37.5%;
+    bottom: 20px;
+}

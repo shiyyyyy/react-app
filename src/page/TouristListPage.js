@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import {Page} from 'react-onsenui';
 
 
-import {footer,ErrorBoundary,info,nonBlockLoading} from '../util/com';
-import {AppCore,resetTo, goBack ,loadIfEmpty,AppMeta,Enum,goTo,trigger,post} from '../util/core';
+import { footer, ErrorBoundary, info, nonBlockLoading, confirm, BlackPrompt, BlackList} from '../util/com';
+import { AppCore, resetTo, goBack, loadIfEmpty, AppMeta, Enum, goTo, trigger, post} from '../util/core';
 import { connect } from 'react-redux';
 
 export default class TouristListWrap extends Component {
@@ -23,7 +23,12 @@ class TouristListPageRender extends Component{
 
 	constructor(props) {
 		super(props);
-		this.state = {'data':{},'inited':false};
+		this.state = {
+			'data':{},'inited':false,
+			BlackPromptShow: false,
+			BlackListShow: false,
+			BlackUserNameArr: [],
+		};
 		this.action = props.p.action;
 		let cfg = AppMeta.actions[this.action];
 		this.text = cfg.text;
@@ -54,23 +59,26 @@ class TouristListPageRender extends Component{
 	// }
 
 	submit(){
+		confirm('是否确认操作？').then(r => r && this.BlackListVer())
+	}
+	sureToRealSignUp(){
 		let data = this.state.data;
 		let order_id = data['订单详情'][0]['id'];
 		let cfg = AppMeta.actions[this.action];
-		// if(!this.minTouriListMobile()){
-		// 	info('至少要有一位游客的手机号');
-		// 	return
-		// }
+							// if(!this.minTouriListMobile()){
+							// 	info('至少要有一位游客的手机号');
+							// 	return
+							// }
 		trigger('加载等待');
-	    post(cfg.submit.url, {id:order_id,data:{'游客名单':data['游客名单']}}).then(
-	        r => {
-			    info(r.message).then(
-					_=>{
+		post(cfg.submit.url, { id: order_id, data: { '游客名单': data['游客名单'] } }).then(
+			r => {
+				info(r.message).then(
+					_ => {
 						goBack();
 					}
 				);
-	        }
-	    );
+			}
+		);
 	}
 
 	afterLoad(){
@@ -97,6 +105,59 @@ class TouristListPageRender extends Component{
 
 	editTourist(item,i,block){
 		goTo('录入游客名单',{action:'录入游客名单',view:this,item: item,i:i,block:block})
+	}
+
+	BlackListVer() {
+		// 判断黑名单
+		let that = this
+		let data = this.state.data;
+		let trouList = data['游客名单']
+		post('/sale/TouristBlacklist/tourist_check', { tourist_data: trouList }).then(
+			r => {
+				if (r.data.length > 0) {
+					that.setState({ BlackUserNameArr: r.data, BlackPromptShow: true })
+				} else {
+					that.sureToRealSignUp()
+				}
+			}
+		)
+	}
+	BlackPromptDialog() {
+		let that = this
+		let param = {
+			show: this.state.BlackPromptShow,
+			blackUser: this.state.BlackUserNameArr,
+			submit(val) {
+				that.setState({ BlackListShow: true })
+			},
+			close(val) {
+				that.setState({ BlackPromptShow: false })
+				confirm('是否继续修改订单？').then((r,e) => {
+					if(r){
+						that.state.BlackUserNameArr.map(item => {
+							let blackList = that.state.data['游客名单'].filter(cell => {
+								if (cell.name === item) {
+									cell.tourist_blacklist = 1
+								}
+							})
+						})
+						that.sureToRealSignUp()
+					}
+				})
+			}
+		}
+		return (<BlackPrompt param={param} />)
+	}
+	BlackListDialog() {
+		let that = this
+		let param = {
+			show: this.state.BlackListShow,
+			tourist_name: this.state.BlackUserNameArr || '',
+			close(val) {
+				that.setState({ BlackListShow: false })
+			}
+		}
+		return (<BlackList param={param} />)
 	}
 
 	render(){
@@ -171,6 +232,8 @@ class TouristListPageRender extends Component{
 				</div>
 				</div>
 			}
+				{this.state.data && this.BlackPromptDialog()}
+				{this.state.data && this.state.BlackListShow && this.BlackListDialog()}
 		    </Page>
 		);
 	}

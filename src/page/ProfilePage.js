@@ -14,7 +14,8 @@ class ProfilePage extends Component{
 
 	constructor(props) {
 	    super(props);
-	    this.state = {state:'initial','order_mod_click':false
+		this.state = {
+			state: 'initial', 'order_mod_click': false
 	    			,data:{'订单数据':{},'账户数据':{},'账户监管':[{}],'消息通知':[]
 	    			,'员工数据':[{}]}
 	    			,'has_account_auth':false
@@ -24,7 +25,7 @@ class ProfilePage extends Component{
 					,'has_contract_auth': false
 					, 'has_doc_apply_auth': false
 					,'has_wechat_auth': false};
-	    this.url = '/PublicApi/read_home?mod=HOME';
+	    this.url = '/PublicApi/app_profile_page';
 	    this.click_history = [];
 	}
 
@@ -36,7 +37,7 @@ class ProfilePage extends Component{
 		this.setState({has_regulatory_auth:has_regulatory_auth});
 		let has_claimFunds_auth = haveActionAuth('搜索资金','资金认领');
 		this.setState({ has_claimFunds_auth: has_claimFunds_auth });
-		let has_claimFundsSenior_auth = haveActionAuth('搜索资金', '资金认领');
+		let has_claimFundsSenior_auth = haveActionAuth('高级搜索资金', '资金认领');
 		this.setState({ has_claimFundsSenior_auth: has_claimFundsSenior_auth });
 
 		let has_contract_auth = haveModAuth('电子合同-订单');
@@ -45,6 +46,17 @@ class ProfilePage extends Component{
 		this.setState({ has_doc_apply_auth: has_doc_apply_auth });
 		let has_wechat_auth = haveModAuth('微信订单');
 		this.setState({ has_wechat_auth: has_wechat_auth });
+
+		// 数据统计
+		let has_same_trade_statistics = haveModAuth('同业采购统计');
+		this.setState({ has_same_trade_statistics: has_same_trade_statistics });
+		let has_business_capital_statistics = haveModAuth('业务资金统计');
+		this.setState({ has_business_capital_statistics: has_business_capital_statistics });
+		let has_pro_tag_statistics = haveModAuth('产品标签统计');
+		this.setState({ has_pro_tag_statistics: has_pro_tag_statistics });
+		let has_retail_sales_customers_statistics = haveModAuth('门市收客统计');
+		this.setState({ has_retail_sales_customers_statistics: has_retail_sales_customers_statistics });
+
 	}
 
 
@@ -83,9 +95,10 @@ class ProfilePage extends Component{
 		goTo('我的账户');
 	}
 
-	otherFuc(target, action){
-		let type = action || null
-		goTo(target, type)
+	otherFuc(target, act, md){
+		let action = act || null
+		let mod = md || null
+		goTo(target, {action,mod})
 	}
 
 	LoadMoreTodayDepOrder(params){
@@ -192,7 +205,7 @@ class ProfilePage extends Component{
 
 	render(){
 		return (
-		<Page onShow={_=>this.onShow()}>
+			<Page onShow={_ => this.onShow()} >
 			{
 			  	this.props.s.user.sid && pullHook(this)	
 		    }
@@ -256,7 +269,7 @@ class ProfilePage extends Component{
 						<div className="model-box-bald-title-text dingdan">其他功能</div>
 						{/* <div className="model-box-bald-title-more" onClick={_ => this.LoadMoreTodayDepOrder()}>详情</div> */}
 					</div>
-					<div className="model-box-bald-main" style={{justifyContent:'start'}}>
+					<div className="model-box-bald-main" style={{justifyContent:'start', position: 'relative'}}>
 					{this.state.has_claimFunds_auth && 
 						<div className="other-fuc-item" onClick={_ => this.otherFuc("资金认领")}>
 							<img className="other-img" src="img/books2.png" />
@@ -264,9 +277,9 @@ class ProfilePage extends Component{
 						</div>
 					}
 					{this.state.has_claimFundsSenior_auth && 
-							<div className="other-fuc-item" onClick={_ => this.otherFuc("资金认领", { type: '高级资金搜索' })}>
+							<div className="other-fuc-item" onClick={_ => this.otherFuc("资金认领", { action: '高级资金搜索' })}>
 								<img className="other-img" src="img/books2.png" />
-								<div>资金认领(高)</div>
+								<div>高级认领</div>
 							</div>
 					}
 					{this.state.has_contract_auth &&
@@ -277,7 +290,7 @@ class ProfilePage extends Component{
 					}
 					{this.state.has_doc_apply_auth &&
 						<div className="other-fuc-item" onClick={_ => this.otherFuc("收支申请列表")}>
-							<img className="other-img" src="img/dingdan.png" />
+							<img className="other-img" src="img/doc_icon/tzdj.png" />
 							<div>收支申请</div>
 						</div>
 					}
@@ -287,12 +300,13 @@ class ProfilePage extends Component{
 							<div>微信订单</div>
 						</div>
 					}
-						<div className="other-fuc-item" onClick={_ => this.otherFuc("微信分享")}>
-							<img className="other-img" src="img/dingdan.png" />
-							<div>微信分享</div>
-						</div>	
-					</div>
 
+					{/* 加载蒙层 */}
+					{this.state.loading && 
+						<div className="fixed-mod"><Icon className="fa fa-spinner fixed-mod-icon pull-hook-content" spin /></div>
+					}
+
+					</div>
 				</div>
 			}
 			{/* 最近订单 */
@@ -402,32 +416,51 @@ class ProfilePage extends Component{
 					</div>
 				</div>
 			}
-			{/* 
-				this.props.s.user.sid && 
+
+
+			{ /* 数据统计 */
+				this.props.s.user.sid && (this.state.has_same_trade_statistics || this.state.has_business_capital_statistics || this.state.has_pro_tag_statistics || this.state.has_retail_sales_customers_statistics) &&
 				<div className="model-box-bald">
-					<div  className="model-box-bald-title">
-						<div className="model-box-bald-title-text">消息通知</div>
-						<div className="model-box-bald-title-more">更多</div>
+					<div className="model-box-bald-title">
+						<div className="model-box-bald-title-text dingdan">数据统计</div>
+						{/* <div className="model-box-bald-title-more" onClick={_ => this.LoadMoreTodayDepOrder()}>详情</div> */}
 					</div>
-
-					<div className="model-box-bald-main-msg">
-					{ 
-						this.state.data['消息通知'].map((msg,i)=>
-							<div className="model-box-bald-main-msg-item" key={i}>
-								<div className="model-box-bald-main-msg-item-left">
-									<span>发布人: {msg.publisher_name}</span> <span>{msg.create_at}</span>
-									<div>{i18n.pick(msg.title)}</div>
-								</div>
-								<div className="model-box-bald-main-msg-item-right">
-									<img src="img/msg1.png" />
-								</div>
-							</div>
-						)
-
+					<div className="model-box-bald-main" style={{justifyContent:'start', position: 'relative'}}>
+					{this.state.has_same_trade_statistics &&
+						<div className="other-fuc-item" onClick={_=>this.otherFuc("统计时间选择", null, '同业采购统计')}>
+							<img className="other-img" src="img/tongji_icon/caigou.png" />
+							<div>同业采购</div>
+						</div>
 					}
+					{this.state.has_business_capital_statistics && 
+						<div className="other-fuc-item" onClick={_ => this.otherFuc("统计业务资金")}>
+							<img className="other-img" src="img/tongji_icon/zijin.png" />
+							<div>业务资金</div>
+						</div>
+					}
+					{this.state.has_pro_tag_statistics &&
+						<div className="other-fuc-item" onClick={_=>this.otherFuc("统计时间选择", null, '产品标签统计')}>
+							<img className="other-img" src="img/tongji_icon/xianlu.png" />
+							<div>线路区域</div>
+						</div>
+					}
+					{this.state.has_retail_sales_customers_statistics &&
+						<div className="other-fuc-item" onClick={_ => this.otherFuc("统计时间选择", null, '门市收客统计')}>
+							<img className="other-img" src="img/tongji_icon/menke.png" />
+							<div>门市收客</div>
+						</div>
+					}
+
+						{/* 加载蒙层 */}
+						{this.state.loading && 
+							<div className="fixed-mod"><Icon className="fa fa-spinner fixed-mod-icon pull-hook-content" spin /></div>
+						}
+
 					</div>
+
 				</div>
-			}	   */}
+			}
+			
 				  
 		  </Page>
 		);
