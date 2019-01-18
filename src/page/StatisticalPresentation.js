@@ -15,6 +15,7 @@ class StatisticalPresentation extends Component {
         this.state = {
             state: 'initial', data: [], page: 1,
             search: { ...props.p.search },
+            key_type: 1, // 1是 人数 2是 流水
         };
         this.mod = props.p.mod || null;
         this.url = null
@@ -30,10 +31,16 @@ class StatisticalPresentation extends Component {
         }
         return (
             <div className="fixed-top-box" >
-                <div className="StatisticalPresentation-date fixed-top" style={{ top: this.tbHeight + 'px'}}>
-                    <span >{this.props.p.search.dep_date_from}</span>
+                <div className="StatisticalPresentation-date" style={{ top: this.tbHeight + 'px'}}>
+                    <span style={{paddingTop:'.213333rem'}}>{this.props.p.search.dep_date_from}</span>
                     <span style={{width: '1.6rem'}}><img src="img/rightDate.png" className="img-size" /></span>
-                    <span >{this.props.p.search.dep_date_to}</span>
+                    <span style={{paddingTop:'.213333rem'}}>{this.props.p.search.dep_date_to}</span>
+                    <div className="StatisticalPresentation-sort">
+                        <span className={"StatisticalPresentation-sort-item "+(this.state.key_type === 2 ? 'StatisticalPresentation-sort-item-active' : '')} 
+                        onClick={_=>this.setListSortType(2)}>按流水排序</span>
+                        <span className={"StatisticalPresentation-sort-item "+(this.state.key_type === 1 ? 'StatisticalPresentation-sort-item-active' : '')} 
+                        onClick={_=>this.setListSortType(1)}>按人数排序</span>
+                    </div>
                 </div>
             </div>
         )
@@ -83,23 +90,34 @@ class StatisticalPresentation extends Component {
         return [pd_tag_type, pd_sub_tag_type]
     }
 
-    afterLoad(){
+    setListSortType(val){
+        this.setState({ key_type: val }, _ => this.list_sort())
+    }
+    list_sort(){
         let data = this.state.data
-        let news = '' 
-        let news2 = '' 
-        for(let i = 0, len = data['统计结果'][this.state.cur_key].length; i < len; i++){
-            for(let j = 0; j < len-1-i; j++){
-                if (parseInt(data['统计结果'][this.state.cur_key][j].result) < parseInt(data['统计结果'][this.state.cur_key][j+1].result)){
+        let key = this.state.cur_key
+        let news = ''
+        let news2 = ''
+        if (this.state.key_type === 2){
+            key = this.state.cur_key2
+        }
+        for (let i = 0, len = data['统计结果'][this.state.cur_key].length; i < len; i++) {
+            for (let j = 0; j < len - 1 - i; j++) {
+                if (parseInt(data['统计结果'][key][j]['result']) < parseInt(data['统计结果'][key][j + 1]['result'])) {
                     news = data['统计结果'][this.state.cur_key][j]
                     news2 = data['统计结果'][this.state.cur_key2][j]
                     data['统计结果'][this.state.cur_key][j] = data['统计结果'][this.state.cur_key][j + 1]
-                    data['统计结果'][this.state.cur_key2][j] = data['统计结果'][this.state.cur_key2][j+1]
-                    data['统计结果'][this.state.cur_key][j+1] = news
-                    data['统计结果'][this.state.cur_key2][j+1] = news2
+                    data['统计结果'][this.state.cur_key2][j] = data['统计结果'][this.state.cur_key2][j + 1]
+                    data['统计结果'][this.state.cur_key][j + 1] = news
+                    data['统计结果'][this.state.cur_key2][j + 1] = news2
                 }
             }
         }
-        this.setState({ data: data})
+        this.setState({ data: data })
+
+    }
+    afterLoad(){
+        this.list_sort()
     }
 
     loadDate(){
@@ -131,7 +149,7 @@ class StatisticalPresentation extends Component {
                         {
                             !this.state.loading && pullHook(this)
                         }
-                        <div style={{ width: '100px', height: '62px' }}></div>
+                        <div style={{ width: '100px', height: '70px' }}></div>
 
                         <div className="StatisticalPresentation" style={{ marginTop: '0' }}>
                             {/* 同业采购 用 */}

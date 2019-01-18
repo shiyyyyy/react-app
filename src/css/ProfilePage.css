@@ -597,12 +597,40 @@
     padding: 0 .32rem .32rem .32rem;
 }
 .StatisticalPresentation-date{
-    background: #fff;
+    height: 64px;
+    font-size: .373333rem;
+    border-bottom: 1px solid #F4F8F9;
+    background-color: #fff;
     border-radius: 4px;
+    box-shadow: 0px 1px 0px rgba(0,0,0,.1);
+    display: -ms-flexbox;
     display: flex;
     justify-content: space-around;
-    /* border-bottom: 1px solid #d9d9d9; */
-    box-shadow: 0px 1px 0px rgba(0,0,0,.1);
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 50px;
+    left: .32rem;
+    right: .32rem;
+    text-align: center;
+}
+.StatisticalPresentation-sort{
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    display: flex;
+    justify-content: space-around;
+}
+.StatisticalPresentation-sort-item{
+    width: 32%;
+    text-align: center;
+}
+.StatisticalPresentation-sort-item-active{
+    color: #6FC5D8;
+    border-bottom: 2px solid #6FC5D8;
+    margin-bottom: -0.08rem;
 }
 .StatisticalPresentation-main{
     background: #fff;
