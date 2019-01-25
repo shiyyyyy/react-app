@@ -130,7 +130,7 @@ class StatisticalFund extends Component {
         let that = this
         let param = {'group_by':this.FilterTypeArr[this.state.cur_index] , 'chart_arr':'doc_fund_c1', mod:'业务资金统计'}
         param = encUrl(param)
-        const url = `/stat/Stat/readChart/业务资金统计?${param}`
+        const url = '/stat/Stat/readChart/业务资金统计?' +  param
         loadIfEmpty(this)
         post(url).then(
             r => {

@@ -100,14 +100,43 @@ export function shareWith(view) {
                         <img src="img/wx-pyq.png"/><br />
                         <span>微信朋友圈</span>
                     </div>
-            </div>
-            <div className="share-options-cancel" onClick={_ => view.setState({shareWithOpen: false})}>
+                </div>
+                <div className="share-options-cancel" onClick={_ => view.setState({shareWithOpen: false})}>
                   取消
-            </div>
+                </div>
                       
             </div>
 
           </Modal>
+    );
+}
+
+export function shareWithEnquiryList(view) {
+    return (
+        <Modal isOpen={view.state.shareWithOpen}>
+            <div className="share-cancel" onClick={_ => view.setState({ shareWithOpen: false })}></div>
+            <div className="share">
+                <div className="share-options" style={{padding: '.533333rem .853333rem'}}>
+                    <div className="wx-friends" onClick={() => view.share('SESSION')}>
+                        <img src="img/wx.png" /><br />
+                        <span>微信好友</span>
+                    </div>
+                    <div className="wx-friends-circle" onClick={() => view.share('TIMELINE')}>
+                        <img src="img/wx-pyq.png" /><br />
+                        <span>微信朋友圈</span>
+                    </div>
+                    <div className="wx-friends-circle" onClick={() => view.adviceSheet()}>
+                        <img src="img/form.png" style={{ background: '#32BF27',borderRadius: '50%',objectFit: 'none'}} /><br />
+                        <span>发放询单</span>
+                    </div>
+                </div>
+                <div className="share-options-cancel" onClick={_ => view.setState({ shareWithOpen: false })}>
+                    取消
+                </div>
+
+            </div>
+
+        </Modal>
     );
 }
 
@@ -796,7 +825,7 @@ export class BlackPrompt extends React.Component {
                         <div className="BlockPrompt-input">
                             警告！游客名单
                             {this.props.param.blackUser.map( (item,index) => 
-                                <span style={{ color: 'red' }}>{item}<span className={index === this.props.param.blackUser.length-1?'hide':''}>、</span></span>
+                                <span style={{ color: 'red' }} key={index}>{item}<span className={index === this.props.param.blackUser.length-1?'hide':''}>、</span></span>
                             )}
                             与黑名单中姓名一致，有旅游诈骗嫌疑请点击查看核对信息，如无问题请关闭。
                         </div>
@@ -843,24 +872,54 @@ export class BlackList extends React.Component {
                         <div className="Blacklist-title">游客黑名单：</div>
                         <div className="Blacklist-list-box">
                             {this.state.data.map( item =>
-                                <div className="Blacklist-list-item">
-                                    <div className="Blacklist-list-cell">
-                                        <span className="Blacklist-list-cell-left">姓名: </span>
-                                        <span className="Blacklist-list-cell-right">{item.tourist_name}</span>
+                                <div className="Blacklist-list-item" key={item.id}>
+                                    <div className="Blacklist-list-item-top">
+                                        <div>
+                                            <div className="Blacklist-list-cell">
+                                                <span className="Blacklist-list-cell-left">姓名: </span>
+                                                <span className="Blacklist-list-cell-right">{item.tourist_name}</span>
+                                            </div>
+                                            <div className="Blacklist-list-cell">
+                                                <span className="Blacklist-list-cell-left">性别: </span>
+                                                <span className="Blacklist-list-cell-right">{Enum['Gender'][item.gender]}</span>
+                                            </div>
+                                            <div className="Blacklist-list-cell">
+                                                <span className="Blacklist-list-cell-left">出生日期: </span>
+                                                <span className="Blacklist-list-cell-right">{item.birthday}</span>
+                                            </div>
+                                            <div className="Blacklist-list-cell">
+                                                <span className="Blacklist-list-cell-left">手机号码: </span>
+                                                <span className="Blacklist-list-cell-right">{item.mobile}</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <img className="Blacklist-list-item-top-photo" src={item.photo?AppCore.HOST+'/'+item.photo:"img/defaultPhoto.jpg"} />
+                                        </div>
                                     </div>
-                                    <div className="Blacklist-list-cell">
-                                        <span className="Blacklist-list-cell-left">性别: </span>
-                                        <span className="Blacklist-list-cell-right">{Enum['Gender'][item.gender]}</span>
+
+                                    <div style={{ marginTop: '.32rem' }}>
+                                        <div className="Blacklist-list-cell">
+                                            <span className="Blacklist-list-cell-left">证件类型</span>
+                                            <span className="Blacklist-list-cell-right">证件号码</span>
+                                        </div>
+                                        <div className="Blacklist-list-cell">
+                                            <span className="Blacklist-list-cell-left">身份证: </span>
+                                            <span className="Blacklist-list-cell-right">{item.id_num}</span>
+                                        </div>
+                                        <div className="Blacklist-list-cell">
+                                            <span className="Blacklist-list-cell-left">护照: </span>
+                                            <span className="Blacklist-list-cell-right">{item.passport_num}</span>
+                                        </div>
+                                        <div className="Blacklist-list-cell">
+                                            <span className="Blacklist-list-cell-left">台证: </span>
+                                            <span className="Blacklist-list-cell-right">{item.tw_passport_num}</span>
+                                        </div>
+                                        <div className="Blacklist-list-cell">
+                                            <span className="Blacklist-list-cell-left">港证: </span>
+                                            <span className="Blacklist-list-cell-right">{item.hk_passport_num}</span>
+                                        </div>
                                     </div>
-                                    <div className="Blacklist-list-cell">
-                                        <span className="Blacklist-list-cell-left">出生日期: </span>
-                                        <span className="Blacklist-list-cell-right">{item.birthday}</span>
-                                    </div>
-                                    <div className="Blacklist-list-cell">
-                                        <span className="Blacklist-list-cell-left">手机号码: </span>
-                                        <span className="Blacklist-list-cell-right">{item.mobile}</span>
-                                    </div>
-                                    <div className="Blacklist-list-cell">
+                                    <div className="Blacklist-list-cell" style={{ marginTop: '.32rem' }}>
                                         <span className="Blacklist-list-cell-top">备注: </span>
                                         <span className="Blacklist-list-cell-btm">{item.comment}</span>
                                     </div>
@@ -868,7 +927,8 @@ export class BlackList extends React.Component {
                             )}
                         </div>
                         <div className="Blacklist-btn"
-                            onClick={_ => this.props.param.close()}>关闭</div>
+                            onClick={_ => this.props.param.close()}>关闭
+                        </div>
                     </div>
                 }
             </Dialog>
