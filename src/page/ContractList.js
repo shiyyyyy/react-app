@@ -290,7 +290,7 @@ class ContractList extends Component {
                                     <div className="contract-item" >
                                         <div className="contract-cell" style={{borderBottom: '1px solid #d9d9d9'}}>
                                             <span className="contract-cell-left">合同编号: {item.contract_num}</span>
-                                            <span className="contract-cell-right">签约代表: {item.traveler}</span>
+                                            <span className="contract-cell-right">电子合同签约者: {item.traveler}</span>
                                         </div>
                                         <div className="contract-cell" style={{borderBottom: '1px solid #d9d9d9'}}>
                                             <span className="contract-cell-left">订单号: D0{item.order_id}</span>

@@ -66,12 +66,11 @@ class AddContract1 extends Component {
     }
     Verification(){
         let data = this.state.data
-        if (!data['签约详情'][0].traveler) { info('请填写签约者姓名'); return true }
+        if (!data['签约详情'][0].traveler) { info('请填写电子合同签约者姓名'); return true }
         if (!data['签约详情'][0].travelerid) { info('请填写签约者证件号'); return true }
         if (!data['签约详情'][0].travelmobile) { info('请填写签约者手机号'); return true }
         if (!data['签约详情'][0].travelemail) { info('请填写签约者邮箱'); return true }
         if (!data['签约详情'][0].addr) { info('请填写签约者地址'); return true }
-        if (!data['签约详情'][0].tourist_name) { info('请填写游客姓名'); return true }
         var reg1=/^[\u4e00-\u9fa5 ]{2,20}$/; //中文
         var reg2=/^[a-zA-Z\/ ]{2,20}$/;  //英文
         var reg3=/^\d{11}$/;  //手机号
@@ -153,9 +152,9 @@ class AddContract1 extends Component {
                         <div className="add-con-title">签约信息</div>
                         <div className="add-con-main">
                             <div className="add-con-cell">
-                                <div className="add-con-cell-left">直客签约者姓名: </div>
+                                <div className="add-con-cell-left">电子合同签约者姓名: </div>
                                 <div className="add-con-cell-right">
-                                    <input className="add-con-cell-right-input" placeholder="请输入直客签约者姓名"
+                                    <input className="add-con-cell-right-input" placeholder="请输入电子合同签约者姓名"
                                     value={this.state.data['签约详情'][0].traveler ||''} onChange={e=>this.changeZKInfo(e,"traveler")} />
                                 </div>
                             </div>
@@ -185,13 +184,6 @@ class AddContract1 extends Component {
                                 <div className="add-con-cell-right">
                                     <input className="add-con-cell-right-input" placeholder="请输入地址"
                                     value={this.state.data['签约详情'][0].addr ||''} onChange={e=>this.changeZKInfo(e,"addr")} />
-                                </div>
-                            </div>
-                            <div className="add-con-cell">
-                                <div className="add-con-cell-left">旅游者姓名: </div>
-                                <div className="add-con-cell-right">
-                                    <input className="add-con-cell-right-input" placeholder="请输入旅游者姓名"
-                                    value={this.state.data['签约详情'][0].tourist_name || ''} onChange={e => this.changeZKInfo(e, "tourist_name")} />
                                 </div>
                             </div>
                         </div>

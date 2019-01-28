@@ -53,6 +53,9 @@ import StatisticsDate from './StatisticsDate';
 import StatisticalPresentation from './StatisticalPresentation';
 import StatisticalFund from './StatisticalFund';
 
+import QrCodeEnquiry from './QrCodeEnquiry';
+
+
 
 export default {
 	'日志页': LogPage,
@@ -124,5 +127,7 @@ export default {
 	'统计时间选择': StatisticsDate,
 	'统计呈现': StatisticalPresentation,
 	'统计业务资金': StatisticalFund,
+
+	'发放询单': QrCodeEnquiry,
 
 };

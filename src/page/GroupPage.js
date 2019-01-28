@@ -34,6 +34,7 @@ class GroupPage extends Component{
 			pd_tag_type:'PdTag',
 			pd_sub_tag_type:'PdSubTag',
 			n_1:'PdSubTagBelong',
+			
 			open_search_key:false,
 			cur_select_search_filter:{text: '产品名称', search: 'pd_name'}
 		};

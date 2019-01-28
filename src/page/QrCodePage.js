@@ -3,7 +3,7 @@ import React, { Component,Fragment } from 'react';
 import {Page} from 'react-onsenui';
 
 import { AppCore, goTo, goBack, shareImage} from '../util/core';
-import { pullHook, loginToPlay, SearchLv2, nonBlockLoading, shareWithEnquiryList} from '../util/com';
+import { pullHook, loginToPlay, SearchLv2, nonBlockLoading, shareWith} from '../util/com';
 import { connect } from 'react-redux';
 import QRCode from 'qrcode.react';
 
@@ -63,10 +63,6 @@ class QrCodePage extends Component{
         ];
         shareImage(...argv);
 	}
-	// 发放询单
-	adviceSheet(){
-		window.location.href ='http://www.baidu.com/';
-	}
 
 	renderToolbar(){
         return(
@@ -86,7 +82,7 @@ class QrCodePage extends Component{
 		return (
 			<Page 
 			renderToolbar={_=>this.renderToolbar()}
-			renderModal={_=>shareWithEnquiryList(this)} >
+			renderModal={_=>shareWith(this)} >
 		    {
 		    	this.props.s.user.sid && 
 					// <div className="QRcode">
@@ -94,7 +90,6 @@ class QrCodePage extends Component{
 						<QRCode id="QRc" value={this.state.url} size={200}
 						style={{width:'0',height:'0',display:'block'}} />
 
-						{/* <canvas id="canvas" width={this.state.c_w} height={this.state.c_h}> */}
 						<canvas id="canvas" width={this.state.c_w*2} height={this.state.c_h*2}>
 						</canvas>                    	
                 	</div>
